@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>GitLab Contributions Pac-Man</title>
+		<style>
+			body {
+				text-align: center;
+				margin: 0;
+				padding: 0;
+			}
+			canvas {
+				border: 1px solid #000;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>GitLab Contributions Pac-Man</h1>
+
+		<canvas id="canvas"></canvas>
+		<br />
+
+		<label for="platform">Choose Platform:</label>
+		<select id="platform">
+			<option value="github">GitHub</option>
+			<option value="gitlab">GitLab</option>
+		</select>
+		<select id="output">
+			<option value="canvas">Canvas</option>
+			<option value="svg">svg</option>
+		</select>
+		<input type="text" id="username" placeholder="Enter Username" />
+		<button id="generate">Generate</button>
+		<div>
+			<img id="svgholder" />
+		</div>
+
+		<script type="module">
+			import { renderContributions } from './dist/pacman-contribution-graph.min.js';
+
+			const generateButton = document.getElementById('generate');
+			generateButton.addEventListener('click', async () => {
+				const canvas = document.getElementById('canvas');
+				const usernameInput = document.getElementById('username');
+				const platformSelect = document.getElementById('platform');
+				const outputSelect = document.getElementById('output');
+				const svgHolder = document.getElementById('svgholder');
+				const username = usernameInput.value;
+				if (!username) return;
+
+				outputSelect.disabled = true;
+
+				if (outputSelect.value == 'canvas') {
+					const initializeGameCanvas = () =>
+						renderContributions({
+							platform: platformSelect.value,
+							username: usernameInput.value,
+							canvas: canvas,
+							githubAuthToken: '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',
+							output: 'canvas',
+							gameOverCallback: () => {
+								console.log('GAME OVER');
+								setTimeout(() => {
+									console.log('Restarting');
+									initializeGameCanvas();
+								}, 3000);
+							}
+						});
+					initializeGameCanvas();
+				} else {
+					const initializeGameSvg = () =>
+						renderContributions({
+							platform: platformSelect.value,
+							username: usernameInput.value,
+							githubAuthToken: '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',
+							output: 'svg',
+							svgCallback: (blobUrl) => {
+								svgHolder.src = blobUrl;
+							},
+							gameOverCallback: () => {
+								console.error('GAME OVER');
+							}
+						});
+					initializeGameSvg();
+				}
+			});
+		</script>
+	</body>
+</html>

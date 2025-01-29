@@ -1,0 +1,24 @@
+{
+	"name": "pacman-contribution-graph",
+	"version": "1.0.0",
+	"description": "Generates a pacman game from a github or gitlab user contributions grid",
+	"repository": "github:abozanona/pacman-contribution-graph",
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"build": "webpack"
+	},
+	"devDependencies": {
+		"terser": "^5.37.0",
+		"ts-loader": "^9.5.2",
+		"typescript": "^4.9.5",
+		"webpack": "^5.97.1",
+		"webpack-cli": "^6.0.1"
+	},
+	"keywords": [],
+	"author": "abozanona",
+	"packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0",
+	"dependencies": {
+		"prettier": "^3.4.2"
+	}
+}
