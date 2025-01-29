@@ -7,7 +7,6 @@ export const renderContributions = async (conf: {
 	platform: 'github' | 'gitlab';
 	username: string;
 	canvas: HTMLCanvasElement;
-	githubAuthToken: string;
 	output: 'canvas' | 'svg';
 	svgCallback: (blonUrl: string) => void;
 	gameOverCallback: () => void;
@@ -15,7 +14,7 @@ export const renderContributions = async (conf: {
 	if (conf.platform == 'gitlab') {
 		Store.contributions = await Utils.getGitlabContribution(conf.username);
 	} else {
-		Store.contributions = await Utils.getGithubContribution(conf.username, conf.githubAuthToken);
+		Store.contributions = await Utils.getGithubContribution(conf.username);
 	}
 	if (conf.output) {
 		Store.outputFormat = conf.output;

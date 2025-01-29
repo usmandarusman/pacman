@@ -19,40 +19,19 @@ export const getGitlabContribution = async (username: string): Promise<Contribut
 	}));
 };
 
-export const getGithubContribution = async (username: string, githubAuthToken: string): Promise<Contribution[]> => {
-	const query = /* GraphQL */ `
-		query ($login: String!) {
-			user(login: $login) {
-				contributionsCollection {
-					contributionCalendar {
-						weeks {
-							contributionDays {
-								contributionCount
-								contributionLevel
-								weekday
-								date
-							}
-						}
-					}
-				}
-			}
-		}
-	`;
-	const variables = { login: username };
-	const response = await fetch('https://api.github.com/graphql', {
-		headers: {
-			Authorization: `bearer ${githubAuthToken}`,
-			'Content-Type': 'application/json'
-		},
-		method: 'POST',
-		body: JSON.stringify({ variables, query })
-	});
+export const getGithubContribution = async (username: string): Promise<Contribution[]> => {
+	const response = await fetch(
+		`https://api.github.com/search/commits?q=author:${username}&sort=author-date&order=desc&page=1&per_page=1000`
+	);
 	const contributionsList = await response.json();
-	return contributionsList.data.user.contributionsCollection.contributionCalendar.weeks
-		.map((week: { contributionDays: { date: string; contributionCount: number }[] }) => week.contributionDays)
-		.flat()
-		.map((day: { date: string; contributionCount: number }) => ({
-			date: day.date,
-			count: day.contributionCount
-		}));
+	return Array.from(
+		contributionsList.items
+			.reduce((map: any, item: any) => {
+				const dateString = item.commit.committer.date.split('T')[0];
+				const date = new Date(dateString);
+				const count = (map.get(dateString) || { count: 0 }).count + 1;
+				return map.set(dateString, { date, count });
+			}, new Map())
+			.values()
+	);
 };
