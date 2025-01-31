@@ -1,8 +1,8 @@
-import { CELL_SIZE, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH } from './constants';
+import { CELL_SIZE, GAME_THEMES, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH } from './constants';
 import { Store } from './store';
-import type { Contribution } from './types';
+import type { Contribution, GameTheme } from './types';
 
-export const resizeCanvas = () => {
+const resizeCanvas = () => {
 	const canvasWidth = GRID_WIDTH * (CELL_SIZE + GAP_SIZE);
 	const canvasHeight = GRID_HEIGHT * (CELL_SIZE + GAP_SIZE) + 20; // Adding some space for months on top
 
@@ -10,7 +10,7 @@ export const resizeCanvas = () => {
 	Store.config.canvas.height = canvasHeight;
 };
 
-export const getGitlabContribution = async (username: string): Promise<Contribution[]> => {
+const getGitlabContribution = async (username: string): Promise<Contribution[]> => {
 	const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
 	const contributionsList = await response.json();
 	return Object.entries(contributionsList).map(([date, count]) => ({
@@ -19,7 +19,7 @@ export const getGitlabContribution = async (username: string): Promise<Contribut
 	}));
 };
 
-export const getGithubContribution = async (username: string): Promise<Contribution[]> => {
+const getGithubContribution = async (username: string): Promise<Contribution[]> => {
 	const response = await fetch(
 		`https://api.github.com/search/commits?q=author:${username}&sort=author-date&order=desc&page=1&per_page=1000`
 	);
@@ -34,4 +34,23 @@ export const getGithubContribution = async (username: string): Promise<Contribut
 			}, new Map())
 			.values()
 	);
+};
+
+const getCurrentTheme = (): GameTheme => {
+	return GAME_THEMES[Store.config.gameTheme] ?? GAME_THEMES['github'];
+};
+
+function hexToRGBA(hex: string, alpha: number): string {
+	const r = parseInt(hex.slice(1, 3), 16);
+	const g = parseInt(hex.slice(3, 5), 16);
+	const b = parseInt(hex.slice(5, 7), 16);
+	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+export const Utils = {
+	resizeCanvas,
+	getGitlabContribution,
+	getGithubContribution,
+	getCurrentTheme,
+	hexToRGBA
 };

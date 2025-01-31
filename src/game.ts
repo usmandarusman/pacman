@@ -1,4 +1,4 @@
-import * as Canvas from './canvas';
+import { Canvas } from './canvas';
 import {
 	DELTA_TIME,
 	GAME_SPEED,
@@ -10,7 +10,7 @@ import {
 	PACMAN_POWERUP_DURATION
 } from './constants';
 import { Store } from './store';
-import * as SVG from './svg';
+import { SVG } from './svg';
 
 const initializeGrid = () => {
 	Store.grid = Array.from({ length: GRID_HEIGHT }, () => Array.from({ length: GRID_WIDTH }, () => 0));
@@ -86,7 +86,7 @@ const placeGhosts = () => {
 	if (Store.config.outputFormat == 'canvas') Canvas.drawGhosts();
 };
 
-export const startGame = () => {
+const startGame = () => {
 	Store.frameCount = 0;
 	Store.ghosts.forEach((ghost) => (ghost.scared = false));
 
@@ -311,4 +311,8 @@ const respawnGhost = (ghostIndex: number) => {
 const activatePowerUp = () => {
 	Store.pacman.powerupReaminingDuration = PACMAN_POWERUP_DURATION;
 	Store.ghosts.forEach((ghost) => (ghost.scared = true));
+};
+
+export const Game = {
+	startGame
 };

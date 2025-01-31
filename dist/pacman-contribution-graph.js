@@ -8,27 +8,27 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   drawGhosts: () => (/* binding */ drawGhosts),
-/* harmony export */   drawGrid: () => (/* binding */ drawGrid),
-/* harmony export */   drawPacman: () => (/* binding */ drawPacman),
-/* harmony export */   renderGameOver: () => (/* binding */ renderGameOver)
+/* harmony export */   Canvas: () => (/* binding */ Canvas)
 /* harmony export */ });
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./constants */ "./src/constants.ts");
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store */ "./src/store.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+
 
 
 const drawGrid = () => {
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').clearRect(0, 0, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height);
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().gridBackground;
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillRect(0, 0, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height);
     for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; x++) {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
             const intensity = _store__WEBPACK_IMPORTED_MODULE_1__.Store.grid[x][y];
             if (intensity > 0) {
                 const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
-                const color = `rgba(${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[0]}, ${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[1]}, ${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[2]}, ${adjustedIntensity})`;
+                const color = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.hexToRGBA(_utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().contributionBoxColor, adjustedIntensity);
                 _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = color;
             }
             else {
-                _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.EMPTY_COLOR;
+                _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().emptyContributionBoxColor;
             }
             _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
             _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas
@@ -37,7 +37,7 @@ const drawGrid = () => {
             _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
         }
     }
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = 'black';
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().textColor;
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').font = '10px Arial';
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').textAlign = 'center';
     let lastMonth = '';
@@ -117,6 +117,12 @@ const renderGameOver = () => {
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').textAlign = 'center';
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillText('Game Over', _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width / 2, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height / 2);
 };
+const Canvas = {
+    drawGrid,
+    drawPacman,
+    drawGhosts,
+    renderGameOver
+};
 
 
 /***/ }),
@@ -130,10 +136,9 @@ const renderGameOver = () => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CELL_SIZE: () => (/* binding */ CELL_SIZE),
-/* harmony export */   CONTRIBUTION_COLOR_BASE: () => (/* binding */ CONTRIBUTION_COLOR_BASE),
 /* harmony export */   DELTA_TIME: () => (/* binding */ DELTA_TIME),
-/* harmony export */   EMPTY_COLOR: () => (/* binding */ EMPTY_COLOR),
 /* harmony export */   GAME_SPEED: () => (/* binding */ GAME_SPEED),
+/* harmony export */   GAME_THEMES: () => (/* binding */ GAME_THEMES),
 /* harmony export */   GAP_SIZE: () => (/* binding */ GAP_SIZE),
 /* harmony export */   GHOST_COLORS: () => (/* binding */ GHOST_COLORS),
 /* harmony export */   GRID_HEIGHT: () => (/* binding */ GRID_HEIGHT),
@@ -153,13 +158,37 @@ const PACMAN_COLOR = 'yellow';
 const PACMAN_COLOR_POWERUP = 'red';
 const PACMAN_COLOR_DEAD = '#80808064';
 const GHOST_COLORS = ['red', 'pink', 'cyan', 'orange'];
-const CONTRIBUTION_COLOR_BASE = [34, 139, 34];
-const EMPTY_COLOR = '#ececef';
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const GAME_SPEED = 1; // 1 => Maximum speed
 const DELTA_TIME = 250;
 const PACMAN_DEATH_DURATION = 10;
 const PACMAN_POWERUP_DURATION = 25;
+const GAME_THEMES = {
+    github: {
+        textColor: '#586069',
+        gridBackground: '#ffffff',
+        contributionBoxColor: '#9be9a8',
+        emptyContributionBoxColor: '#ebedf0'
+    },
+    'github-dark': {
+        textColor: '#8b949e',
+        gridBackground: '#0d1117',
+        contributionBoxColor: '#26a641',
+        emptyContributionBoxColor: '#161b22'
+    },
+    gitlab: {
+        textColor: '#626167',
+        gridBackground: '#ffffff',
+        contributionBoxColor: '#7992f5',
+        emptyContributionBoxColor: '#ececef'
+    },
+    'gitlab-dark': {
+        textColor: '#999999',
+        gridBackground: '#1f1f1f',
+        contributionBoxColor: '#2e7db1',
+        emptyContributionBoxColor: '#2d2d2d'
+    }
+};
 
 
 /***/ }),
@@ -172,7 +201,7 @@ const PACMAN_POWERUP_DURATION = 25;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   startGame: () => (/* binding */ startGame)
+/* harmony export */   Game: () => (/* binding */ Game)
 /* harmony export */ });
 /* harmony import */ var _canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./canvas */ "./src/canvas.ts");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./constants */ "./src/constants.ts");
@@ -233,7 +262,7 @@ const placePacman = () => {
         };
     }
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawPacman();
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawPacman();
 };
 const placeGhosts = () => {
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts = [];
@@ -250,14 +279,14 @@ const placeGhosts = () => {
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.scaredGhostsDestinations.push({ x: 0, y: 0 });
     }
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGhosts();
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGhosts();
 };
 const startGame = () => {
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount = 0;
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
     initializeGrid();
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGrid();
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGrid();
     placePacman();
     placeGhosts();
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'svg') {
@@ -301,10 +330,10 @@ const updateGame = () => {
         if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
             clearInterval(_store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval);
             if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-                _canvas__WEBPACK_IMPORTED_MODULE_0__.renderGameOver();
+                _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.renderGameOver();
         }
         if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'svg') {
-            const animatedSVG = _svg__WEBPACK_IMPORTED_MODULE_3__.generateAnimatedSVG();
+            const animatedSVG = _svg__WEBPACK_IMPORTED_MODULE_3__.SVG.generateAnimatedSVG();
             const svgBlob = new Blob([animatedSVG], {
                 type: 'image/svg+xml;charset=utf-8'
             });
@@ -324,11 +353,11 @@ const updateGame = () => {
         grid: _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.map((row) => [...row])
     });
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGrid();
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGrid();
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawPacman();
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawPacman();
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGhosts();
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGhosts();
 };
 const movePacman = () => {
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
@@ -457,6 +486,9 @@ const activatePowerUp = () => {
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_POWERUP_DURATION;
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = true));
 };
+const Game = {
+    startGame
+};
 
 
 /***/ }),
@@ -503,22 +535,25 @@ const Store = {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   generateAnimatedSVG: () => (/* binding */ generateAnimatedSVG)
+/* harmony export */   SVG: () => (/* binding */ SVG)
 /* harmony export */ });
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./constants */ "./src/constants.ts");
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store */ "./src/store.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+
 
 
 const generateAnimatedSVG = () => {
     const svgWidth = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
     const svgHeight = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 20;
     let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<rect width="100%" height="100%" fill="${_utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().gridBackground}"/>`;
     // Month labels
     let lastMonth = '';
     for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
         if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y] !== lastMonth) {
             const xPos = y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-            svg += `<text x="${xPos}" y="10" text-anchor="middle" font-size="10" fill="black">${_store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y]}</text>`;
+            svg += `<text x="${xPos}" y="10" text-anchor="middle" font-size="10" fill="${_utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().textColor}">${_store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y]}</text>`;
             lastMonth = _store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y];
         }
     }
@@ -528,7 +563,7 @@ const generateAnimatedSVG = () => {
             const cellX = y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
             const cellY = x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
             const intensity = _store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory[0].grid[x][y];
-            const color = intensity > 0 ? getContributionColor(intensity) : _constants__WEBPACK_IMPORTED_MODULE_0__.EMPTY_COLOR;
+            const color = intensity > 0 ? getContributionColor(intensity) : _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().emptyContributionBoxColor;
             svg += `<rect id="cell-${x}-${y}" x="${cellX}" y="${cellY}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" rx="5" fill="${color}">
                 <animate attributeName="fill" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite" 
                     values="${generateCellColorValues(x, y)}" 
@@ -622,13 +657,13 @@ const generateCellColorValues = (x, y) => {
     return _store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory
         .map((state) => {
         const intensity = state.grid[x][y];
-        return intensity > 0 ? getContributionColor(intensity) : _constants__WEBPACK_IMPORTED_MODULE_0__.EMPTY_COLOR;
+        return intensity > 0 ? getContributionColor(intensity) : _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().emptyContributionBoxColor;
     })
         .join(';');
 };
 const getContributionColor = (intensity) => {
     const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
-    return `rgba(${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[0]}, ${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[1]}, ${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[2]}, ${adjustedIntensity})`;
+    return _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.hexToRGBA(_utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().contributionBoxColor, adjustedIntensity);
 };
 const generateGhostPositions = (ghostIndex) => {
     return _store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory
@@ -659,6 +694,9 @@ const generateGhostColors = (ghostIndex) => {
     })
         .join(';');
 };
+const SVG = {
+    generateAnimatedSVG
+};
 
 
 /***/ }),
@@ -671,9 +709,7 @@ const generateGhostColors = (ghostIndex) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   getGithubContribution: () => (/* binding */ getGithubContribution),
-/* harmony export */   getGitlabContribution: () => (/* binding */ getGitlabContribution),
-/* harmony export */   resizeCanvas: () => (/* binding */ resizeCanvas)
+/* harmony export */   Utils: () => (/* binding */ Utils)
 /* harmony export */ });
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./constants */ "./src/constants.ts");
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store */ "./src/store.ts");
@@ -714,6 +750,23 @@ const getGithubContribution = (username) => __awaiter(void 0, void 0, void 0, fu
     }, new Map())
         .values());
 });
+const getCurrentTheme = () => {
+    var _a;
+    return (_a = _constants__WEBPACK_IMPORTED_MODULE_0__.GAME_THEMES[_store__WEBPACK_IMPORTED_MODULE_1__.Store.config.gameTheme]) !== null && _a !== void 0 ? _a : _constants__WEBPACK_IMPORTED_MODULE_0__.GAME_THEMES['github'];
+};
+function hexToRGBA(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+const Utils = {
+    resizeCanvas,
+    getGitlabContribution,
+    getGithubContribution,
+    getCurrentTheme,
+    hexToRGBA
+};
 
 
 /***/ })
@@ -802,16 +855,16 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 const renderContributions = (conf) => __awaiter(void 0, void 0, void 0, function* () {
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config = conf;
     if (conf.platform == 'gitlab') {
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.getGitlabContribution(conf.username);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGitlabContribution(conf.username);
     }
     else {
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.getGithubContribution(conf.username);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGithubContribution(conf.username);
     }
     if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.config.outputFormat == 'canvas') {
         _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas = conf.canvas;
-        _utils__WEBPACK_IMPORTED_MODULE_2__.resizeCanvas();
+        _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.resizeCanvas();
     }
-    _game__WEBPACK_IMPORTED_MODULE_0__.startGame();
+    _game__WEBPACK_IMPORTED_MODULE_0__.Game.startGame();
 });
 
 })();

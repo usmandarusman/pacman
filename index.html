@@ -77,7 +77,8 @@
 									console.log('Restarting');
 									initializeGameCanvas();
 								}, 3000);
-							}
+							},
+							gameTheme: 'github'
 						});
 					initializeGameCanvas();
 				} else {
@@ -91,7 +92,8 @@
 							},
 							gameOverCallback: () => {
 								console.error('GAME OVER');
-							}
+							},
+							gameTheme: 'github-dark'
 						});
 					initializeGameSvg();
 				}

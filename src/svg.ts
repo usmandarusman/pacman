@@ -1,27 +1,19 @@
-import {
-	CELL_SIZE,
-	CONTRIBUTION_COLOR_BASE,
-	EMPTY_COLOR,
-	GAP_SIZE,
-	GRID_HEIGHT,
-	GRID_WIDTH,
-	PACMAN_COLOR,
-	PACMAN_COLOR_DEAD,
-	PACMAN_COLOR_POWERUP
-} from './constants';
+import { CELL_SIZE, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR, PACMAN_COLOR_DEAD, PACMAN_COLOR_POWERUP } from './constants';
 import { Store } from './store';
+import { Utils } from './utils';
 
-export const generateAnimatedSVG = () => {
+const generateAnimatedSVG = () => {
 	const svgWidth = GRID_WIDTH * (CELL_SIZE + GAP_SIZE);
 	const svgHeight = GRID_HEIGHT * (CELL_SIZE + GAP_SIZE) + 20;
 	let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+	svg += `<rect width="100%" height="100%" fill="${Utils.getCurrentTheme().gridBackground}"/>`;
 
 	// Month labels
 	let lastMonth = '';
 	for (let y = 0; y < GRID_WIDTH; y++) {
 		if (Store.monthLabels[y] !== lastMonth) {
 			const xPos = y * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2;
-			svg += `<text x="${xPos}" y="10" text-anchor="middle" font-size="10" fill="black">${Store.monthLabels[y]}</text>`;
+			svg += `<text x="${xPos}" y="10" text-anchor="middle" font-size="10" fill="${Utils.getCurrentTheme().textColor}">${Store.monthLabels[y]}</text>`;
 			lastMonth = Store.monthLabels[y];
 		}
 	}
@@ -32,7 +24,7 @@ export const generateAnimatedSVG = () => {
 			const cellX = y * (CELL_SIZE + GAP_SIZE);
 			const cellY = x * (CELL_SIZE + GAP_SIZE) + 15;
 			const intensity = Store.gameHistory[0].grid[x][y];
-			const color = intensity > 0 ? getContributionColor(intensity) : EMPTY_COLOR;
+			const color = intensity > 0 ? getContributionColor(intensity) : Utils.getCurrentTheme().emptyContributionBoxColor;
 			svg += `<rect id="cell-${x}-${y}" x="${cellX}" y="${cellY}" width="${CELL_SIZE}" height="${CELL_SIZE}" rx="5" fill="${color}">
                 <animate attributeName="fill" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite" 
                     values="${generateCellColorValues(x, y)}" 
@@ -133,14 +125,14 @@ const generateCellColorValues = (x: number, y: number) => {
 	return Store.gameHistory
 		.map((state) => {
 			const intensity = state.grid[x][y];
-			return intensity > 0 ? getContributionColor(intensity) : EMPTY_COLOR;
+			return intensity > 0 ? getContributionColor(intensity) : Utils.getCurrentTheme().emptyContributionBoxColor;
 		})
 		.join(';');
 };
 
 const getContributionColor = (intensity: number) => {
 	const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
-	return `rgba(${CONTRIBUTION_COLOR_BASE[0]}, ${CONTRIBUTION_COLOR_BASE[1]}, ${CONTRIBUTION_COLOR_BASE[2]}, ${adjustedIntensity})`;
+	return Utils.hexToRGBA(Utils.getCurrentTheme().contributionBoxColor, adjustedIntensity);
 };
 
 const generateGhostPositions = (ghostIndex: number) => {
@@ -173,4 +165,8 @@ const generateGhostColors = (ghostIndex: number) => {
 			return ghost.scared ? 'blue' : ghost.color;
 		})
 		.join(';');
+};
+
+export const SVG = {
+	generateAnimatedSVG
 };

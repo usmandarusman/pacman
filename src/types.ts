@@ -45,4 +45,14 @@ export interface Config {
 	outputFormat: 'canvas' | 'svg';
 	svgCallback: (blonUrl: string) => void;
 	gameOverCallback: () => void;
+	gameTheme: ThemeKeys;
+}
+
+export type ThemeKeys = 'github' | 'github-dark' | 'gitlab' | 'gitlab-dark';
+
+export interface GameTheme {
+	textColor: string;
+	gridBackground: string;
+	contributionBoxColor: string;
+	emptyContributionBoxColor: string;
 }

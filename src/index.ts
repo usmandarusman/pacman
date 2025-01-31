@@ -1,7 +1,7 @@
-import * as Game from './game';
+import { Game } from './game';
 import { Store } from './store';
 import { Config } from './types';
-import * as Utils from './utils';
+import { Utils } from './utils';
 
 export const renderContributions = async (conf: Config) => {
 	Store.config = conf;
