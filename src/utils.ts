@@ -1,14 +1,6 @@
-import { CELL_SIZE, GAME_THEMES, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH } from './constants';
+import { GAME_THEMES } from './constants';
 import { Store } from './store';
 import type { Contribution, GameTheme } from './types';
-
-const resizeCanvas = () => {
-	const canvasWidth = GRID_WIDTH * (CELL_SIZE + GAP_SIZE);
-	const canvasHeight = GRID_HEIGHT * (CELL_SIZE + GAP_SIZE) + 20; // Adding some space for months on top
-
-	Store.config.canvas.width = canvasWidth;
-	Store.config.canvas.height = canvasHeight;
-};
 
 const getGitlabContribution = async (username: string): Promise<Contribution[]> => {
 	const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
@@ -48,7 +40,6 @@ function hexToRGBA(hex: string, alpha: number): string {
 }
 
 export const Utils = {
-	resizeCanvas,
 	getGitlabContribution,
 	getGithubContribution,
 	getCurrentTheme,

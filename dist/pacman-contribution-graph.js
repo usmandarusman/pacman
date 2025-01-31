@@ -16,6 +16,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const resizeCanvas = () => {
+    const canvasWidth = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
+    const canvasHeight = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 20; // Adding some space for months on top
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width = canvasWidth;
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height = canvasHeight;
+};
 const drawGrid = () => {
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().gridBackground;
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillRect(0, 0, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height);
@@ -118,6 +124,7 @@ const renderGameOver = () => {
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillText('Game Over', _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width / 2, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height / 2);
 };
 const Canvas = {
+    resizeCanvas,
     drawGrid,
     drawPacman,
     drawGhosts,
@@ -137,7 +144,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CELL_SIZE: () => (/* binding */ CELL_SIZE),
 /* harmony export */   DELTA_TIME: () => (/* binding */ DELTA_TIME),
-/* harmony export */   GAME_SPEED: () => (/* binding */ GAME_SPEED),
 /* harmony export */   GAME_THEMES: () => (/* binding */ GAME_THEMES),
 /* harmony export */   GAP_SIZE: () => (/* binding */ GAP_SIZE),
 /* harmony export */   GHOST_COLORS: () => (/* binding */ GHOST_COLORS),
@@ -159,10 +165,9 @@ const PACMAN_COLOR_POWERUP = 'red';
 const PACMAN_COLOR_DEAD = '#80808064';
 const GHOST_COLORS = ['red', 'pink', 'cyan', 'orange'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const GAME_SPEED = 1; // 1 => Maximum speed
 const DELTA_TIME = 250;
 const PACMAN_DEATH_DURATION = 10;
-const PACMAN_POWERUP_DURATION = 25;
+const PACMAN_POWERUP_DURATION = 15;
 const GAME_THEMES = {
     github: {
         textColor: '#586069',
@@ -282,6 +287,10 @@ const placeGhosts = () => {
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGhosts();
 };
 const startGame = () => {
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas = _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas;
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.resizeCanvas();
+    }
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount = 0;
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
     initializeGrid();
@@ -304,7 +313,7 @@ const startGame = () => {
 };
 const updateGame = () => {
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount++;
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount % _constants__WEBPACK_IMPORTED_MODULE_1__.GAME_SPEED !== 0) {
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount % _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.gameSpeed !== 0) {
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameHistory.push({
             pacman: Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman),
             ghosts: _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
@@ -315,7 +324,7 @@ const updateGame = () => {
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration--;
         if (!_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
-            // HE'S ALIVE
+            // IT'S ALIVE!
         }
     }
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
@@ -572,7 +581,7 @@ const generateAnimatedSVG = () => {
         }
     }
     // Pacman
-    svg += `<path id="pacman" d="${generatePacManPath(0.25)}"
+    svg += `<path id="pacman" d="${generatePacManPath(0.35)}"
         transform="translate(${_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE)}, ${_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15})">
 		<animate attributeName="fill" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
                 keyTimes="${generateKeyTimes()}"
@@ -724,12 +733,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 };
 
 
-const resizeCanvas = () => {
-    const canvasWidth = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
-    const canvasHeight = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 20; // Adding some space for months on top
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width = canvasWidth;
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height = canvasHeight;
-};
 const getGitlabContribution = (username) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield fetch(`https://gitlab.com/users/${username}/calendar.json`);
     const contributionsList = yield response.json();
@@ -761,7 +764,6 @@ function hexToRGBA(hex, alpha) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 const Utils = {
-    resizeCanvas,
     getGitlabContribution,
     getGithubContribution,
     getCurrentTheme,
@@ -853,16 +855,25 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 const renderContributions = (conf) => __awaiter(void 0, void 0, void 0, function* () {
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config = conf;
-    if (conf.platform == 'gitlab') {
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGitlabContribution(conf.username);
-    }
-    else {
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGithubContribution(conf.username);
-    }
-    if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.config.outputFormat == 'canvas') {
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas = conf.canvas;
-        _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.resizeCanvas();
+    const defaultConfing = {
+        platform: 'github',
+        username: '',
+        canvas: undefined,
+        outputFormat: 'svg',
+        svgCallback: (_) => { },
+        gameOverCallback: () => () => { },
+        gameTheme: 'github',
+        gameSpeed: 1,
+        enableSounds: true
+    };
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config = Object.assign(Object.assign({}, defaultConfing), conf);
+    switch (conf.platform) {
+        case 'gitlab':
+            _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGitlabContribution(conf.username);
+            break;
+        case 'github':
+            _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGithubContribution(conf.username);
+            break;
     }
     _game__WEBPACK_IMPORTED_MODULE_0__.Game.startGame();
 });

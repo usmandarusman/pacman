@@ -9,10 +9,9 @@ export const PACMAN_COLOR_POWERUP = 'red';
 export const PACMAN_COLOR_DEAD = '#80808064';
 export const GHOST_COLORS = ['red', 'pink', 'cyan', 'orange'];
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-export const GAME_SPEED = 1; // 1 => Maximum speed
 export const DELTA_TIME = 250;
 export const PACMAN_DEATH_DURATION = 10;
-export const PACMAN_POWERUP_DURATION = 25;
+export const PACMAN_POWERUP_DURATION = 15;
 export const GAME_THEMES: { [key in ThemeKeys]: GameTheme } = {
 	github: {
 		textColor: '#586069',

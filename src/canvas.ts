@@ -2,6 +2,14 @@ import { CELL_SIZE, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR, PACMAN_COLO
 import { Store } from './store';
 import { Utils } from './utils';
 
+const resizeCanvas = () => {
+	const canvasWidth = GRID_WIDTH * (CELL_SIZE + GAP_SIZE);
+	const canvasHeight = GRID_HEIGHT * (CELL_SIZE + GAP_SIZE) + 20; // Adding some space for months on top
+
+	Store.config.canvas.width = canvasWidth;
+	Store.config.canvas.height = canvasHeight;
+};
+
 const drawGrid = () => {
 	Store.config.canvas.getContext('2d')!.fillStyle = Utils.getCurrentTheme().gridBackground;
 	Store.config.canvas.getContext('2d')!.fillRect(0, 0, Store.config.canvas.width, Store.config.canvas.height);
@@ -115,6 +123,7 @@ const renderGameOver = () => {
 };
 
 export const Canvas = {
+	resizeCanvas,
 	drawGrid,
 	drawPacman,
 	drawGhosts,

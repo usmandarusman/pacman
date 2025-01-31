@@ -4,16 +4,27 @@ import { Config } from './types';
 import { Utils } from './utils';
 
 export const renderContributions = async (conf: Config) => {
-	Store.config = conf;
-	if (conf.platform == 'gitlab') {
-		Store.contributions = await Utils.getGitlabContribution(conf.username);
-	} else {
-		Store.contributions = await Utils.getGithubContribution(conf.username);
-	}
+	const defaultConfing: Config = {
+		platform: 'github',
+		username: '',
+		canvas: undefined as unknown as HTMLCanvasElement,
+		outputFormat: 'svg',
+		svgCallback: (_: string) => {},
+		gameOverCallback: () => () => {},
+		gameTheme: 'github',
+		gameSpeed: 1,
+		enableSounds: true
+	};
+	Store.config = { ...defaultConfing, ...conf };
 
-	if (Store.config.outputFormat == 'canvas') {
-		Store.config.canvas = conf.canvas;
-		Utils.resizeCanvas();
+	switch (conf.platform) {
+		case 'gitlab':
+			Store.contributions = await Utils.getGitlabContribution(conf.username);
+			break;
+
+		case 'github':
+			Store.contributions = await Utils.getGithubContribution(conf.username);
+			break;
 	}
 
 	Game.startGame();

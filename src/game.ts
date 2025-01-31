@@ -1,14 +1,5 @@
 import { Canvas } from './canvas';
-import {
-	DELTA_TIME,
-	GAME_SPEED,
-	GHOST_COLORS,
-	GRID_HEIGHT,
-	GRID_WIDTH,
-	MONTHS,
-	PACMAN_DEATH_DURATION,
-	PACMAN_POWERUP_DURATION
-} from './constants';
+import { DELTA_TIME, GHOST_COLORS, GRID_HEIGHT, GRID_WIDTH, MONTHS, PACMAN_DEATH_DURATION, PACMAN_POWERUP_DURATION } from './constants';
 import { Store } from './store';
 import { SVG } from './svg';
 
@@ -87,6 +78,11 @@ const placeGhosts = () => {
 };
 
 const startGame = () => {
+	if (Store.config.outputFormat == 'canvas') {
+		Store.config.canvas = Store.config.canvas;
+		Canvas.resizeCanvas();
+	}
+
 	Store.frameCount = 0;
 	Store.ghosts.forEach((ghost) => (ghost.scared = false));
 
@@ -110,7 +106,7 @@ const startGame = () => {
 
 const updateGame = () => {
 	Store.frameCount++;
-	if (Store.frameCount % GAME_SPEED !== 0) {
+	if (Store.frameCount % Store.config.gameSpeed !== 0) {
 		Store.gameHistory.push({
 			pacman: { ...Store.pacman },
 			ghosts: Store.ghosts.map((ghost) => ({ ...ghost })),
@@ -122,7 +118,7 @@ const updateGame = () => {
 	if (Store.pacman.deadReaminingDuration) {
 		Store.pacman.deadReaminingDuration--;
 		if (!Store.pacman.deadReaminingDuration) {
-			// HE'S ALIVE
+			// IT'S ALIVE!
 		}
 	}
 

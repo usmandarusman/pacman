@@ -34,7 +34,7 @@ const generateAnimatedSVG = () => {
 	}
 
 	// Pacman
-	svg += `<path id="pacman" d="${generatePacManPath(0.25)}"
+	svg += `<path id="pacman" d="${generatePacManPath(0.35)}"
         transform="translate(${Store.pacman.y * (CELL_SIZE + GAP_SIZE)}, ${Store.pacman.x * (CELL_SIZE + GAP_SIZE) + 15})">
 		<animate attributeName="fill" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
                 keyTimes="${generateKeyTimes()}"

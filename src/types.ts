@@ -46,6 +46,8 @@ export interface Config {
 	svgCallback: (blonUrl: string) => void;
 	gameOverCallback: () => void;
 	gameTheme: ThemeKeys;
+	gameSpeed: number;
+	enableSounds: boolean;
 }
 
 export type ThemeKeys = 'github' | 'github-dark' | 'gitlab' | 'gitlab-dark';
