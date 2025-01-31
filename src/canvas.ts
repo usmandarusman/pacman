@@ -103,12 +103,3 @@ export const renderGameOver = () => {
 	Store.canvas.getContext('2d')!.textAlign = 'center';
 	Store.canvas.getContext('2d')!.fillText('Game Over', Store.canvas.width / 2, Store.canvas.height / 2);
 };
-
-export const gameOver = () => {
-	clearInterval(Store.gameInterval);
-
-	Store.canvas.getContext('2d')!.fillStyle = 'black';
-	Store.canvas.getContext('2d')!.font = '20px Arial';
-	Store.canvas.getContext('2d')!.textAlign = 'center';
-	Store.canvas.getContext('2d')!.fillText('You Lost!', Store.canvas.width / 2, Store.canvas.height / 2);
-};
