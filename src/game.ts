@@ -1,9 +1,18 @@
 import * as Canvas from './canvas';
-import { GAME_SPEED, GHOST_COLORS, GRID_HEIGHT, GRID_WIDTH, MONTHS } from './constants';
+import {
+	DELTA_TIME,
+	GAME_SPEED,
+	GHOST_COLORS,
+	GRID_HEIGHT,
+	GRID_WIDTH,
+	MONTHS,
+	PACMAN_DEATH_DURATION,
+	PACMAN_POWERUP_DURATION
+} from './constants';
 import { Store } from './store';
 import * as SVG from './svg';
 
-export const initializeGrid = () => {
+const initializeGrid = () => {
 	Store.grid = Array.from({ length: GRID_HEIGHT }, () => Array.from({ length: GRID_WIDTH }, () => 0));
 	Store.monthLabels = Array(GRID_WIDTH).fill('');
 	let maxCommits = 1;
@@ -39,7 +48,7 @@ export const initializeGrid = () => {
 	}
 };
 
-export const placePacman = () => {
+const placePacman = () => {
 	let validCells = [];
 	for (let x = 0; x < GRID_HEIGHT; x++) {
 		for (let y = 0; y < GRID_WIDTH; y++) {
@@ -53,13 +62,14 @@ export const placePacman = () => {
 			y: randomCell.y,
 			direction: 'right',
 			points: 0,
-			powerUp: false
+			deadReaminingDuration: 0,
+			powerupReaminingDuration: 0
 		};
 	}
 	if (Store.config.outputFormat == 'canvas') Canvas.drawPacman();
 };
 
-export const placeGhosts = () => {
+const placeGhosts = () => {
 	Store.ghosts = [];
 	Store.scaredGhostsDestinations = [];
 	// Create 4 ghosts
@@ -77,6 +87,14 @@ export const placeGhosts = () => {
 };
 
 export const startGame = () => {
+	Store.frameCount = 0;
+	Store.ghosts.forEach((ghost) => (ghost.scared = false));
+
+	initializeGrid();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawGrid();
+	placePacman();
+	placeGhosts();
+
 	if (Store.config.outputFormat == 'svg') {
 		const remainingCells = () => Store.grid.some((row) => row.some((cell) => cell > 0));
 		while (remainingCells()) {
@@ -86,11 +104,36 @@ export const startGame = () => {
 		updateGame();
 	} else {
 		clearInterval(Store.gameInterval);
-		Store.gameInterval = setInterval(() => updateGame(), GAME_SPEED / 5);
+		Store.gameInterval = setInterval(() => updateGame(), DELTA_TIME);
 	}
 };
 
 const updateGame = () => {
+	Store.frameCount++;
+	if (Store.frameCount % GAME_SPEED !== 0) {
+		Store.gameHistory.push({
+			pacman: { ...Store.pacman },
+			ghosts: Store.ghosts.map((ghost) => ({ ...ghost })),
+			grid: Store.grid.map((row) => [...row])
+		});
+		return;
+	}
+
+	if (Store.pacman.deadReaminingDuration) {
+		Store.pacman.deadReaminingDuration--;
+		if (!Store.pacman.deadReaminingDuration) {
+			// HE'S ALIVE
+		}
+	}
+
+	if (Store.pacman.powerupReaminingDuration) {
+		Store.pacman.powerupReaminingDuration--;
+		if (!Store.pacman.powerupReaminingDuration) {
+			Store.ghosts.forEach((ghost) => (ghost.scared = false));
+			Store.pacman.points = 0;
+		}
+	}
+
 	const remainingCells = Store.grid.some((row) => row.some((cell) => cell > 0));
 	if (!remainingCells) {
 		if (Store.config.outputFormat == 'canvas') {
@@ -129,9 +172,12 @@ const updateGame = () => {
 };
 
 const movePacman = () => {
+	if (Store.pacman.deadReaminingDuration) {
+		return;
+	}
 	let targetCells: { x: number; y: number; distance: number }[] = [];
 
-	if (Store.pacman.powerUp) {
+	if (Store.pacman.powerupReaminingDuration) {
 		targetCells = Store.ghosts.map((ghost) => ({
 			x: ghost.x,
 			y: ghost.y,
@@ -207,7 +253,7 @@ const moveGhosts = () => {
 			const [dx, dy] = directions[Math.floor(Math.random() * directions.length)];
 
 			// If Pacman has the power-up, ghosts move slower (move every other frame)
-			if (Store.pacman.powerUp && Math.random() < 0.5) return;
+			if (Store.pacman.powerupReaminingDuration && Math.random() < 0.5) return;
 
 			const newX = ghost.x + dx;
 			const newY = ghost.y + dy;
@@ -231,27 +277,17 @@ const getRandomDestination = (x: number, y: number) => {
 };
 
 const checkCollisions = () => {
+	if (Store.pacman.deadReaminingDuration) return;
+
 	Store.ghosts.forEach((ghost, index) => {
 		if (ghost.x === Store.pacman.x && ghost.y === Store.pacman.y) {
-			if (Store.pacman.powerUp && ghost.scared) {
+			if (Store.pacman.powerupReaminingDuration && ghost.scared) {
 				respawnGhost(index);
 				Store.pacman.points += 10;
-				if (Store.config.outputFormat == 'canvas') {
-					setTimeout(() => {
-						respawnPacman();
-						startGame();
-					}, GAME_SPEED * 5);
-				}
 			} else {
-				if (Store.config.outputFormat == 'canvas') {
-					clearInterval(Store.gameInterval);
-					setTimeout(() => {
-						respawnPacman();
-						startGame();
-					}, GAME_SPEED * 5);
-				} else {
-					respawnPacman();
-				}
+				Store.pacman.points = 0;
+				Store.pacman.powerupReaminingDuration = 0;
+				Store.pacman.deadReaminingDuration = PACMAN_DEATH_DURATION;
 			}
 		}
 	});
@@ -272,36 +308,7 @@ const respawnGhost = (ghostIndex: number) => {
 	};
 };
 
-const respawnPacman = () => {
-	let validCells = [];
-	for (let x = 0; x < GRID_HEIGHT; x++) {
-		for (let y = 0; y < GRID_WIDTH; y++) {
-			if (Store.grid[x][y] > 0) validCells.push({ x, y });
-		}
-	}
-	if (validCells.length > 0) {
-		const randomCell = validCells[Math.floor(Math.random() * validCells.length)];
-		Store.pacman = {
-			x: randomCell.x,
-			y: randomCell.y,
-			direction: 'right',
-			points: 0,
-			powerUp: false
-		};
-	}
-	Store.ghosts.forEach((ghost) => (ghost.scared = false));
-	if (Store.config.outputFormat == 'canvas') Canvas.drawGrid();
-	if (Store.config.outputFormat == 'canvas') Canvas.drawPacman();
-	if (Store.config.outputFormat == 'canvas') Canvas.drawGhosts();
-};
-
 const activatePowerUp = () => {
-	Store.pacman.powerUp = true;
+	Store.pacman.powerupReaminingDuration = PACMAN_POWERUP_DURATION;
 	Store.ghosts.forEach((ghost) => (ghost.scared = true));
-
-	setTimeout(() => {
-		Store.pacman.powerUp = false;
-		Store.ghosts.forEach((ghost) => (ghost.scared = false));
-		Store.pacman.points = 0;
-	}, GAME_SPEED * 5);
 };

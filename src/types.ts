@@ -3,7 +3,8 @@ export interface Pacman {
 	y: number;
 	direction: string;
 	points: number;
-	powerUp?: boolean;
+	deadReaminingDuration: number;
+	powerupReaminingDuration: number;
 }
 
 export interface Ghost {
@@ -20,6 +21,7 @@ export interface Contribution {
 }
 
 export interface StoreType {
+	frameCount: number;
 	contributions: Contribution[];
 	pacman: Pacman;
 	ghosts: Ghost[];

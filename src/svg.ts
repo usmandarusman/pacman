@@ -1,4 +1,14 @@
-import { CELL_SIZE, CONTRIBUTION_COLOR_BASE, EMPTY_COLOR, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR } from './constants';
+import {
+	CELL_SIZE,
+	CONTRIBUTION_COLOR_BASE,
+	EMPTY_COLOR,
+	GAP_SIZE,
+	GRID_HEIGHT,
+	GRID_WIDTH,
+	PACMAN_COLOR,
+	PACMAN_COLOR_DEAD,
+	PACMAN_COLOR_POWERUP
+} from './constants';
 import { Store } from './store';
 
 export const generateAnimatedSVG = () => {
@@ -32,8 +42,11 @@ export const generateAnimatedSVG = () => {
 	}
 
 	// Pacman
-	svg += `<path id="pacman" fill="${PACMAN_COLOR}" d="${generatePacManPath(0.25)}"
+	svg += `<path id="pacman" d="${generatePacManPath(0.25)}"
         transform="translate(${Store.pacman.y * (CELL_SIZE + GAP_SIZE)}, ${Store.pacman.x * (CELL_SIZE + GAP_SIZE) + 15})">
+		<animate attributeName="fill" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
+                keyTimes="${generateKeyTimes()}"
+                values="${generatePacManColors()}"/>
         <animateTransform attributeName="transform" type="translate" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
             keyTimes="${generateKeyTimes()}"
             values="${generatePacManPositions()}"/>
@@ -98,6 +111,20 @@ const generatePacManPositions = () => {
 			const x = state.pacman.y * (CELL_SIZE + GAP_SIZE);
 			const y = state.pacman.x * (CELL_SIZE + GAP_SIZE) + 15;
 			return `${x},${y}`;
+		})
+		.join(';');
+};
+
+const generatePacManColors = () => {
+	return Store.gameHistory
+		.map((state) => {
+			if (state.pacman.deadReaminingDuration) {
+				return PACMAN_COLOR_DEAD;
+			} else if (state.pacman.powerupReaminingDuration) {
+				return PACMAN_COLOR_POWERUP;
+			} else {
+				return PACMAN_COLOR;
+			}
 		})
 		.join(';');
 };

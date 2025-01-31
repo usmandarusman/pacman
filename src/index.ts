@@ -1,4 +1,3 @@
-import * as Canvas from './canvas';
 import * as Game from './game';
 import { Store } from './store';
 import { Config } from './types';
@@ -17,10 +16,5 @@ export const renderContributions = async (conf: Config) => {
 		Utils.resizeCanvas();
 	}
 
-	Game.initializeGrid();
-
-	if (Store.config.outputFormat == 'canvas') Canvas.drawGrid();
-	Game.placePacman();
-	Game.placeGhosts();
 	Game.startGame();
 };

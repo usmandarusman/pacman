@@ -1,4 +1,14 @@
-import { CELL_SIZE, CONTRIBUTION_COLOR_BASE, EMPTY_COLOR, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR } from './constants';
+import {
+	CELL_SIZE,
+	CONTRIBUTION_COLOR_BASE,
+	EMPTY_COLOR,
+	GAP_SIZE,
+	GRID_HEIGHT,
+	GRID_WIDTH,
+	PACMAN_COLOR,
+	PACMAN_COLOR_DEAD,
+	PACMAN_COLOR_POWERUP
+} from './constants';
 import { Store } from './store';
 
 export const drawGrid = () => {
@@ -41,8 +51,14 @@ export const drawPacman = () => {
 	const y = Store.pacman.x * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2 + 15;
 	const radius = CELL_SIZE / 2;
 
-	// Change Pac-Man's color to red if he's on power-up, else yellow
-	Store.config.canvas.getContext('2d')!.fillStyle = Store.pacman.powerUp ? 'red' : PACMAN_COLOR;
+	// Change Pac-Man's color to red if he's on power-up, dead, else yellow
+	if (Store.pacman.deadReaminingDuration) {
+		Store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR_DEAD;
+	} else if (Store.pacman.powerupReaminingDuration) {
+		Store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR_POWERUP;
+	} else {
+		Store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR;
+	}
 
 	const mouthAngle = Store.pacmanMouthOpen ? 0.25 * Math.PI : 0.1 * Math.PI;
 

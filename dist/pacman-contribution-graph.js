@@ -53,8 +53,16 @@ const drawPacman = () => {
     const x = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
     const y = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
     const radius = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-    // Change Pac-Man's color to red if he's on power-up, else yellow
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.powerUp ? 'red' : _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
+    // Change Pac-Man's color to red if he's on power-up, dead, else yellow
+    if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.deadReaminingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
+    }
+    else if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.powerupReaminingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_POWERUP;
+    }
+    else {
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
+    }
     const mouthAngle = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacmanMouthOpen ? 0.25 * Math.PI : 0.1 * Math.PI;
     let startAngle, endAngle;
     switch (_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.direction) {
@@ -123,6 +131,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CELL_SIZE: () => (/* binding */ CELL_SIZE),
 /* harmony export */   CONTRIBUTION_COLOR_BASE: () => (/* binding */ CONTRIBUTION_COLOR_BASE),
+/* harmony export */   DELTA_TIME: () => (/* binding */ DELTA_TIME),
 /* harmony export */   EMPTY_COLOR: () => (/* binding */ EMPTY_COLOR),
 /* harmony export */   GAME_SPEED: () => (/* binding */ GAME_SPEED),
 /* harmony export */   GAP_SIZE: () => (/* binding */ GAP_SIZE),
@@ -130,18 +139,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   GRID_HEIGHT: () => (/* binding */ GRID_HEIGHT),
 /* harmony export */   GRID_WIDTH: () => (/* binding */ GRID_WIDTH),
 /* harmony export */   MONTHS: () => (/* binding */ MONTHS),
-/* harmony export */   PACMAN_COLOR: () => (/* binding */ PACMAN_COLOR)
+/* harmony export */   PACMAN_COLOR: () => (/* binding */ PACMAN_COLOR),
+/* harmony export */   PACMAN_COLOR_DEAD: () => (/* binding */ PACMAN_COLOR_DEAD),
+/* harmony export */   PACMAN_COLOR_POWERUP: () => (/* binding */ PACMAN_COLOR_POWERUP),
+/* harmony export */   PACMAN_DEATH_DURATION: () => (/* binding */ PACMAN_DEATH_DURATION),
+/* harmony export */   PACMAN_POWERUP_DURATION: () => (/* binding */ PACMAN_POWERUP_DURATION)
 /* harmony export */ });
 const CELL_SIZE = 20;
 const GAP_SIZE = 2;
 const GRID_WIDTH = 52;
 const GRID_HEIGHT = 7;
 const PACMAN_COLOR = 'yellow';
+const PACMAN_COLOR_POWERUP = 'red';
+const PACMAN_COLOR_DEAD = '#80808064';
 const GHOST_COLORS = ['red', 'pink', 'cyan', 'orange'];
 const CONTRIBUTION_COLOR_BASE = [34, 139, 34];
 const EMPTY_COLOR = '#ececef';
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const GAME_SPEED = 1000;
+const GAME_SPEED = 1; // 1 => Maximum speed
+const DELTA_TIME = 250;
+const PACMAN_DEATH_DURATION = 10;
+const PACMAN_POWERUP_DURATION = 25;
 
 
 /***/ }),
@@ -154,9 +172,6 @@ const GAME_SPEED = 1000;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   initializeGrid: () => (/* binding */ initializeGrid),
-/* harmony export */   placeGhosts: () => (/* binding */ placeGhosts),
-/* harmony export */   placePacman: () => (/* binding */ placePacman),
 /* harmony export */   startGame: () => (/* binding */ startGame)
 /* harmony export */ });
 /* harmony import */ var _canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./canvas */ "./src/canvas.ts");
@@ -213,7 +228,8 @@ const placePacman = () => {
             y: randomCell.y,
             direction: 'right',
             points: 0,
-            powerUp: false
+            deadReaminingDuration: 0,
+            powerupReaminingDuration: 0
         };
     }
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
@@ -237,6 +253,13 @@ const placeGhosts = () => {
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGhosts();
 };
 const startGame = () => {
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount = 0;
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
+    initializeGrid();
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGrid();
+    placePacman();
+    placeGhosts();
     if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'svg') {
         const remainingCells = () => _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.some((row) => row.some((cell) => cell > 0));
         while (remainingCells()) {
@@ -247,10 +270,32 @@ const startGame = () => {
     }
     else {
         clearInterval(_store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval = setInterval(() => updateGame(), _constants__WEBPACK_IMPORTED_MODULE_1__.GAME_SPEED / 5);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval = setInterval(() => updateGame(), _constants__WEBPACK_IMPORTED_MODULE_1__.DELTA_TIME);
     }
 };
 const updateGame = () => {
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount++;
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount % _constants__WEBPACK_IMPORTED_MODULE_1__.GAME_SPEED !== 0) {
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameHistory.push({
+            pacman: Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman),
+            ghosts: _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
+            grid: _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.map((row) => [...row])
+        });
+        return;
+    }
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration--;
+        if (!_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
+            // HE'S ALIVE
+        }
+    }
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration--;
+        if (!_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
+            _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
+            _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points = 0;
+        }
+    }
     const remainingCells = _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.some((row) => row.some((cell) => cell > 0));
     if (!remainingCells) {
         if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
@@ -286,8 +331,11 @@ const updateGame = () => {
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGhosts();
 };
 const movePacman = () => {
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
+        return;
+    }
     let targetCells = [];
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerUp) {
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
         targetCells = _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.map((ghost) => ({
             x: ghost.x,
             y: ghost.y,
@@ -354,7 +402,7 @@ const moveGhosts = () => {
             ];
             const [dx, dy] = directions[Math.floor(Math.random() * directions.length)];
             // If Pacman has the power-up, ghosts move slower (move every other frame)
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerUp && Math.random() < 0.5)
+            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration && Math.random() < 0.5)
                 return;
             const newX = ghost.x + dx;
             const newY = ghost.y + dy;
@@ -375,29 +423,18 @@ const getRandomDestination = (x, y) => {
     };
 };
 const checkCollisions = () => {
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration)
+        return;
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost, index) => {
         if (ghost.x === _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x && ghost.y === _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y) {
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerUp && ghost.scared) {
+            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration && ghost.scared) {
                 respawnGhost(index);
                 _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points += 10;
-                if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
-                    setTimeout(() => {
-                        respawnPacman();
-                        startGame();
-                    }, _constants__WEBPACK_IMPORTED_MODULE_1__.GAME_SPEED * 5);
-                }
             }
             else {
-                if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
-                    clearInterval(_store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval);
-                    setTimeout(() => {
-                        respawnPacman();
-                        startGame();
-                    }, _constants__WEBPACK_IMPORTED_MODULE_1__.GAME_SPEED * 5);
-                }
-                else {
-                    respawnPacman();
-                }
+                _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points = 0;
+                _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration = 0;
+                _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_DEATH_DURATION;
             }
         }
     });
@@ -416,40 +453,9 @@ const respawnGhost = (ghostIndex) => {
         target: undefined
     };
 };
-const respawnPacman = () => {
-    let validCells = [];
-    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
-        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y] > 0)
-                validCells.push({ x, y });
-        }
-    }
-    if (validCells.length > 0) {
-        const randomCell = validCells[Math.floor(Math.random() * validCells.length)];
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman = {
-            x: randomCell.x,
-            y: randomCell.y,
-            direction: 'right',
-            points: 0,
-            powerUp: false
-        };
-    }
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGrid();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawPacman();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGhosts();
-};
 const activatePowerUp = () => {
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerUp = true;
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_POWERUP_DURATION;
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = true));
-    setTimeout(() => {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerUp = false;
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points = 0;
-    }, _constants__WEBPACK_IMPORTED_MODULE_1__.GAME_SPEED * 5);
 };
 
 
@@ -466,8 +472,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Store: () => (/* binding */ Store)
 /* harmony export */ });
 const Store = {
+    frameCount: 0,
     contributions: [],
-    pacman: { x: 0, y: 0, direction: 'right', points: 0, powerUp: false },
+    pacman: {
+        x: 0,
+        y: 0,
+        direction: 'right',
+        points: 0,
+        deadReaminingDuration: 0,
+        powerupReaminingDuration: 0
+    },
     ghosts: [],
     grid: [],
     monthLabels: [],
@@ -523,8 +537,11 @@ const generateAnimatedSVG = () => {
         }
     }
     // Pacman
-    svg += `<path id="pacman" fill="${_constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR}" d="${generatePacManPath(0.25)}"
+    svg += `<path id="pacman" d="${generatePacManPath(0.25)}"
         transform="translate(${_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE)}, ${_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15})">
+		<animate attributeName="fill" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
+                keyTimes="${generateKeyTimes()}"
+                values="${generatePacManColors()}"/>
         <animateTransform attributeName="transform" type="translate" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
             keyTimes="${generateKeyTimes()}"
             values="${generatePacManPositions()}"/>
@@ -583,6 +600,21 @@ const generatePacManPositions = () => {
         const x = state.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
         const y = state.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
         return `${x},${y}`;
+    })
+        .join(';');
+};
+const generatePacManColors = () => {
+    return _store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory
+        .map((state) => {
+        if (state.pacman.deadReaminingDuration) {
+            return _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
+        }
+        else if (state.pacman.powerupReaminingDuration) {
+            return _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_POWERUP;
+        }
+        else {
+            return _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
+        }
     })
         .join(';');
 };
@@ -752,10 +784,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   renderContributions: () => (/* binding */ renderContributions)
 /* harmony export */ });
-/* harmony import */ var _canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./canvas */ "./src/canvas.ts");
-/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/game.ts");
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./src/store.ts");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./game */ "./src/game.ts");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store */ "./src/store.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -768,25 +799,19 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-
 const renderContributions = (conf) => __awaiter(void 0, void 0, void 0, function* () {
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config = conf;
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config = conf;
     if (conf.platform == 'gitlab') {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_3__.getGitlabContribution(conf.username);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.getGitlabContribution(conf.username);
     }
     else {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_3__.getGithubContribution(conf.username);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.getGithubContribution(conf.username);
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas = conf.canvas;
-        _utils__WEBPACK_IMPORTED_MODULE_3__.resizeCanvas();
+    if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.config.outputFormat == 'canvas') {
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas = conf.canvas;
+        _utils__WEBPACK_IMPORTED_MODULE_2__.resizeCanvas();
     }
-    _game__WEBPACK_IMPORTED_MODULE_1__.initializeGrid();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
-        _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGrid();
-    _game__WEBPACK_IMPORTED_MODULE_1__.placePacman();
-    _game__WEBPACK_IMPORTED_MODULE_1__.placeGhosts();
-    _game__WEBPACK_IMPORTED_MODULE_1__.startGame();
+    _game__WEBPACK_IMPORTED_MODULE_0__.startGame();
 });
 
 })();
