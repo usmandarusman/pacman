@@ -6,8 +6,8 @@ export const resizeCanvas = () => {
 	const canvasWidth = GRID_WIDTH * (CELL_SIZE + GAP_SIZE);
 	const canvasHeight = GRID_HEIGHT * (CELL_SIZE + GAP_SIZE) + 20; // Adding some space for months on top
 
-	Store.canvas.width = canvasWidth;
-	Store.canvas.height = canvasHeight;
+	Store.config.canvas.width = canvasWidth;
+	Store.config.canvas.height = canvasHeight;
 };
 
 export const getGitlabContribution = async (username: string): Promise<Contribution[]> => {

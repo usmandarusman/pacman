@@ -1,24 +1,6 @@
-import type { Contribution, Ghost, Pacman } from './types';
+import type { Config, StoreType } from './types';
 
-export const Store: {
-	contributions: Contribution[];
-	pacman: Pacman;
-	ghosts: Ghost[];
-	grid: number[][];
-	monthLabels: string[];
-	pacmanMouthOpen: boolean;
-	gameInterval: number;
-	scaredGhostsDestinations: { x: number; y: number }[];
-	gameHistory: {
-		pacman: Pacman;
-		ghosts: Ghost[];
-		grid: number[][];
-	}[];
-	canvas: HTMLCanvasElement;
-	outputFormat: 'canvas' | 'svg';
-	svgCallback: (blonUrl: string) => void;
-	gameOverCallback: () => void;
-} = {
+export const Store: StoreType = {
 	contributions: [],
 	pacman: { x: 0, y: 0, direction: 'right', points: 0, powerUp: false },
 	ghosts: [],
@@ -28,8 +10,5 @@ export const Store: {
 	gameInterval: 0,
 	scaredGhostsDestinations: [],
 	gameHistory: [],
-	canvas: undefined as unknown as HTMLCanvasElement,
-	outputFormat: 'canvas',
-	svgCallback: (_: string) => {},
-	gameOverCallback: () => {}
+	config: undefined as unknown as Config
 };

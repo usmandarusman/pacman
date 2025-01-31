@@ -56,7 +56,7 @@ export const placePacman = () => {
 			powerUp: false
 		};
 	}
-	if (Store.outputFormat == 'canvas') Canvas.drawPacman();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawPacman();
 };
 
 export const placeGhosts = () => {
@@ -73,11 +73,11 @@ export const placeGhosts = () => {
 		Store.ghosts.push({ x, y, color, scared: false, target: undefined });
 		Store.scaredGhostsDestinations.push({ x: 0, y: 0 });
 	}
-	if (Store.outputFormat == 'canvas') Canvas.drawGhosts();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawGhosts();
 };
 
 export const startGame = () => {
-	if (Store.outputFormat == 'svg') {
+	if (Store.config.outputFormat == 'svg') {
 		const remainingCells = () => Store.grid.some((row) => row.some((cell) => cell > 0));
 		while (remainingCells()) {
 			updateGame();
@@ -93,21 +93,21 @@ export const startGame = () => {
 const updateGame = () => {
 	const remainingCells = Store.grid.some((row) => row.some((cell) => cell > 0));
 	if (!remainingCells) {
-		if (Store.outputFormat == 'canvas') {
+		if (Store.config.outputFormat == 'canvas') {
 			clearInterval(Store.gameInterval);
-			if (Store.outputFormat == 'canvas') Canvas.renderGameOver();
+			if (Store.config.outputFormat == 'canvas') Canvas.renderGameOver();
 		}
 
-		if (Store.outputFormat == 'svg') {
+		if (Store.config.outputFormat == 'svg') {
 			const animatedSVG = SVG.generateAnimatedSVG();
 			const svgBlob = new Blob([animatedSVG], {
 				type: 'image/svg+xml;charset=utf-8'
 			});
 			const svgUrl = URL.createObjectURL(svgBlob);
-			Store.svgCallback(svgUrl);
+			Store.config.svgCallback(svgUrl);
 		}
 
-		Store.gameOverCallback();
+		Store.config.gameOverCallback();
 		return;
 	}
 
@@ -123,9 +123,9 @@ const updateGame = () => {
 		grid: Store.grid.map((row) => [...row])
 	});
 
-	if (Store.outputFormat == 'canvas') Canvas.drawGrid();
-	if (Store.outputFormat == 'canvas') Canvas.drawPacman();
-	if (Store.outputFormat == 'canvas') Canvas.drawGhosts();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawGrid();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawPacman();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawGhosts();
 };
 
 const movePacman = () => {
@@ -236,14 +236,14 @@ const checkCollisions = () => {
 			if (Store.pacman.powerUp && ghost.scared) {
 				respawnGhost(index);
 				Store.pacman.points += 10;
-				if (Store.outputFormat == 'canvas') {
+				if (Store.config.outputFormat == 'canvas') {
 					setTimeout(() => {
 						respawnPacman();
 						startGame();
 					}, GAME_SPEED * 5);
 				}
 			} else {
-				if (Store.outputFormat == 'canvas') {
+				if (Store.config.outputFormat == 'canvas') {
 					clearInterval(Store.gameInterval);
 					setTimeout(() => {
 						respawnPacman();
@@ -290,9 +290,9 @@ const respawnPacman = () => {
 		};
 	}
 	Store.ghosts.forEach((ghost) => (ghost.scared = false));
-	if (Store.outputFormat == 'canvas') Canvas.drawGrid();
-	if (Store.outputFormat == 'canvas') Canvas.drawPacman();
-	if (Store.outputFormat == 'canvas') Canvas.drawGhosts();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawGrid();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawPacman();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawGhosts();
 };
 
 const activatePowerUp = () => {

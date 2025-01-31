@@ -18,31 +18,33 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const drawGrid = () => {
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').clearRect(0, 0, _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.width, _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.height);
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').clearRect(0, 0, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height);
     for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; x++) {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
             const intensity = _store__WEBPACK_IMPORTED_MODULE_1__.Store.grid[x][y];
             if (intensity > 0) {
                 const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
                 const color = `rgba(${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[0]}, ${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[1]}, ${_constants__WEBPACK_IMPORTED_MODULE_0__.CONTRIBUTION_COLOR_BASE[2]}, ${adjustedIntensity})`;
-                _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillStyle = color;
+                _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = color;
             }
             else {
-                _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.EMPTY_COLOR;
+                _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.EMPTY_COLOR;
             }
-            _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').beginPath();
-            _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').roundRect(y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE), x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, 5);
-            _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fill();
+            _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
+            _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas
+                .getContext('2d')
+                .roundRect(y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE), x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, 5);
+            _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
         }
     }
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillStyle = 'black';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').font = '10px Arial';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').textAlign = 'center';
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = 'black';
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').font = '10px Arial';
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').textAlign = 'center';
     let lastMonth = '';
     for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
         if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y] !== lastMonth) {
             const xPos = y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-            _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillText(_store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y], xPos, 10);
+            _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillText(_store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y], xPos, 10);
             lastMonth = _store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y];
         }
     }
@@ -52,7 +54,7 @@ const drawPacman = () => {
     const y = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
     const radius = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
     // Change Pac-Man's color to red if he's on power-up, else yellow
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillStyle = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.powerUp ? 'red' : _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.powerUp ? 'red' : _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
     const mouthAngle = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacmanMouthOpen ? 0.25 * Math.PI : 0.1 * Math.PI;
     let startAngle, endAngle;
     switch (_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.direction) {
@@ -74,38 +76,38 @@ const drawPacman = () => {
             endAngle = 2 * Math.PI - mouthAngle;
             break;
     }
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').beginPath();
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').arc(x, y, radius, startAngle, endAngle);
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').lineTo(x, y);
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fill();
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x, y, radius, startAngle, endAngle);
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').lineTo(x, y);
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
 };
 const drawGhosts = () => {
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.ghosts.forEach((ghost) => {
         const x = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
         const y = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
         const radius = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillStyle = ghost.scared ? 'blue' : ghost.color;
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').arc(x, y, radius, 0, Math.PI);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').rect(x - radius, y, radius * 2, radius);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fill();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillStyle = 'white';
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fill();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillStyle = 'black';
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fill();
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = ghost.scared ? 'blue' : ghost.color;
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x, y, radius, 0, Math.PI);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').rect(x - radius, y, radius * 2, radius);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = 'white';
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = 'black';
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
     });
 };
 const renderGameOver = () => {
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillStyle = 'black';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').font = '20px Arial';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').textAlign = 'center';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.getContext('2d').fillText('Game Over', _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.width / 2, _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.height / 2);
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = 'black';
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').font = '20px Arial';
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').textAlign = 'center';
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillText('Game Over', _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width / 2, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height / 2);
 };
 
 
@@ -214,7 +216,7 @@ const placePacman = () => {
             powerUp: false
         };
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawPacman();
 };
 const placeGhosts = () => {
@@ -231,11 +233,11 @@ const placeGhosts = () => {
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.push({ x, y, color, scared: false, target: undefined });
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.scaredGhostsDestinations.push({ x: 0, y: 0 });
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGhosts();
 };
 const startGame = () => {
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'svg') {
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'svg') {
         const remainingCells = () => _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.some((row) => row.some((cell) => cell > 0));
         while (remainingCells()) {
             updateGame();
@@ -251,20 +253,20 @@ const startGame = () => {
 const updateGame = () => {
     const remainingCells = _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.some((row) => row.some((cell) => cell > 0));
     if (!remainingCells) {
-        if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas') {
+        if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
             clearInterval(_store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval);
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
                 _canvas__WEBPACK_IMPORTED_MODULE_0__.renderGameOver();
         }
-        if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'svg') {
+        if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'svg') {
             const animatedSVG = _svg__WEBPACK_IMPORTED_MODULE_3__.generateAnimatedSVG();
             const svgBlob = new Blob([animatedSVG], {
                 type: 'image/svg+xml;charset=utf-8'
             });
             const svgUrl = URL.createObjectURL(svgBlob);
-            _store__WEBPACK_IMPORTED_MODULE_2__.Store.svgCallback(svgUrl);
+            _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.svgCallback(svgUrl);
         }
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameOverCallback();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.gameOverCallback();
         return;
     }
     movePacman();
@@ -276,11 +278,11 @@ const updateGame = () => {
         ghosts: _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
         grid: _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.map((row) => [...row])
     });
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGrid();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawPacman();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGhosts();
 };
 const movePacman = () => {
@@ -378,7 +380,7 @@ const checkCollisions = () => {
             if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerUp && ghost.scared) {
                 respawnGhost(index);
                 _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points += 10;
-                if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas') {
+                if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
                     setTimeout(() => {
                         respawnPacman();
                         startGame();
@@ -386,7 +388,7 @@ const checkCollisions = () => {
                 }
             }
             else {
-                if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas') {
+                if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
                     clearInterval(_store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval);
                     setTimeout(() => {
                         respawnPacman();
@@ -433,11 +435,11 @@ const respawnPacman = () => {
         };
     }
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGrid();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawPacman();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGhosts();
 };
 const activatePowerUp = () => {
@@ -473,10 +475,7 @@ const Store = {
     gameInterval: 0,
     scaredGhostsDestinations: [],
     gameHistory: [],
-    canvas: undefined,
-    outputFormat: 'canvas',
-    svgCallback: (_) => { },
-    gameOverCallback: () => { }
+    config: undefined
 };
 
 
@@ -660,8 +659,8 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 const resizeCanvas = () => {
     const canvasWidth = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
     const canvasHeight = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 20; // Adding some space for months on top
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.width = canvasWidth;
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.canvas.height = canvasHeight;
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width = canvasWidth;
+    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height = canvasHeight;
 };
 const getGitlabContribution = (username) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield fetch(`https://gitlab.com/users/${username}/calendar.json`);
@@ -771,23 +770,19 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 const renderContributions = (conf) => __awaiter(void 0, void 0, void 0, function* () {
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config = conf;
     if (conf.platform == 'gitlab') {
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_3__.getGitlabContribution(conf.username);
     }
     else {
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_3__.getGithubContribution(conf.username);
     }
-    if (conf.output) {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.outputFormat = conf.output;
-    }
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.svgCallback = conf.svgCallback;
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameOverCallback = conf.gameOverCallback;
-    if (conf.output == 'canvas') {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.canvas = conf.canvas;
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas = conf.canvas;
         _utils__WEBPACK_IMPORTED_MODULE_3__.resizeCanvas();
     }
     _game__WEBPACK_IMPORTED_MODULE_1__.initializeGrid();
-    if (conf.output == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.drawGrid();
     _game__WEBPACK_IMPORTED_MODULE_1__.placePacman();
     _game__WEBPACK_IMPORTED_MODULE_1__.placeGhosts();

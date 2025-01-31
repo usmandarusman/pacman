@@ -18,3 +18,29 @@ export interface Contribution {
 	date: Date;
 	count: number;
 }
+
+export interface StoreType {
+	contributions: Contribution[];
+	pacman: Pacman;
+	ghosts: Ghost[];
+	grid: number[][];
+	monthLabels: string[];
+	pacmanMouthOpen: boolean;
+	gameInterval: number;
+	scaredGhostsDestinations: { x: number; y: number }[];
+	gameHistory: {
+		pacman: Pacman;
+		ghosts: Ghost[];
+		grid: number[][];
+	}[];
+	config: Config;
+}
+
+export interface Config {
+	platform: 'github' | 'gitlab';
+	username: string;
+	canvas: HTMLCanvasElement;
+	outputFormat: 'canvas' | 'svg';
+	svgCallback: (blonUrl: string) => void;
+	gameOverCallback: () => void;
+}

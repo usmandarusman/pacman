@@ -57,7 +57,7 @@
 							platform: platformSelect.value,
 							username: usernameInput.value,
 							canvas: canvas,
-							output: 'canvas',
+							outputFormat: 'canvas',
 							gameOverCallback: () => {
 								console.log('GAME OVER');
 								setTimeout(() => {
@@ -72,7 +72,7 @@
 						renderContributions({
 							platform: platformSelect.value,
 							username: usernameInput.value,
-							output: 'svg',
+							outputFormat: 'svg',
 							svgCallback: (blobUrl) => {
 								svgHolder.src = blobUrl;
 							},
