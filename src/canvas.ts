@@ -60,7 +60,7 @@ export const drawPacman = () => {
 		Store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR;
 	}
 
-	const mouthAngle = Store.pacmanMouthOpen ? 0.25 * Math.PI : 0.1 * Math.PI;
+	const mouthAngle = Store.pacmanMouthOpen ? 0.35 * Math.PI : 0.1 * Math.PI;
 
 	let startAngle, endAngle;
 	switch (Store.pacman.direction) {

@@ -7,11 +7,17 @@
 		<style>
 			body {
 				text-align: center;
-				margin: 0;
+				margin: 0 0 70px;
 				padding: 0;
 			}
 			canvas {
 				border: 1px solid #000;
+			}
+			.page-statistics {
+				padding: 30px;
+				position: fixed;
+				bottom: 0;
+				width: 100%;
 			}
 		</style>
 	</head>
@@ -34,6 +40,13 @@
 		<button id="generate">Generate</button>
 		<div>
 			<img id="svgholder" />
+		</div>
+
+		<div class="page-statistics">
+			<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+			<span id="busuanzi_container_site_pv"> Total visits to the site <span id="busuanzi_value_site_pv"></span> times</span>
+			<span class="post-meta-divider">|</span>
+			<span id="busuanzi_container_site_uv">Number of visitors <span id="busuanzi_value_site_uv"></span> people</span>
 		</div>
 
 		<script type="module">

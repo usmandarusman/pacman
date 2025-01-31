@@ -63,7 +63,7 @@ const drawPacman = () => {
     else {
         _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
     }
-    const mouthAngle = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacmanMouthOpen ? 0.25 * Math.PI : 0.1 * Math.PI;
+    const mouthAngle = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacmanMouthOpen ? 0.35 * Math.PI : 0.1 * Math.PI;
     let startAngle, endAngle;
     switch (_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.direction) {
         case 'up':
