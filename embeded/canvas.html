@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>GitLab Contributions Pac-Man</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			canvas {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="pacmancanvas"></canvas>
+
+		<script type="module">
+			const getQueryParams = () => {
+				const urlParams = new URLSearchParams(window.location.search);
+				const params = {};
+				for (const [key, value] of urlParams.entries()) {
+					params[key] = value;
+				}
+				return params;
+			};
+			import { renderContributions } from 'https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.1/dist/pacman-contribution-graph.min.js';
+			const canvas = document.getElementById('pacmancanvas');
+			const initializeGameCanvas = () =>
+				renderContributions({
+					...getQueryParams(),
+					canvas: canvas,
+					output: 'canvas'
+				});
+			initializeGameCanvas();
+		</script>
+	</body>
+</html>
