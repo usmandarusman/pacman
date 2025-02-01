@@ -29,7 +29,7 @@ const drawGrid = () => {
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillRect(0, 0, _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.width, _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.height);
     for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; x++) {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
-            const intensity = _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y];
+            const intensity = _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y].intensity;
             if (intensity > 0) {
                 const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
                 const color = _utils__WEBPACK_IMPORTED_MODULE_3__.Utils.hexToRGBA(_utils__WEBPACK_IMPORTED_MODULE_3__.Utils.getCurrentTheme().contributionBoxColor, adjustedIntensity);
@@ -62,10 +62,10 @@ const drawPacman = () => {
     const y = _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
     const radius = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
     // Change Pac-Man's color to red if he's on power-up, dead, else yellow
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadRemainingDuration) {
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
     }
-    else if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
+    else if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupRemainingDuration) {
         _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_POWERUP;
     }
     else {
@@ -127,7 +127,6 @@ const renderGameOver = () => {
 };
 const drawSoundController = () => {
     if (!_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.enableSounds) {
-        console.log('vvvv');
         return;
     }
     const width = 30, height = 30, left = _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.width - width - 10, top = 10;
@@ -286,7 +285,9 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 const initializeGrid = () => {
-    _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid = Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT }, () => Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH }, () => 0));
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points = 0;
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.totalPoints = 0;
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid = Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT }, () => Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH }, () => ({ commitsCount: 0, intensity: 0 })));
     _store__WEBPACK_IMPORTED_MODULE_3__.Store.monthLabels = Array(_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH).fill('');
     let maxCommits = 1;
     const now = new Date();
@@ -297,15 +298,15 @@ const initializeGrid = () => {
         const dayOfWeek = contributionDate.getDay();
         const weeksAgo = Math.floor((+startOfCurrentWeek - +contributionDate) / (1000 * 60 * 60 * 24 * 7));
         if (weeksAgo >= 0 && weeksAgo < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH && dayOfWeek >= 0 && dayOfWeek < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT) {
-            _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[dayOfWeek][_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - weeksAgo] = contribution.count;
+            _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[dayOfWeek][_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - weeksAgo] = { commitsCount: contribution.count, intensity: 0 };
             if (contribution.count > maxCommits)
                 maxCommits = contribution.count;
         }
     });
     for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
-            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] > 0) {
-                _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] = _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] / maxCommits;
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y].commitsCount > 0) {
+                _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y].intensity = _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y].commitsCount / maxCommits;
             }
         }
     }
@@ -320,7 +321,7 @@ const placePacman = () => {
     let validCells = [];
     for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
-            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] > 0)
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y].intensity > 0)
                 validCells.push({ x, y });
         }
     }
@@ -331,8 +332,9 @@ const placePacman = () => {
             y: randomCell.y,
             direction: 'right',
             points: 0,
-            deadReaminingDuration: 0,
-            powerupReaminingDuration: 0
+            totalPoints: 0,
+            deadRemainingDuration: 0,
+            powerupRemainingDuration: 0
         };
     }
     if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
@@ -348,7 +350,7 @@ const placeGhosts = () => {
         do {
             x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
             y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
-        } while (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] === 0);
+        } while (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y].intensity === 0);
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.push({ x, y, color, scared: false, target: undefined });
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.scaredGhostsDestinations.push({ x: 0, y: 0 });
     }
@@ -377,7 +379,7 @@ const startGame = () => __awaiter(void 0, void 0, void 0, function* () {
     placePacman();
     placeGhosts();
     if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'svg') {
-        const remainingCells = () => _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.some((row) => row.some((cell) => cell > 0));
+        const remainingCells = () => _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.some((row) => row.some((cell) => cell.intensity > 0));
         while (remainingCells()) {
             yield updateGame();
         }
@@ -395,13 +397,13 @@ const updateGame = () => __awaiter(void 0, void 0, void 0, function* () {
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.gameHistory.push({
             pacman: Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman),
             ghosts: _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
-            grid: _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.map((row) => [...row])
+            grid: _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.map((row) => [...row.map((col) => col.intensity)])
         });
         return;
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration) {
-        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration--;
-        if (!_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration) {
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadRemainingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadRemainingDuration--;
+        if (!_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadRemainingDuration) {
             // IT'S ALIVE!
             if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
                 _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
@@ -409,14 +411,14 @@ const updateGame = () => __awaiter(void 0, void 0, void 0, function* () {
                     .then(() => _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().startDefaultSound());
         }
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration) {
-        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration--;
-        if (!_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration) {
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupRemainingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupRemainingDuration--;
+        if (!_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupRemainingDuration) {
             _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
             _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points = 0;
         }
     }
-    const remainingCells = _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.some((row) => row.some((cell) => cell > 0));
+    const remainingCells = _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.some((row) => row.some((cell) => cell.intensity > 0));
     if (!remainingCells) {
         if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
             clearInterval(_store__WEBPACK_IMPORTED_MODULE_3__.Store.gameInterval);
@@ -445,7 +447,7 @@ const updateGame = () => __awaiter(void 0, void 0, void 0, function* () {
     _store__WEBPACK_IMPORTED_MODULE_3__.Store.gameHistory.push({
         pacman: Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman),
         ghosts: _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
-        grid: _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.map((row) => [...row])
+        grid: _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.map((row) => [...row.map((col) => col.intensity)])
     });
     if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGrid();
@@ -457,11 +459,11 @@ const updateGame = () => __awaiter(void 0, void 0, void 0, function* () {
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawSoundController();
 });
 const movePacman = () => {
-    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration) {
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadRemainingDuration) {
         return;
     }
     let targetCells = [];
-    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration) {
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupRemainingDuration) {
         targetCells = _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.map((ghost) => ({
             x: ghost.x,
             y: ghost.y,
@@ -471,7 +473,7 @@ const movePacman = () => {
     else {
         for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
             for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
-                if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] > 0)
+                if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y].intensity > 0)
                     targetCells.push({ x, y, distance: Infinity });
             }
         }
@@ -492,9 +494,10 @@ const movePacman = () => {
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y += Math.sign(dy);
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.direction = dy > 0 ? 'right' : 'left';
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y] > 0) {
-        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points += 1;
-        _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y] = 0;
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y].intensity > 0) {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.totalPoints += _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y].commitsCount;
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.config.pointsIncreasedCallback(_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.totalPoints);
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y].intensity = 0;
         if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points >= 30)
             activatePowerUp();
     }
@@ -528,7 +531,7 @@ const moveGhosts = () => {
             ];
             const [dx, dy] = directions[Math.floor(Math.random() * directions.length)];
             // If Pacman has the power-up, ghosts move slower (move every other frame)
-            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration && Math.random() < 0.5)
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupRemainingDuration && Math.random() < 0.5)
                 return;
             const newX = ghost.x + dx;
             const newY = ghost.y + dy;
@@ -549,11 +552,11 @@ const getRandomDestination = (x, y) => {
     };
 };
 const checkCollisions = () => {
-    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration)
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadRemainingDuration)
         return;
     _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.forEach((ghost, index) => {
         if (ghost.x === _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x && ghost.y === _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y) {
-            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration && ghost.scared) {
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupRemainingDuration && ghost.scared) {
                 respawnGhost(index);
                 _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points += 10;
                 if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
@@ -562,8 +565,8 @@ const checkCollisions = () => {
             }
             else {
                 _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points = 0;
-                _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration = 0;
-                _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_DEATH_DURATION;
+                _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupRemainingDuration = 0;
+                _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadRemainingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_DEATH_DURATION;
                 if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
                     _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
                         .play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.GAME_OVER)
@@ -578,7 +581,7 @@ const respawnGhost = (ghostIndex) => {
     do {
         x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
         y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
-    } while ((Math.abs(x - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x) <= 2 && Math.abs(y - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y) <= 2) || _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] === 0);
+    } while ((Math.abs(x - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x) <= 2 && Math.abs(y - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y) <= 2) || _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y].intensity === 0);
     _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts[ghostIndex] = {
         x,
         y,
@@ -588,7 +591,7 @@ const respawnGhost = (ghostIndex) => {
     };
 };
 const activatePowerUp = () => {
-    _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_POWERUP_DURATION;
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupRemainingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_POWERUP_DURATION;
     _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.forEach((ghost) => (ghost.scared = true));
 };
 const Game = {
@@ -655,7 +658,10 @@ class MusicPlayer {
                 return;
             }
             if (this.currentSource) {
-                this.currentSource.stop();
+                try {
+                    this.currentSource.stop();
+                }
+                catch (ex) { }
             }
             const buffer = this.sounds.get(sound);
             if (!buffer) {
@@ -678,7 +684,10 @@ class MusicPlayer {
     }
     startDefaultSound() {
         if (this.defaultSource) {
-            this.defaultSource.stop();
+            try {
+                this.defaultSource.stop();
+            }
+            catch (ex) { }
         }
         const buffer = this.sounds.get(Sound.DEFAULT);
         if (!buffer) {
@@ -695,7 +704,10 @@ class MusicPlayer {
     }
     stopDefaultSound() {
         if (this.defaultSource) {
-            this.defaultSource.stop();
+            try {
+                this.defaultSource.stop();
+            }
+            catch (ex) { }
             this.defaultSource = null;
         }
     }
@@ -740,8 +752,9 @@ const Store = {
         y: 0,
         direction: 'right',
         points: 0,
-        deadReaminingDuration: 0,
-        powerupReaminingDuration: 0
+        totalPoints: 0,
+        deadRemainingDuration: 0,
+        powerupRemainingDuration: 0
     },
     ghosts: [],
     grid: [],
@@ -870,10 +883,10 @@ const generatePacManPositions = () => {
 const generatePacManColors = () => {
     return _store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory
         .map((state) => {
-        if (state.pacman.deadReaminingDuration) {
+        if (state.pacman.deadRemainingDuration) {
             return _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
         }
-        else if (state.pacman.powerupReaminingDuration) {
+        else if (state.pacman.powerupRemainingDuration) {
             return _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_POWERUP;
         }
         else {
@@ -1084,7 +1097,8 @@ const renderContributions = (conf) => __awaiter(void 0, void 0, void 0, function
         gameOverCallback: () => () => { },
         gameTheme: 'github',
         gameSpeed: 1,
-        enableSounds: true
+        enableSounds: true,
+        pointsIncreasedCallback: (_) => { }
     };
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.config = Object.assign(Object.assign({}, defaultConfing), conf);
     switch (conf.platform) {

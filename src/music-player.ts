@@ -38,7 +38,9 @@ export class MusicPlayer {
 			return;
 		}
 		if (this.currentSource) {
-			this.currentSource.stop();
+			try {
+				this.currentSource.stop();
+			} catch (ex) {}
 		}
 
 		const buffer = this.sounds.get(sound);
@@ -65,7 +67,9 @@ export class MusicPlayer {
 
 	public startDefaultSound(): void {
 		if (this.defaultSource) {
-			this.defaultSource.stop();
+			try {
+				this.defaultSource.stop();
+			} catch (ex) {}
 		}
 
 		const buffer = this.sounds.get(Sound.DEFAULT);
@@ -86,7 +90,9 @@ export class MusicPlayer {
 
 	public stopDefaultSound(): void {
 		if (this.defaultSource) {
-			this.defaultSource.stop();
+			try {
+				this.defaultSource.stop();
+			} catch (ex) {}
 			this.defaultSource = null;
 		}
 	}

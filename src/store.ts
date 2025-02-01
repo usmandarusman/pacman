@@ -8,8 +8,9 @@ export const Store: StoreType = {
 		y: 0,
 		direction: 'right',
 		points: 0,
-		deadReaminingDuration: 0,
-		powerupReaminingDuration: 0
+		totalPoints: 0,
+		deadRemainingDuration: 0,
+		powerupRemainingDuration: 0
 	},
 	ghosts: [],
 	grid: [],

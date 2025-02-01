@@ -110,9 +110,9 @@ const generatePacManPositions = () => {
 const generatePacManColors = () => {
 	return Store.gameHistory
 		.map((state) => {
-			if (state.pacman.deadReaminingDuration) {
+			if (state.pacman.deadRemainingDuration) {
 				return PACMAN_COLOR_DEAD;
-			} else if (state.pacman.powerupReaminingDuration) {
+			} else if (state.pacman.powerupRemainingDuration) {
 				return PACMAN_COLOR_POWERUP;
 			} else {
 				return PACMAN_COLOR;

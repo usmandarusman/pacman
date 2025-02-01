@@ -163,6 +163,7 @@
 					<br />
 					<button id="downloadSvg" class="btn btn-success mt-3" style="display: none">Download SVG</button>
 				</div>
+				<div>Commits count: <span id="points">0</span></div>
 			</div>
 
 			<div class="section">
@@ -301,6 +302,7 @@ initializeGameCanvas();
 			const downloadSvgButton = document.getElementById('downloadSvg');
 			const userAvatar = document.getElementById('userAvatar');
 			const userNotFound = document.getElementById('userNotFound');
+			const points = document.getElementById('points');
 
 			generateButton.disabled = true;
 
@@ -311,6 +313,7 @@ initializeGameCanvas();
 			});
 
 			usernameInput.addEventListener('input', debounce(checkUser, 500));
+			platformSelect.addEventListener('input', debounce(checkUser, 500));
 
 			function debounce(func, wait) {
 				let timeout;
@@ -334,21 +337,43 @@ initializeGameCanvas();
 					return;
 				}
 
-				try {
-					const response = await fetch(`https://api.${platform}.com/users/${username}`);
-					if (response.ok) {
-						const data = await response.json();
-						userAvatar.src = data.avatar_url;
-						userAvatar.style.display = 'inline';
-						userNotFound.style.display = 'none';
-						generateButton.disabled = false;
-					} else {
-						throw new Error('User not found');
+				if (platform == 'githib') {
+					try {
+						const response = await fetch(`https://api.github.com/users/${username}`);
+						if (response.ok) {
+							const data = await response.json();
+							userAvatar.src = data.avatar_url;
+							userAvatar.style.display = 'inline';
+							userNotFound.style.display = 'none';
+							generateButton.disabled = false;
+						} else {
+							throw new Error('User not found');
+						}
+					} catch (error) {
+						userAvatar.style.display = 'none';
+						userNotFound.style.display = 'block';
+						generateButton.disabled = true;
 					}
-				} catch (error) {
-					userAvatar.style.display = 'none';
-					userNotFound.style.display = 'block';
-					generateButton.disabled = true;
+				} else {
+					try {
+						const response = await fetch(`https://api.github.com/search/users?q=user:${username}`);
+						if (response.ok) {
+							const data = await response.json();
+							if (!data.items.length) {
+								throw new Error('User not found');
+							}
+							userAvatar.src = data.items[0].avatar_url;
+							userAvatar.style.display = 'inline';
+							userNotFound.style.display = 'none';
+							generateButton.disabled = false;
+						} else {
+							throw new Error('User not found');
+						}
+					} catch (error) {
+						userAvatar.style.display = 'none';
+						userNotFound.style.display = 'block';
+						generateButton.disabled = true;
+					}
 				}
 			}
 
@@ -372,6 +397,9 @@ initializeGameCanvas();
 						gameOverCallback: () => {
 							console.log('Game Over');
 							setTimeout(() => renderContributions({ ...config, canvas: canvas }), 3000);
+						},
+						pointsIncreasedCallback: (pointsSum) => {
+							points.innerText = pointsSum;
 						}
 					});
 				} else {
@@ -386,6 +414,9 @@ initializeGameCanvas();
 						},
 						gameOverCallback: () => {
 							console.log('Game Over');
+						},
+						pointsIncreasedCallback: (pointsSum) => {
+							points.innerText = pointsSum;
 						}
 					});
 				}

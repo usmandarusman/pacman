@@ -17,7 +17,7 @@ const drawGrid = () => {
 
 	for (let x = 0; x < GRID_HEIGHT; x++) {
 		for (let y = 0; y < GRID_WIDTH; y++) {
-			const intensity = Store.grid[x][y];
+			const intensity = Store.grid[x][y].intensity;
 			if (intensity > 0) {
 				const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
 				const color = Utils.hexToRGBA(Utils.getCurrentTheme().contributionBoxColor, adjustedIntensity);
@@ -53,9 +53,9 @@ const drawPacman = () => {
 	const radius = CELL_SIZE / 2;
 
 	// Change Pac-Man's color to red if he's on power-up, dead, else yellow
-	if (Store.pacman.deadReaminingDuration) {
+	if (Store.pacman.deadRemainingDuration) {
 		Store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR_DEAD;
-	} else if (Store.pacman.powerupReaminingDuration) {
+	} else if (Store.pacman.powerupRemainingDuration) {
 		Store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR_POWERUP;
 	} else {
 		Store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR;
@@ -125,7 +125,6 @@ const renderGameOver = () => {
 
 const drawSoundController = () => {
 	if (!Store.config.enableSounds) {
-		console.log('vvvv');
 		return;
 	}
 

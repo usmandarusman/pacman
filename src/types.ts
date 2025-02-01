@@ -3,8 +3,9 @@ export interface Pacman {
 	y: number;
 	direction: string;
 	points: number;
-	deadReaminingDuration: number;
-	powerupReaminingDuration: number;
+	totalPoints: number;
+	deadRemainingDuration: number;
+	powerupRemainingDuration: number;
 }
 
 export interface Ghost {
@@ -25,7 +26,7 @@ export interface StoreType {
 	contributions: Contribution[];
 	pacman: Pacman;
 	ghosts: Ghost[];
-	grid: number[][];
+	grid: { intensity: number; commitsCount: number }[][];
 	monthLabels: string[];
 	pacmanMouthOpen: boolean;
 	gameInterval: number;
@@ -48,6 +49,7 @@ export interface Config {
 	gameTheme: ThemeKeys;
 	gameSpeed: number;
 	enableSounds: boolean;
+	pointsIncreasedCallback: (pointsSum: number) => void;
 }
 
 export type ThemeKeys = 'github' | 'github-dark' | 'gitlab' | 'gitlab-dark';

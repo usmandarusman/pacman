@@ -13,7 +13,8 @@ export const renderContributions = async (conf: Config) => {
 		gameOverCallback: () => () => {},
 		gameTheme: 'github',
 		gameSpeed: 1,
-		enableSounds: true
+		enableSounds: true,
+		pointsIncreasedCallback: (_: number) => {}
 	};
 	Store.config = { ...defaultConfing, ...conf };
 
