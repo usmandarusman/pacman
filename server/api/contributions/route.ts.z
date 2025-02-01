@@ -1,0 +1,31 @@
+import { NextResponse } from 'next/server';
+
+export async function GET(request: Request) {
+	const { searchParams } = new URL(request.url);
+	const username = searchParams.get('username');
+
+	if (!username) {
+		return NextResponse.json({ error: 'Username is required' }, { status: 400 });
+	}
+
+	try {
+		const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
+
+		if (!response.ok) {
+			throw new Error('Failed to fetch contributions from GitLab');
+		}
+
+		const contributionsList = await response.json();
+
+		// Create a new response with CORS headers
+		const corsResponse = NextResponse.json(contributionsList);
+		corsResponse.headers.set('Access-Control-Allow-Origin', '*');
+		corsResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+		corsResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+		return corsResponse;
+	} catch (error) {
+		console.error('Error fetching contributions:', error);
+		return NextResponse.json({ error: 'Failed to fetch contributions' }, { status: 500 });
+	}
+}

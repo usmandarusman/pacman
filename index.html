@@ -337,7 +337,7 @@ initializeGameCanvas();
 					return;
 				}
 
-				if (platform == 'githib') {
+				if (platform == 'github') {
 					try {
 						const response = await fetch(`https://api.github.com/users/${username}`);
 						if (response.ok) {
@@ -356,13 +356,13 @@ initializeGameCanvas();
 					}
 				} else {
 					try {
-						const response = await fetch(`https://api.github.com/search/users?q=user:${username}`);
+						const response = await fetch(`https://gitlab.com/api/v4/users?username=${username}`);
 						if (response.ok) {
 							const data = await response.json();
-							if (!data.items.length) {
+							if (!data.length) {
 								throw new Error('User not found');
 							}
-							userAvatar.src = data.items[0].avatar_url;
+							userAvatar.src = data[0].avatar_url;
 							userAvatar.style.display = 'inline';
 							userNotFound.style.display = 'none';
 							generateButton.disabled = false;

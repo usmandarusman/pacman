@@ -3,7 +3,10 @@ import { Store } from './store';
 import type { Contribution, GameTheme } from './types';
 
 const getGitlabContribution = async (username: string): Promise<Contribution[]> => {
-	const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
+	// const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
+	const response = await fetch(
+		`https://v0-new-project-q1hhrdodoye-abozanona-gmailcoms-projects.vercel.app/api/contributions?username=${username}`
+	);
 	const contributionsList = await response.json();
 	return Object.entries(contributionsList).map(([date, count]) => ({
 		date: new Date(date),

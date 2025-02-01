@@ -857,6 +857,7 @@ const generateAnimatedSVG = () => {
         </use>`;
     });
     svg += '</svg>';
+    // TODO: minify SVG
     return svg;
 };
 const generatePacManPath = (mouthAngle) => {
@@ -975,7 +976,8 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 const getGitlabContribution = (username) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield fetch(`https://gitlab.com/users/${username}/calendar.json`);
+    // const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
+    const response = yield fetch(`https://v0-new-project-q1hhrdodoye-abozanona-gmailcoms-projects.vercel.app/api/contributions?username=${username}`);
     const contributionsList = yield response.json();
     return Object.entries(contributionsList).map(([date, count]) => ({
         date: new Date(date),

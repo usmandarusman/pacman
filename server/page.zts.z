@@ -1,0 +1,13 @@
+//
+export default function Home() {
+	return (
+		<div className="p-8">
+			<h1 className="text-3xl font-bold mb-4">GitHub and GitLab API Routes</h1>
+			<p className="mb-4">Use the following API routes:</p>
+			<ul className="list-disc pl-8">
+				<li>/api/contributions?username=USERNAME</li>
+			</ul>
+			<p className="mt-4">Replace 'USERNAME' with an actual GitLab username.</p>
+		</div>
+	);
+}
