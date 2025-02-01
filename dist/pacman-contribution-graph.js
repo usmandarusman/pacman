@@ -623,10 +623,10 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 };
 var Sound;
 (function (Sound) {
-    Sound["DEFAULT"] = "/src/assets/sounds/pacman_chomp.wav";
-    Sound["BEGINNING"] = "/src/assets/sounds/pacman_beginning.wav";
-    Sound["GAME_OVER"] = "/src/assets/sounds/pacman_death.wav";
-    Sound["EAT_GHOST"] = "/src/assets/sounds/pacman_eatghost.wav";
+    Sound["DEFAULT"] = "https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_chomp.wav";
+    Sound["BEGINNING"] = "https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_beginning.wav";
+    Sound["GAME_OVER"] = "https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_death.wav";
+    Sound["EAT_GHOST"] = "https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_eatghost.wav";
 })(Sound || (Sound = {}));
 class MusicPlayer {
     constructor() {

@@ -1,8 +1,8 @@
 export enum Sound {
-	DEFAULT = '/src/assets/sounds/pacman_chomp.wav',
-	BEGINNING = '/src/assets/sounds/pacman_beginning.wav',
-	GAME_OVER = '/src/assets/sounds/pacman_death.wav',
-	EAT_GHOST = '/src/assets/sounds/pacman_eatghost.wav'
+	DEFAULT = 'https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_chomp.wav',
+	BEGINNING = 'https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_beginning.wav',
+	GAME_OVER = 'https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_death.wav',
+	EAT_GHOST = 'https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_eatghost.wav'
 }
 
 export class MusicPlayer {
