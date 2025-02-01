@@ -1,4 +1,4 @@
-import { CELL_SIZE, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR, PACMAN_COLOR_DEAD, PACMAN_COLOR_POWERUP } from './constants';
+import { CELL_SIZE, GAP_SIZE, GHOSTS, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR, PACMAN_COLOR_DEAD, PACMAN_COLOR_POWERUP } from './constants';
 import { MusicPlayer } from './music-player';
 import { Store } from './store';
 import { Utils } from './utils';
@@ -92,32 +92,21 @@ const drawPacman = () => {
 
 const drawGhosts = () => {
 	Store.ghosts.forEach((ghost) => {
-		const x = ghost.y * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2;
-		const y = ghost.x * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2 + 15;
-		const radius = CELL_SIZE / 2;
+		const x = ghost.y * (CELL_SIZE + GAP_SIZE);
+		const y = ghost.x * (CELL_SIZE + GAP_SIZE) + 15;
+		const size = CELL_SIZE;
 
-		Store.config.canvas.getContext('2d')!.fillStyle = ghost.scared ? 'blue' : ghost.color;
-		Store.config.canvas.getContext('2d')!.beginPath();
-		Store.config.canvas.getContext('2d')!.arc(x, y, radius, 0, Math.PI);
-		Store.config.canvas.getContext('2d')!.rect(x - radius, y, radius * 2, radius);
-		Store.config.canvas.getContext('2d')!.fill();
-
-		Store.config.canvas.getContext('2d')!.fillStyle = 'white';
-		Store.config.canvas.getContext('2d')!.beginPath();
-		Store.config.canvas.getContext('2d')!.arc(x - radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
-		Store.config.canvas.getContext('2d')!.arc(x + radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
-		Store.config.canvas.getContext('2d')!.fill();
-
-		Store.config.canvas.getContext('2d')!.fillStyle = 'black';
-		Store.config.canvas.getContext('2d')!.beginPath();
-		Store.config.canvas.getContext('2d')!.arc(x - radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
-		Store.config.canvas.getContext('2d')!.arc(x + radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
-		Store.config.canvas.getContext('2d')!.fill();
+		const ctx = Store.config.canvas.getContext('2d')!;
+		if (ghost.scared) {
+			ctx.drawImage(GHOSTS['scared'].img, x, y, size, size);
+		} else {
+			ctx.drawImage(GHOSTS[ghost.name].img, x, y, size, size);
+		}
 	});
 };
 
 const renderGameOver = () => {
-	Store.config.canvas.getContext('2d')!.fillStyle = 'black';
+	Store.config.canvas.getContext('2d')!.fillStyle = Utils.getCurrentTheme().textColor;
 	Store.config.canvas.getContext('2d')!.font = '20px Arial';
 	Store.config.canvas.getContext('2d')!.textAlign = 'center';
 	Store.config.canvas.getContext('2d')!.fillText('Game Over', Store.config.canvas.width / 2, Store.config.canvas.height / 2);

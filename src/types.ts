@@ -8,10 +8,11 @@ export interface Pacman {
 	powerupRemainingDuration: number;
 }
 
+export type GhostName = 'blinky' | 'clyde' | 'inky' | 'pinky';
 export interface Ghost {
 	x: number;
 	y: number;
-	color: string;
+	name: GhostName;
 	scared: boolean;
 	target?: { x: number; y: number };
 }

@@ -1,5 +1,14 @@
 import { Canvas } from './canvas';
-import { DELTA_TIME, GHOST_COLORS, GRID_HEIGHT, GRID_WIDTH, MONTHS, PACMAN_DEATH_DURATION, PACMAN_POWERUP_DURATION } from './constants';
+import {
+	DELTA_TIME,
+	GHOST_NAMES,
+	GHOSTS,
+	GRID_HEIGHT,
+	GRID_WIDTH,
+	MONTHS,
+	PACMAN_DEATH_DURATION,
+	PACMAN_POWERUP_DURATION
+} from './constants';
 import { MusicPlayer, Sound } from './music-player';
 import { Store } from './store';
 import { SVG } from './svg';
@@ -67,15 +76,13 @@ const placePacman = () => {
 const placeGhosts = () => {
 	Store.ghosts = [];
 	Store.scaredGhostsDestinations = [];
-	// Create 4 ghosts
 	for (let i = 0; i < 4; i++) {
-		const color = GHOST_COLORS[i % GHOST_COLORS.length];
 		let x, y;
 		do {
 			x = Math.floor(Math.random() * GRID_HEIGHT);
 			y = Math.floor(Math.random() * GRID_WIDTH);
 		} while (Store.grid[x][y].intensity === 0);
-		Store.ghosts.push({ x, y, color, scared: false, target: undefined });
+		Store.ghosts.push({ x, y, name: GHOST_NAMES[i], scared: false, target: undefined });
 		Store.scaredGhostsDestinations.push({ x: 0, y: 0 });
 	}
 	if (Store.config.outputFormat == 'canvas') Canvas.drawGhosts();
@@ -105,6 +112,12 @@ const startGame = async () => {
 
 	placePacman();
 	placeGhosts();
+
+	GHOSTS.blinky.img.src = GHOSTS.blinky.imgDate;
+	GHOSTS.clyde.img.src = GHOSTS.clyde.imgDate;
+	GHOSTS.inky.img.src = GHOSTS.inky.imgDate;
+	GHOSTS.pinky.img.src = GHOSTS.pinky.imgDate;
+	GHOSTS.scared.img.src = GHOSTS.scared.imgDate;
 
 	if (Store.config.outputFormat == 'svg') {
 		const remainingCells = () => Store.grid.some((row) => row.some((cell) => cell.intensity > 0));
@@ -235,6 +248,7 @@ const movePacman = () => {
 
 	if (Store.grid[Store.pacman.x][Store.pacman.y].intensity > 0) {
 		Store.pacman.totalPoints += Store.grid[Store.pacman.x][Store.pacman.y].commitsCount;
+		Store.pacman.points++;
 		Store.config.pointsIncreasedCallback(Store.pacman.totalPoints);
 		Store.grid[Store.pacman.x][Store.pacman.y].intensity = 0;
 
@@ -332,7 +346,7 @@ const respawnGhost = (ghostIndex: number) => {
 	Store.ghosts[ghostIndex] = {
 		x,
 		y,
-		color: GHOST_COLORS[ghostIndex % GHOST_COLORS.length],
+		name: GHOST_NAMES[ghostIndex % GHOST_NAMES.length],
 		scared: false,
 		target: undefined
 	};

@@ -99,28 +99,20 @@ const drawPacman = () => {
 };
 const drawGhosts = () => {
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => {
-        const x = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-        const y = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
-        const radius = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = ghost.scared ? 'blue' : ghost.color;
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x, y, radius, 0, Math.PI);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').rect(x - radius, y, radius * 2, radius);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = 'white';
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = 'black';
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
+        const x = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
+        const y = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
+        const size = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE;
+        const ctx = _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d');
+        if (ghost.scared) {
+            ctx.drawImage(_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['scared'].img, x, y, size, size);
+        }
+        else {
+            ctx.drawImage(_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS[ghost.name].img, x, y, size, size);
+        }
     });
 };
 const renderGameOver = () => {
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = 'black';
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_3__.Utils.getCurrentTheme().textColor;
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').font = '20px Arial';
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').textAlign = 'center';
     _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillText('Game Over', _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.width / 2, _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.height / 2);
@@ -203,7 +195,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   DELTA_TIME: () => (/* binding */ DELTA_TIME),
 /* harmony export */   GAME_THEMES: () => (/* binding */ GAME_THEMES),
 /* harmony export */   GAP_SIZE: () => (/* binding */ GAP_SIZE),
-/* harmony export */   GHOST_COLORS: () => (/* binding */ GHOST_COLORS),
+/* harmony export */   GHOSTS: () => (/* binding */ GHOSTS),
+/* harmony export */   GHOST_NAMES: () => (/* binding */ GHOST_NAMES),
 /* harmony export */   GRID_HEIGHT: () => (/* binding */ GRID_HEIGHT),
 /* harmony export */   GRID_WIDTH: () => (/* binding */ GRID_WIDTH),
 /* harmony export */   MONTHS: () => (/* binding */ MONTHS),
@@ -220,7 +213,7 @@ const GRID_HEIGHT = 7;
 const PACMAN_COLOR = 'yellow';
 const PACMAN_COLOR_POWERUP = 'red';
 const PACMAN_COLOR_DEAD = '#80808064';
-const GHOST_COLORS = ['red', 'pink', 'cyan', 'orange'];
+const GHOST_NAMES = ['blinky', 'clyde', 'inky', 'pinky'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const DELTA_TIME = 250;
 const PACMAN_DEATH_DURATION = 10;
@@ -249,6 +242,28 @@ const GAME_THEMES = {
         gridBackground: '#1f1f1f',
         contributionBoxColor: '#2e7db1',
         emptyContributionBoxColor: '#2d2d2d'
+    }
+};
+const GHOSTS = {
+    blinky: {
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAfUlEQVQ4T+2TUQ7AIAhDy/0PzQIRAqxmLtnn/DJPWypBAVkKKOMCyOQN7IRElLrcnIrDLNK4wVtxNbkb6Hq+jOcSbim6QVzKEstkw92gxVeFrMpqokix4wA+NvCOnvfArvcEbHoe2G9QmmhDMUc65p3xYC6q3zQPxtdl3NgF5QpL/b/rs3IAAAAASUVORK5CYIIA',
+        img: new Image()
+    },
+    clyde: {
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAgUlEQVQ4T+2T0Q6AIAhFLx9sH1MfTIPCAeLKrcd8PHqP4JBQLN7BFacNlHkAs+AQcqIueBs2mVWjgtWwl4yCdrd/pHYLLlVEgR2yK0wy4SoI5TcGXU4wM+AEJQfwsUCuXngDOR4rqKbngf0C94gyFHmkbd4rbkxD/pv2jfR1Ky7sBNrzXbHpnBX+AAAAAElFTkSuQmCC',
+        img: new Image()
+    },
+    inky: {
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAg0lEQVQ4T+WTWxKAIAhFuQvK/a+jFoT5QAVxypn+6vMEx6sDIO/jk12OAMs1WDVOXV3UBW+bRVbTFMFu8yCZBExH/g26VHCXI0AJpKgdUCUrTlkwxE+FECdzS7HiJemXgvyeO29gE7jD8wDVFX4vSLNtR1q2z+OVlaZxTaXYrq7HbxYBS8VgMVrqzkEAAAAASUVORK5CYIIA',
+        img: new Image()
+    },
+    pinky: {
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAhklEQVQ4T+2T0Q2AIAwF281wC50Qt9DNagoptqVESfyUz4N3vJCCECxaD4o47gt6bsAo2IWUqAnehkUmbYpgNqwlvSCnur+dtnnAuYUVyCGJimTAi8DUzwmwOoGI7hYjDgAfC/jqiTfg47ZBND0P7BeoR+Sh8CMt8x5xYSWkv2nbcF834swuA/9u49Yy5bgAAAAASUVORK5CYIIA',
+        img: new Image()
+    },
+    scared: {
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAeUlEQVQ4T82TUQ6AMAhD7UX0/sdyF0GREVmDmTN+bH9r6Bs0A0t2VpFULwDrrfBkZFcA3YC3ZodViAFGzQHyP0B2w2NrB0/1AoDbHwLoQ5/nrw1OBuD5e/crbM9Aiz35njHWzpSB/m3+0r40mV41M8U19WJe3Uw/tQOKt08pUUbBEQAAAABJRU5ErkJgggAA',
+        img: new Image()
     }
 };
 
@@ -343,15 +358,13 @@ const placePacman = () => {
 const placeGhosts = () => {
     _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts = [];
     _store__WEBPACK_IMPORTED_MODULE_3__.Store.scaredGhostsDestinations = [];
-    // Create 4 ghosts
     for (let i = 0; i < 4; i++) {
-        const color = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_COLORS[i % _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_COLORS.length];
         let x, y;
         do {
             x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
             y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
         } while (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y].intensity === 0);
-        _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.push({ x, y, color, scared: false, target: undefined });
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.push({ x, y, name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[i], scared: false, target: undefined });
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.scaredGhostsDestinations.push({ x: 0, y: 0 });
     }
     if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
@@ -378,6 +391,11 @@ const startGame = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     placePacman();
     placeGhosts();
+    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.blinky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.blinky.imgDate;
+    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.clyde.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.clyde.imgDate;
+    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.inky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.inky.imgDate;
+    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.pinky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.pinky.imgDate;
+    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.scared.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.scared.imgDate;
     if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'svg') {
         const remainingCells = () => _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.some((row) => row.some((cell) => cell.intensity > 0));
         while (remainingCells()) {
@@ -496,6 +514,7 @@ const movePacman = () => {
     }
     if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y].intensity > 0) {
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.totalPoints += _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y].commitsCount;
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points++;
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.config.pointsIncreasedCallback(_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.totalPoints);
         _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y].intensity = 0;
         if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points >= 30)
@@ -585,7 +604,7 @@ const respawnGhost = (ghostIndex) => {
     _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts[ghostIndex] = {
         x,
         y,
-        color: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_COLORS[ghostIndex % _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_COLORS.length],
+        name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[ghostIndex % _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES.length],
         scared: false,
         target: undefined
     };
@@ -790,6 +809,7 @@ const generateAnimatedSVG = () => {
     const svgHeight = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 20;
     let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
     svg += `<rect width="100%" height="100%" fill="${_utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().gridBackground}"/>`;
+    svg += generateGhostsPredefinition();
     // Month labels
     let lastMonth = '';
     for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
@@ -827,34 +847,14 @@ const generateAnimatedSVG = () => {
     </path>`;
     // Ghosts
     _store__WEBPACK_IMPORTED_MODULE_1__.Store.ghosts.forEach((ghost, index) => {
-        svg += `<path id="ghost${index}" d="${generateGhostPath(_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2)}" fill="${ghost.color}">
-            <animate attributeName="fill" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
+        svg += `<use id="ghost${index}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" href="#ghost-${ghost.name}">
+            <animateTransform attributeName="transform" type="translate" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
+                keyTimes="${generateKeyTimes()}"
+                values="${generateGhostPositions(index)}"/>
+            <animate attributeName="href" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
                 keyTimes="${generateKeyTimes()}"
                 values="${generateGhostColors(index)}"/>
-            <animateTransform attributeName="transform" type="translate" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </path>
-        <circle cx="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 3}" cy="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 3}" r="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 8}" fill="white">
-            <animateTransform attributeName="transform" type="translate" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </circle>
-        <circle cx="${(_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE * 2) / 3}" cy="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 3}" r="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 8}" fill="white">
-            <animateTransform attributeName="transform" type="translate" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </circle>
-        <circle cx="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 3}" cy="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 3}" r="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 16}" fill="black">
-            <animateTransform attributeName="transform" type="translate" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </circle>
-        <circle cx="${(_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE * 2) / 3}" cy="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 3}" r="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 16}" fill="black">
-            <animateTransform attributeName="transform" type="translate" dur="${_store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </circle>`;
+        </use>`;
     });
     svg += '</svg>';
     return svg;
@@ -917,24 +917,32 @@ const generateGhostPositions = (ghostIndex) => {
     })
         .join(';');
 };
-const generateGhostPath = (radius) => {
-    return `M ${radius},${radius * 2}
-            Q ${radius * 0.8},${radius * 1.5} ${radius * 0.5},${radius * 1.3}
-            Q ${radius * 0.3},${radius * 1.1} 0,${radius}
-            L 0,0
-            L ${radius * 2},0
-            L ${radius * 2},${radius}
-            Q ${radius * 1.7},${radius * 1.1} ${radius * 1.5},${radius * 1.3}
-            Q ${radius * 1.2},${radius * 1.5} ${radius},${radius * 2}
-            Z`;
-};
 const generateGhostColors = (ghostIndex) => {
     return _store__WEBPACK_IMPORTED_MODULE_1__.Store.gameHistory
         .map((state) => {
         const ghost = state.ghosts[ghostIndex];
-        return ghost.scared ? 'blue' : ghost.color;
+        return ghost.scared ? '#scared' : '#' + ghost.name;
     })
         .join(';');
+};
+const generateGhostsPredefinition = () => {
+    return `<defs>
+		<symbol id="blinky" viewBox="0 0 100 100">
+            <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['blinky'].imgDate}" width="100" height="100"/>
+		</symbol>
+		<symbol id="clyde" viewBox="0 0 100 100">
+            <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['clyde'].imgDate}" width="100" height="100"/>
+		</symbol>
+		<symbol id="inky" viewBox="0 0 100 100">
+            <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['inky'].imgDate}" width="100" height="100"/>
+		</symbol>
+		<symbol id="pinky" viewBox="0 0 100 100">
+            <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['pinky'].imgDate}" width="100" height="100"/>
+		</symbol>
+		<symbol id="scared" viewBox="0 0 100 100">
+            <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['scared'].imgDate}" width="100" height="100"/>
+		</symbol>
+	</defs>`;
 };
 const SVG = {
     generateAnimatedSVG

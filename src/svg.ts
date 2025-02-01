@@ -1,4 +1,4 @@
-import { CELL_SIZE, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR, PACMAN_COLOR_DEAD, PACMAN_COLOR_POWERUP } from './constants';
+import { CELL_SIZE, GAP_SIZE, GHOSTS, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR, PACMAN_COLOR_DEAD, PACMAN_COLOR_POWERUP } from './constants';
 import { Store } from './store';
 import { Utils } from './utils';
 
@@ -7,6 +7,8 @@ const generateAnimatedSVG = () => {
 	const svgHeight = GRID_HEIGHT * (CELL_SIZE + GAP_SIZE) + 20;
 	let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
 	svg += `<rect width="100%" height="100%" fill="${Utils.getCurrentTheme().gridBackground}"/>`;
+
+	svg += generateGhostsPredefinition();
 
 	// Month labels
 	let lastMonth = '';
@@ -48,37 +50,18 @@ const generateAnimatedSVG = () => {
 
 	// Ghosts
 	Store.ghosts.forEach((ghost, index) => {
-		svg += `<path id="ghost${index}" d="${generateGhostPath(CELL_SIZE / 2)}" fill="${ghost.color}">
-            <animate attributeName="fill" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
+		svg += `<use id="ghost${index}" width="${CELL_SIZE}" height="${CELL_SIZE}" href="#ghost-${ghost.name}">
+            <animateTransform attributeName="transform" type="translate" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
+                keyTimes="${generateKeyTimes()}"
+                values="${generateGhostPositions(index)}"/>
+            <animate attributeName="href" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
                 keyTimes="${generateKeyTimes()}"
                 values="${generateGhostColors(index)}"/>
-            <animateTransform attributeName="transform" type="translate" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </path>
-        <circle cx="${CELL_SIZE / 3}" cy="${CELL_SIZE / 3}" r="${CELL_SIZE / 8}" fill="white">
-            <animateTransform attributeName="transform" type="translate" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </circle>
-        <circle cx="${(CELL_SIZE * 2) / 3}" cy="${CELL_SIZE / 3}" r="${CELL_SIZE / 8}" fill="white">
-            <animateTransform attributeName="transform" type="translate" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </circle>
-        <circle cx="${CELL_SIZE / 3}" cy="${CELL_SIZE / 3}" r="${CELL_SIZE / 16}" fill="black">
-            <animateTransform attributeName="transform" type="translate" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </circle>
-        <circle cx="${(CELL_SIZE * 2) / 3}" cy="${CELL_SIZE / 3}" r="${CELL_SIZE / 16}" fill="black">
-            <animateTransform attributeName="transform" type="translate" dur="${Store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes()}"
-                values="${generateGhostPositions(index)}"/>
-        </circle>`;
+        </use>`;
 	});
 
 	svg += '</svg>';
+	// TODO: minify SVG
 	return svg;
 };
 
@@ -146,25 +129,33 @@ const generateGhostPositions = (ghostIndex: number) => {
 		.join(';');
 };
 
-const generateGhostPath = (radius: number) => {
-	return `M ${radius},${radius * 2}
-            Q ${radius * 0.8},${radius * 1.5} ${radius * 0.5},${radius * 1.3}
-            Q ${radius * 0.3},${radius * 1.1} 0,${radius}
-            L 0,0
-            L ${radius * 2},0
-            L ${radius * 2},${radius}
-            Q ${radius * 1.7},${radius * 1.1} ${radius * 1.5},${radius * 1.3}
-            Q ${radius * 1.2},${radius * 1.5} ${radius},${radius * 2}
-            Z`;
-};
-
 const generateGhostColors = (ghostIndex: number) => {
 	return Store.gameHistory
 		.map((state) => {
 			const ghost = state.ghosts[ghostIndex];
-			return ghost.scared ? 'blue' : ghost.color;
+			return ghost.scared ? '#scared' : '#' + ghost.name;
 		})
 		.join(';');
+};
+
+const generateGhostsPredefinition = () => {
+	return `<defs>
+		<symbol id="blinky" viewBox="0 0 100 100">
+            <image href="${GHOSTS['blinky'].imgDate}" width="100" height="100"/>
+		</symbol>
+		<symbol id="clyde" viewBox="0 0 100 100">
+            <image href="${GHOSTS['clyde'].imgDate}" width="100" height="100"/>
+		</symbol>
+		<symbol id="inky" viewBox="0 0 100 100">
+            <image href="${GHOSTS['inky'].imgDate}" width="100" height="100"/>
+		</symbol>
+		<symbol id="pinky" viewBox="0 0 100 100">
+            <image href="${GHOSTS['pinky'].imgDate}" width="100" height="100"/>
+		</symbol>
+		<symbol id="scared" viewBox="0 0 100 100">
+            <image href="${GHOSTS['scared'].imgDate}" width="100" height="100"/>
+		</symbol>
+	</defs>`;
 };
 
 export const SVG = {
