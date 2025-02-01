@@ -11,67 +11,69 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Canvas: () => (/* binding */ Canvas)
 /* harmony export */ });
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./constants */ "./src/constants.ts");
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store */ "./src/store.ts");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _music_player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./music-player */ "./src/music-player.ts");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./src/store.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+
 
 
 
 const resizeCanvas = () => {
     const canvasWidth = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
     const canvasHeight = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 20; // Adding some space for months on top
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width = canvasWidth;
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height = canvasHeight;
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.width = canvasWidth;
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.height = canvasHeight;
 };
 const drawGrid = () => {
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().gridBackground;
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillRect(0, 0, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height);
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_3__.Utils.getCurrentTheme().gridBackground;
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillRect(0, 0, _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.width, _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.height);
     for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; x++) {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
-            const intensity = _store__WEBPACK_IMPORTED_MODULE_1__.Store.grid[x][y];
+            const intensity = _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y];
             if (intensity > 0) {
                 const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
-                const color = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.hexToRGBA(_utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().contributionBoxColor, adjustedIntensity);
-                _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = color;
+                const color = _utils__WEBPACK_IMPORTED_MODULE_3__.Utils.hexToRGBA(_utils__WEBPACK_IMPORTED_MODULE_3__.Utils.getCurrentTheme().contributionBoxColor, adjustedIntensity);
+                _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = color;
             }
             else {
-                _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().emptyContributionBoxColor;
+                _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_3__.Utils.getCurrentTheme().emptyContributionBoxColor;
             }
-            _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
-            _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas
+            _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+            _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas
                 .getContext('2d')
                 .roundRect(y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE), x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, 5);
-            _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
+            _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
         }
     }
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme().textColor;
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').font = '10px Arial';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').textAlign = 'center';
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_3__.Utils.getCurrentTheme().textColor;
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').font = '10px Arial';
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').textAlign = 'center';
     let lastMonth = '';
     for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
-        if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y] !== lastMonth) {
+        if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.monthLabels[y] !== lastMonth) {
             const xPos = y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-            _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillText(_store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y], xPos, 10);
-            lastMonth = _store__WEBPACK_IMPORTED_MODULE_1__.Store.monthLabels[y];
+            _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillText(_store__WEBPACK_IMPORTED_MODULE_2__.Store.monthLabels[y], xPos, 10);
+            lastMonth = _store__WEBPACK_IMPORTED_MODULE_2__.Store.monthLabels[y];
         }
     }
 };
 const drawPacman = () => {
-    const x = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-    const y = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
+    const x = _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
+    const y = _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
     const radius = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
     // Change Pac-Man's color to red if he's on power-up, dead, else yellow
-    if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.deadReaminingDuration) {
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
+    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
     }
-    else if (_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.powerupReaminingDuration) {
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_POWERUP;
+    else if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_POWERUP;
     }
     else {
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
     }
-    const mouthAngle = _store__WEBPACK_IMPORTED_MODULE_1__.Store.pacmanMouthOpen ? 0.35 * Math.PI : 0.1 * Math.PI;
+    const mouthAngle = _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacmanMouthOpen ? 0.35 * Math.PI : 0.1 * Math.PI;
     let startAngle, endAngle;
-    switch (_store__WEBPACK_IMPORTED_MODULE_1__.Store.pacman.direction) {
+    switch (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.direction) {
         case 'up':
             startAngle = 1.5 * Math.PI + mouthAngle;
             endAngle = 1.5 * Math.PI - mouthAngle;
@@ -90,45 +92,101 @@ const drawPacman = () => {
             endAngle = 2 * Math.PI - mouthAngle;
             break;
     }
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x, y, radius, startAngle, endAngle);
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').lineTo(x, y);
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x, y, radius, startAngle, endAngle);
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').lineTo(x, y);
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
 };
 const drawGhosts = () => {
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.ghosts.forEach((ghost) => {
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => {
         const x = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
         const y = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
         const radius = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = ghost.scared ? 'blue' : ghost.color;
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x, y, radius, 0, Math.PI);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').rect(x - radius, y, radius * 2, radius);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = 'white';
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = 'black';
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').beginPath();
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
-        _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fill();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = ghost.scared ? 'blue' : ghost.color;
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x, y, radius, 0, Math.PI);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').rect(x - radius, y, radius * 2, radius);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = 'white';
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 4, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = 'black';
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x - radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(x + radius / 3, y - radius / 3, radius / 8, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
     });
 };
 const renderGameOver = () => {
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillStyle = 'black';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').font = '20px Arial';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').textAlign = 'center';
-    _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.getContext('2d').fillText('Game Over', _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.width / 2, _store__WEBPACK_IMPORTED_MODULE_1__.Store.config.canvas.height / 2);
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = 'black';
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').font = '20px Arial';
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').textAlign = 'center';
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillText('Game Over', _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.width / 2, _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.height / 2);
+};
+const drawSoundController = () => {
+    if (!_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.enableSounds) {
+        console.log('vvvv');
+        return;
+    }
+    const width = 30, height = 30, left = _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.width - width - 10, top = 10;
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fillStyle = `rgba(0, 0, 0, ${_music_player__WEBPACK_IMPORTED_MODULE_1__.MusicPlayer.getInstance().isMuted ? 0.3 : 0.5})`;
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').moveTo(left + 10, top + 10);
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').lineTo(left + 20, top + 5);
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').lineTo(left + 20, top + 25);
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').lineTo(left + 10, top + 20);
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').closePath();
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').fill();
+    if (!_music_player__WEBPACK_IMPORTED_MODULE_1__.MusicPlayer.getInstance().isMuted) {
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').strokeStyle = `rgba(0, 0, 0, 0.4)`;
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').lineWidth = 2;
+        // First wave
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(left + 25, top + 15, 5, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').stroke();
+        // Second wave
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').arc(left + 25, top + 15, 8, 0, Math.PI * 2);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').stroke();
+    }
+    else {
+        // Mute line
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').strokeStyle = 'rgba(255, 0, 0, 0.6)';
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').lineWidth = 3;
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').beginPath();
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').moveTo(left + 25, top + 5);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').lineTo(left + 5, top + 25);
+        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getContext('2d').stroke();
+    }
+};
+const listenToSoundController = () => {
+    if (!_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.enableSounds) {
+        return;
+    }
+    _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.addEventListener('click', function (event) {
+        const rect = _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left, y = event.clientY - rect.top;
+        const width = 30, height = 30, left = _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas.width - width - 10, top = 10;
+        if (x >= left && x <= left + this.width && y >= top && y <= top + this.height) {
+            if (_music_player__WEBPACK_IMPORTED_MODULE_1__.MusicPlayer.getInstance().isMuted) {
+                _music_player__WEBPACK_IMPORTED_MODULE_1__.MusicPlayer.getInstance().unmute();
+            }
+            else {
+                _music_player__WEBPACK_IMPORTED_MODULE_1__.MusicPlayer.getInstance().mute();
+            }
+        }
+    });
 };
 const Canvas = {
     resizeCanvas,
     drawGrid,
     drawPacman,
     drawGhosts,
-    renderGameOver
+    renderGameOver,
+    drawSoundController,
+    listenToSoundController
 };
 
 
@@ -210,33 +268,44 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./canvas */ "./src/canvas.ts");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./constants */ "./src/constants.ts");
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./src/store.ts");
-/* harmony import */ var _svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./svg */ "./src/svg.ts");
+/* harmony import */ var _music_player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./music-player */ "./src/music-player.ts");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./store */ "./src/store.ts");
+/* harmony import */ var _svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./svg */ "./src/svg.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
 
 
 
 
 const initializeGrid = () => {
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid = Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT }, () => Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH }, () => 0));
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.monthLabels = Array(_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH).fill('');
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid = Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT }, () => Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH }, () => 0));
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.monthLabels = Array(_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH).fill('');
     let maxCommits = 1;
     const now = new Date();
     const startOfCurrentWeek = new Date(now);
     startOfCurrentWeek.setDate(now.getDate() - now.getDay());
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.contributions.forEach((contribution) => {
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.contributions.forEach((contribution) => {
         const contributionDate = new Date(contribution.date);
         const dayOfWeek = contributionDate.getDay();
         const weeksAgo = Math.floor((+startOfCurrentWeek - +contributionDate) / (1000 * 60 * 60 * 24 * 7));
         if (weeksAgo >= 0 && weeksAgo < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH && dayOfWeek >= 0 && dayOfWeek < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT) {
-            _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[dayOfWeek][_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - weeksAgo] = contribution.count;
+            _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[dayOfWeek][_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - weeksAgo] = contribution.count;
             if (contribution.count > maxCommits)
                 maxCommits = contribution.count;
         }
     });
     for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y] > 0) {
-                _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y] = _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y] / maxCommits;
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] > 0) {
+                _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] = _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] / maxCommits;
             }
         }
     }
@@ -244,20 +313,20 @@ const initializeGrid = () => {
         const weeksAgo = _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - y;
         const columnDate = new Date(startOfCurrentWeek);
         columnDate.setDate(columnDate.getDate() - weeksAgo * 7);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.monthLabels[y] = _constants__WEBPACK_IMPORTED_MODULE_1__.MONTHS[columnDate.getMonth()];
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.monthLabels[y] = _constants__WEBPACK_IMPORTED_MODULE_1__.MONTHS[columnDate.getMonth()];
     }
 };
 const placePacman = () => {
     let validCells = [];
     for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y] > 0)
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] > 0)
                 validCells.push({ x, y });
         }
     }
     if (validCells.length > 0) {
         const randomCell = validCells[Math.floor(Math.random() * validCells.length)];
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman = {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman = {
             x: randomCell.x,
             y: randomCell.y,
             direction: 'right',
@@ -266,12 +335,12 @@ const placePacman = () => {
             powerupReaminingDuration: 0
         };
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawPacman();
 };
 const placeGhosts = () => {
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts = [];
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.scaredGhostsDestinations = [];
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts = [];
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.scaredGhostsDestinations = [];
     // Create 4 ghosts
     for (let i = 0; i < 4; i++) {
         const color = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_COLORS[i % _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_COLORS.length];
@@ -279,102 +348,121 @@ const placeGhosts = () => {
         do {
             x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
             y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
-        } while (_store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y] === 0);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.push({ x, y, color, scared: false, target: undefined });
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.scaredGhostsDestinations.push({ x: 0, y: 0 });
+        } while (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] === 0);
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.push({ x, y, color, scared: false, target: undefined });
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.scaredGhostsDestinations.push({ x: 0, y: 0 });
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGhosts();
 };
-const startGame = () => {
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas = _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.canvas;
+const startGame = () => __awaiter(void 0, void 0, void 0, function* () {
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.config.canvas = _store__WEBPACK_IMPORTED_MODULE_3__.Store.config.canvas;
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.resizeCanvas();
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.listenToSoundController();
     }
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount = 0;
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.frameCount = 0;
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
     initializeGrid();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGrid();
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
+        if (!_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.enableSounds) {
+            _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().mute();
+        }
+        yield _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().preloadSounds();
+        _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().startDefaultSound();
+        yield _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.BEGINNING);
+    }
     placePacman();
     placeGhosts();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'svg') {
-        const remainingCells = () => _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.some((row) => row.some((cell) => cell > 0));
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'svg') {
+        const remainingCells = () => _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.some((row) => row.some((cell) => cell > 0));
         while (remainingCells()) {
-            updateGame();
+            yield updateGame();
         }
         // One more time to generate svg
-        updateGame();
+        yield updateGame();
     }
     else {
-        clearInterval(_store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval = setInterval(() => updateGame(), _constants__WEBPACK_IMPORTED_MODULE_1__.DELTA_TIME);
+        clearInterval(_store__WEBPACK_IMPORTED_MODULE_3__.Store.gameInterval);
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.gameInterval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () { return yield updateGame(); }), _constants__WEBPACK_IMPORTED_MODULE_1__.DELTA_TIME);
     }
-};
-const updateGame = () => {
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount++;
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.frameCount % _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.gameSpeed !== 0) {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameHistory.push({
-            pacman: Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman),
-            ghosts: _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
-            grid: _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.map((row) => [...row])
+});
+const updateGame = () => __awaiter(void 0, void 0, void 0, function* () {
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.frameCount++;
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.frameCount % _store__WEBPACK_IMPORTED_MODULE_3__.Store.config.gameSpeed !== 0) {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.gameHistory.push({
+            pacman: Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman),
+            ghosts: _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
+            grid: _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.map((row) => [...row])
         });
         return;
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration--;
-        if (!_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration--;
+        if (!_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration) {
             // IT'S ALIVE!
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
+                _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
+                    .play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.GAME_OVER)
+                    .then(() => _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().startDefaultSound());
         }
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration--;
-        if (!_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
-            _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
-            _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points = 0;
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration) {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration--;
+        if (!_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration) {
+            _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.forEach((ghost) => (ghost.scared = false));
+            _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points = 0;
         }
     }
-    const remainingCells = _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.some((row) => row.some((cell) => cell > 0));
+    const remainingCells = _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.some((row) => row.some((cell) => cell > 0));
     if (!remainingCells) {
-        if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas') {
-            clearInterval(_store__WEBPACK_IMPORTED_MODULE_2__.Store.gameInterval);
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
+        if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
+            clearInterval(_store__WEBPACK_IMPORTED_MODULE_3__.Store.gameInterval);
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
                 _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.renderGameOver();
+                _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
+                    .play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.BEGINNING)
+                    .then(() => _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().stopDefaultSound());
+            }
         }
-        if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'svg') {
-            const animatedSVG = _svg__WEBPACK_IMPORTED_MODULE_3__.SVG.generateAnimatedSVG();
+        if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'svg') {
+            const animatedSVG = _svg__WEBPACK_IMPORTED_MODULE_4__.SVG.generateAnimatedSVG();
             const svgBlob = new Blob([animatedSVG], {
                 type: 'image/svg+xml;charset=utf-8'
             });
             const svgUrl = URL.createObjectURL(svgBlob);
-            _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.svgCallback(svgUrl);
+            _store__WEBPACK_IMPORTED_MODULE_3__.Store.config.svgCallback(svgUrl);
         }
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.config.gameOverCallback();
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.config.gameOverCallback();
         return;
     }
     movePacman();
     moveGhosts();
     checkCollisions();
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacmanMouthOpen = !_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacmanMouthOpen;
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.gameHistory.push({
-        pacman: Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman),
-        ghosts: _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
-        grid: _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid.map((row) => [...row])
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacmanMouthOpen = !_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacmanMouthOpen;
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.gameHistory.push({
+        pacman: Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman),
+        ghosts: _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.map((ghost) => (Object.assign({}, ghost))),
+        grid: _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid.map((row) => [...row])
     });
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGrid();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawPacman();
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.config.outputFormat == 'canvas')
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGhosts();
-};
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas')
+        _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawSoundController();
+});
 const movePacman = () => {
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration) {
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration) {
         return;
     }
     let targetCells = [];
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration) {
-        targetCells = _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.map((ghost) => ({
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration) {
+        targetCells = _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.map((ghost) => ({
             x: ghost.x,
             y: ghost.y,
             distance: Infinity
@@ -383,7 +471,7 @@ const movePacman = () => {
     else {
         for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
             for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
-                if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y] > 0)
+                if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] > 0)
                     targetCells.push({ x, y, distance: Infinity });
             }
         }
@@ -391,28 +479,28 @@ const movePacman = () => {
     if (targetCells.length === 0)
         return;
     const closest = targetCells.reduce((closest, cell) => {
-        const distance = Math.abs(cell.x - _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x) + Math.abs(cell.y - _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y);
+        const distance = Math.abs(cell.x - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x) + Math.abs(cell.y - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y);
         return distance < closest.distance ? Object.assign(Object.assign({}, cell), { distance }) : closest;
-    }, { x: _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x, y: _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y, distance: Infinity });
-    const dx = closest.x - _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x;
-    const dy = closest.y - _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y;
+    }, { x: _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x, y: _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y, distance: Infinity });
+    const dx = closest.x - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x;
+    const dy = closest.y - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y;
     if (Math.abs(dx) > Math.abs(dy)) {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x += Math.sign(dx);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.direction = dx > 0 ? 'down' : 'up';
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x += Math.sign(dx);
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.direction = dx > 0 ? 'down' : 'up';
     }
     else {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y += Math.sign(dy);
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.direction = dy > 0 ? 'right' : 'left';
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y += Math.sign(dy);
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.direction = dy > 0 ? 'right' : 'left';
     }
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y] > 0) {
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points += 1;
-        _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y] = 0;
-        if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points >= 30)
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y] > 0) {
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points += 1;
+        _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x][_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y] = 0;
+        if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points >= 30)
             activatePowerUp();
     }
 };
 const moveGhosts = () => {
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost, index) => {
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.forEach((ghost, index) => {
         if (ghost.scared) {
             if (!ghost.target) {
                 ghost.target = getRandomDestination(ghost.x, ghost.y);
@@ -440,7 +528,7 @@ const moveGhosts = () => {
             ];
             const [dx, dy] = directions[Math.floor(Math.random() * directions.length)];
             // If Pacman has the power-up, ghosts move slower (move every other frame)
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration && Math.random() < 0.5)
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration && Math.random() < 0.5)
                 return;
             const newX = ghost.x + dx;
             const newY = ghost.y + dy;
@@ -461,18 +549,26 @@ const getRandomDestination = (x, y) => {
     };
 };
 const checkCollisions = () => {
-    if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration)
+    if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration)
         return;
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost, index) => {
-        if (ghost.x === _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x && ghost.y === _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y) {
-            if (_store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration && ghost.scared) {
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.forEach((ghost, index) => {
+        if (ghost.x === _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x && ghost.y === _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y) {
+            if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration && ghost.scared) {
                 respawnGhost(index);
-                _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points += 10;
+                _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points += 10;
+                if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
+                    _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.EAT_GHOST);
+                }
             }
             else {
-                _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.points = 0;
-                _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration = 0;
-                _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.deadReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_DEATH_DURATION;
+                _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.points = 0;
+                _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration = 0;
+                _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.deadReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_DEATH_DURATION;
+                if (_store__WEBPACK_IMPORTED_MODULE_3__.Store.config.outputFormat == 'canvas') {
+                    _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
+                        .play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.GAME_OVER)
+                        .then(() => _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().stopDefaultSound());
+                }
             }
         }
     });
@@ -482,8 +578,8 @@ const respawnGhost = (ghostIndex) => {
     do {
         x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
         y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
-    } while ((Math.abs(x - _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.x) <= 2 && Math.abs(y - _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.y) <= 2) || _store__WEBPACK_IMPORTED_MODULE_2__.Store.grid[x][y] === 0);
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts[ghostIndex] = {
+    } while ((Math.abs(x - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.x) <= 2 && Math.abs(y - _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.y) <= 2) || _store__WEBPACK_IMPORTED_MODULE_3__.Store.grid[x][y] === 0);
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts[ghostIndex] = {
         x,
         y,
         color: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_COLORS[ghostIndex % _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_COLORS.length],
@@ -492,12 +588,136 @@ const respawnGhost = (ghostIndex) => {
     };
 };
 const activatePowerUp = () => {
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.pacman.powerupReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_POWERUP_DURATION;
-    _store__WEBPACK_IMPORTED_MODULE_2__.Store.ghosts.forEach((ghost) => (ghost.scared = true));
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.pacman.powerupReaminingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_POWERUP_DURATION;
+    _store__WEBPACK_IMPORTED_MODULE_3__.Store.ghosts.forEach((ghost) => (ghost.scared = true));
 };
 const Game = {
     startGame
 };
+
+
+/***/ }),
+
+/***/ "./src/music-player.ts":
+/*!*****************************!*\
+  !*** ./src/music-player.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MusicPlayer: () => (/* binding */ MusicPlayer),
+/* harmony export */   Sound: () => (/* binding */ Sound)
+/* harmony export */ });
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var Sound;
+(function (Sound) {
+    Sound["DEFAULT"] = "/src/assets/sounds/pacman_chomp.wav";
+    Sound["BEGINNING"] = "/src/assets/sounds/pacman_beginning.wav";
+    Sound["GAME_OVER"] = "/src/assets/sounds/pacman_death.wav";
+    Sound["EAT_GHOST"] = "/src/assets/sounds/pacman_eatghost.wav";
+})(Sound || (Sound = {}));
+class MusicPlayer {
+    constructor() {
+        this.sounds = new Map();
+        this.currentSource = null;
+        this.defaultSource = null;
+        this.isMuted = false;
+        this.audioContext = new AudioContext();
+    }
+    static getInstance() {
+        if (!MusicPlayer.instance) {
+            MusicPlayer.instance = new MusicPlayer();
+        }
+        return MusicPlayer.instance;
+    }
+    preloadSounds() {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const sound of Object.values(Sound)) {
+                const response = yield fetch(sound);
+                const arrayBuffer = yield response.arrayBuffer();
+                const audioBuffer = yield this.audioContext.decodeAudioData(arrayBuffer);
+                this.sounds.set(sound, audioBuffer);
+            }
+        });
+    }
+    play(sound) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.isMuted) {
+                return;
+            }
+            if (this.currentSource) {
+                this.currentSource.stop();
+            }
+            const buffer = this.sounds.get(sound);
+            if (!buffer) {
+                console.error(`Sound ${sound} not found`);
+                return;
+            }
+            this.currentSource = this.audioContext.createBufferSource();
+            this.currentSource.buffer = buffer;
+            this.currentSource.connect(this.audioContext.destination);
+            if (!this.isMuted) {
+                this.currentSource.start();
+            }
+            return new Promise((resolve) => {
+                this.currentSource.onended = () => {
+                    this.currentSource = null;
+                    resolve();
+                };
+            });
+        });
+    }
+    startDefaultSound() {
+        if (this.defaultSource) {
+            this.defaultSource.stop();
+        }
+        const buffer = this.sounds.get(Sound.DEFAULT);
+        if (!buffer) {
+            console.error('Default sound not found');
+            return;
+        }
+        this.defaultSource = this.audioContext.createBufferSource();
+        this.defaultSource.buffer = buffer;
+        this.defaultSource.loop = true;
+        this.defaultSource.connect(this.audioContext.destination);
+        if (!this.isMuted) {
+            this.defaultSource.start();
+        }
+    }
+    stopDefaultSound() {
+        if (this.defaultSource) {
+            this.defaultSource.stop();
+            this.defaultSource = null;
+        }
+    }
+    mute() {
+        this.isMuted = true;
+        if (this.currentSource) {
+            this.currentSource.disconnect();
+        }
+        if (this.defaultSource) {
+            this.defaultSource.disconnect();
+        }
+    }
+    unmute() {
+        this.isMuted = false;
+        if (this.currentSource) {
+            this.currentSource.connect(this.audioContext.destination);
+        }
+        if (this.defaultSource) {
+            this.defaultSource.connect(this.audioContext.destination);
+        }
+    }
+}
 
 
 /***/ }),

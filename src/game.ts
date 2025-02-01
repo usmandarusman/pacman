@@ -1,5 +1,6 @@
 import { Canvas } from './canvas';
 import { DELTA_TIME, GHOST_COLORS, GRID_HEIGHT, GRID_WIDTH, MONTHS, PACMAN_DEATH_DURATION, PACMAN_POWERUP_DURATION } from './constants';
+import { MusicPlayer, Sound } from './music-player';
 import { Store } from './store';
 import { SVG } from './svg';
 
@@ -77,10 +78,11 @@ const placeGhosts = () => {
 	if (Store.config.outputFormat == 'canvas') Canvas.drawGhosts();
 };
 
-const startGame = () => {
+const startGame = async () => {
 	if (Store.config.outputFormat == 'canvas') {
 		Store.config.canvas = Store.config.canvas;
 		Canvas.resizeCanvas();
+		Canvas.listenToSoundController();
 	}
 
 	Store.frameCount = 0;
@@ -88,23 +90,33 @@ const startGame = () => {
 
 	initializeGrid();
 	if (Store.config.outputFormat == 'canvas') Canvas.drawGrid();
+
+	if (Store.config.outputFormat == 'canvas') {
+		if (!Store.config.enableSounds) {
+			MusicPlayer.getInstance().mute();
+		}
+		await MusicPlayer.getInstance().preloadSounds();
+		MusicPlayer.getInstance().startDefaultSound();
+		await MusicPlayer.getInstance().play(Sound.BEGINNING);
+	}
+
 	placePacman();
 	placeGhosts();
 
 	if (Store.config.outputFormat == 'svg') {
 		const remainingCells = () => Store.grid.some((row) => row.some((cell) => cell > 0));
 		while (remainingCells()) {
-			updateGame();
+			await updateGame();
 		}
 		// One more time to generate svg
-		updateGame();
+		await updateGame();
 	} else {
 		clearInterval(Store.gameInterval);
-		Store.gameInterval = setInterval(() => updateGame(), DELTA_TIME);
+		Store.gameInterval = setInterval(async () => await updateGame(), DELTA_TIME);
 	}
 };
 
-const updateGame = () => {
+const updateGame = async () => {
 	Store.frameCount++;
 	if (Store.frameCount % Store.config.gameSpeed !== 0) {
 		Store.gameHistory.push({
@@ -119,6 +131,10 @@ const updateGame = () => {
 		Store.pacman.deadReaminingDuration--;
 		if (!Store.pacman.deadReaminingDuration) {
 			// IT'S ALIVE!
+			if (Store.config.outputFormat == 'canvas')
+				MusicPlayer.getInstance()
+					.play(Sound.GAME_OVER)
+					.then(() => MusicPlayer.getInstance().startDefaultSound());
 		}
 	}
 
@@ -134,7 +150,12 @@ const updateGame = () => {
 	if (!remainingCells) {
 		if (Store.config.outputFormat == 'canvas') {
 			clearInterval(Store.gameInterval);
-			if (Store.config.outputFormat == 'canvas') Canvas.renderGameOver();
+			if (Store.config.outputFormat == 'canvas') {
+				Canvas.renderGameOver();
+				MusicPlayer.getInstance()
+					.play(Sound.BEGINNING)
+					.then(() => MusicPlayer.getInstance().stopDefaultSound());
+			}
 		}
 
 		if (Store.config.outputFormat == 'svg') {
@@ -165,6 +186,7 @@ const updateGame = () => {
 	if (Store.config.outputFormat == 'canvas') Canvas.drawGrid();
 	if (Store.config.outputFormat == 'canvas') Canvas.drawPacman();
 	if (Store.config.outputFormat == 'canvas') Canvas.drawGhosts();
+	if (Store.config.outputFormat == 'canvas') Canvas.drawSoundController();
 };
 
 const movePacman = () => {
@@ -280,10 +302,18 @@ const checkCollisions = () => {
 			if (Store.pacman.powerupReaminingDuration && ghost.scared) {
 				respawnGhost(index);
 				Store.pacman.points += 10;
+				if (Store.config.outputFormat == 'canvas') {
+					MusicPlayer.getInstance().play(Sound.EAT_GHOST);
+				}
 			} else {
 				Store.pacman.points = 0;
 				Store.pacman.powerupReaminingDuration = 0;
 				Store.pacman.deadReaminingDuration = PACMAN_DEATH_DURATION;
+				if (Store.config.outputFormat == 'canvas') {
+					MusicPlayer.getInstance()
+						.play(Sound.GAME_OVER)
+						.then(() => MusicPlayer.getInstance().stopDefaultSound());
+				}
 			}
 		}
 	});

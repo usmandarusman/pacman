@@ -1,4 +1,5 @@
 import { CELL_SIZE, GAP_SIZE, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR, PACMAN_COLOR_DEAD, PACMAN_COLOR_POWERUP } from './constants';
+import { MusicPlayer } from './music-player';
 import { Store } from './store';
 import { Utils } from './utils';
 
@@ -122,10 +123,78 @@ const renderGameOver = () => {
 	Store.config.canvas.getContext('2d')!.fillText('Game Over', Store.config.canvas.width / 2, Store.config.canvas.height / 2);
 };
 
+const drawSoundController = () => {
+	if (!Store.config.enableSounds) {
+		console.log('vvvv');
+		return;
+	}
+
+	const width = 30,
+		height = 30,
+		left = Store.config.canvas.width - width - 10,
+		top = 10;
+	Store.config.canvas.getContext('2d')!.fillStyle = `rgba(0, 0, 0, ${MusicPlayer.getInstance().isMuted ? 0.3 : 0.5})`;
+	Store.config.canvas.getContext('2d')!.beginPath();
+	Store.config.canvas.getContext('2d')!.moveTo(left + 10, top + 10);
+	Store.config.canvas.getContext('2d')!.lineTo(left + 20, top + 5);
+	Store.config.canvas.getContext('2d')!.lineTo(left + 20, top + 25);
+	Store.config.canvas.getContext('2d')!.lineTo(left + 10, top + 20);
+	Store.config.canvas.getContext('2d')!.closePath();
+	Store.config.canvas.getContext('2d')!.fill();
+
+	if (!MusicPlayer.getInstance().isMuted) {
+		Store.config.canvas.getContext('2d')!.strokeStyle = `rgba(0, 0, 0, 0.4)`;
+		Store.config.canvas.getContext('2d')!.lineWidth = 2;
+
+		// First wave
+		Store.config.canvas.getContext('2d')!.beginPath();
+		Store.config.canvas.getContext('2d')!.arc(left + 25, top + 15, 5, 0, Math.PI * 2);
+		Store.config.canvas.getContext('2d')!.stroke();
+
+		// Second wave
+		Store.config.canvas.getContext('2d')!.beginPath();
+		Store.config.canvas.getContext('2d')!.arc(left + 25, top + 15, 8, 0, Math.PI * 2);
+		Store.config.canvas.getContext('2d')!.stroke();
+	} else {
+		// Mute line
+		Store.config.canvas.getContext('2d')!.strokeStyle = 'rgba(255, 0, 0, 0.6)';
+		Store.config.canvas.getContext('2d')!.lineWidth = 3;
+		Store.config.canvas.getContext('2d')!.beginPath();
+		Store.config.canvas.getContext('2d')!.moveTo(left + 25, top + 5);
+		Store.config.canvas.getContext('2d')!.lineTo(left + 5, top + 25);
+		Store.config.canvas.getContext('2d')!.stroke();
+	}
+};
+
+const listenToSoundController = () => {
+	if (!Store.config.enableSounds) {
+		return;
+	}
+	Store.config.canvas.addEventListener('click', function (event) {
+		const rect = Store.config.canvas.getBoundingClientRect();
+		const x = event.clientX - rect.left,
+			y = event.clientY - rect.top;
+		const width = 30,
+			height = 30,
+			left = Store.config.canvas.width - width - 10,
+			top = 10;
+
+		if (x >= left && x <= left + this.width && y >= top && y <= top + this.height) {
+			if (MusicPlayer.getInstance().isMuted) {
+				MusicPlayer.getInstance().unmute();
+			} else {
+				MusicPlayer.getInstance().mute();
+			}
+		}
+	});
+};
+
 export const Canvas = {
 	resizeCanvas,
 	drawGrid,
 	drawPacman,
 	drawGhosts,
-	renderGameOver
+	renderGameOver,
+	drawSoundController,
+	listenToSoundController
 };
