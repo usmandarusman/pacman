@@ -226,7 +226,7 @@
 						<tr>
 							<td><code>svgCallback</code></td>
 							<td>A callback function that will get called when SVG picture is generated</td>
-							<td><code>(blonUrl: string) => void</code></td>
+							<td><code>(animatedSVG: string) => void</code></td>
 						</tr>
 						<tr>
 							<td><code>gameOverCallback</code></td>
@@ -445,9 +445,13 @@ pr.start();
 					}
 					pr = new PacmanRenderer({
 						...config,
-						svgCallback: (blobUrl) => {
-							svgHolder.src = blobUrl;
-							currentSvgBlob = blobUrl;
+						svgCallback: (animatedSVG) => {
+							const svgBlob = new Blob([animatedSVG], {
+								type: 'image/svg+xml;charset=utf-8'
+							});
+							const svgUrl = URL.createObjectURL(svgBlob);
+							svgHolder.src = svgUrl;
+							currentSvgBlob = svgUrl;
 						},
 						gameOverCallback: () => {
 							console.log('Game Over');

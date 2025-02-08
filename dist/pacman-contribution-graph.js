@@ -450,11 +450,7 @@ const updateGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
         }
         if (store.config.outputFormat == 'svg') {
             const animatedSVG = _svg__WEBPACK_IMPORTED_MODULE_3__.SVG.generateAnimatedSVG(store);
-            const svgBlob = new Blob([animatedSVG], {
-                type: 'image/svg+xml;charset=utf-8'
-            });
-            const svgUrl = URL.createObjectURL(svgBlob);
-            store.config.svgCallback(svgUrl);
+            store.config.svgCallback(animatedSVG);
         }
         store.config.gameOverCallback();
         return;

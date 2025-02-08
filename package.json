@@ -9,7 +9,8 @@
 	"scripts": {
 		"build": "webpack --config webpack.prod.js",
 		"dev": "webpack --progress --config webpack.dev.js",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "npm run build",
+		"build-action": "pnpm run --prefix ./github-action build"
 	},
 	"devDependencies": {
 		"terser": "^5.37.0",

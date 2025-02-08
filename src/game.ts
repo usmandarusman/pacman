@@ -182,11 +182,7 @@ const updateGame = async (store: StoreType) => {
 
 		if (store.config.outputFormat == 'svg') {
 			const animatedSVG = SVG.generateAnimatedSVG(store);
-			const svgBlob = new Blob([animatedSVG], {
-				type: 'image/svg+xml;charset=utf-8'
-			});
-			const svgUrl = URL.createObjectURL(svgBlob);
-			store.config.svgCallback(svgUrl);
+			store.config.svgCallback(animatedSVG);
 		}
 
 		store.config.gameOverCallback();
