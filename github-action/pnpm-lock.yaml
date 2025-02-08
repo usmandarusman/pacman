@@ -12,8 +12,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       pacman-contribution-graph:
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.3
+        version: 1.0.3
     devDependencies:
       '@vercel/ncc':
         specifier: ^0.38.3
@@ -55,8 +55,8 @@ packages:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
 
-  pacman-contribution-graph@1.0.2:
-    resolution: {integrity: sha512-6PS9pYAEsUiNSXMZaRc0rYOpciGM4OJ8E45Q2cMA1fRbzkKxO8UChvfHJ0cDCT4SE3j/h5KMQWAS884OKY4a2w==}
+  pacman-contribution-graph@1.0.3:
+    resolution: {integrity: sha512-xqbNIoe1tda7UnvwkiFI9SBk3NVKnsveLBHJEZzgnjtZU6X9EglX6qesDAIFfvuLXBOZThImPdFL0jSAMHkaxw==}
 
   prettier@3.4.2:
     resolution: {integrity: sha512-e9MewbtFo+Fevyuxn/4rrcDAaq0IYxPGLvObpQjiZBMAzB9IGmzlnG9RZy3FFas+eBMu2vA0CszMeduow5dIuQ==}
@@ -118,7 +118,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  pacman-contribution-graph@1.0.2:
+  pacman-contribution-graph@1.0.3:
     dependencies:
       prettier: 3.4.2
       webpack-merge: 6.0.1
