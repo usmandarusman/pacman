@@ -98,9 +98,9 @@ const drawGhosts = (store: StoreType) => {
 
 		const ctx = store.config.canvas.getContext('2d')!;
 		if (ghost.scared) {
-			ctx.drawImage(GHOSTS['scared'].img, x, y, size, size);
+			ctx.drawImage(GHOSTS['scared'].img!, x, y, size, size);
 		} else {
-			ctx.drawImage(GHOSTS[ghost.name].img, x, y, size, size);
+			ctx.drawImage(GHOSTS[ghost.name].img!, x, y, size, size);
 		}
 	});
 };
