@@ -4,7 +4,7 @@
 	"description": "Generates a pacman game from a github or gitlab user contributions grid",
 	"repository": "github:abozanona/pacman-contribution-graph",
 	"type": "module",
-	"main": "index.js",
+	"main": "dist/pacman-contribution-graph.min.js",
 	"scripts": {
 		"build": "webpack --config webpack.prod.js",
 		"dev": "webpack --progress --config webpack.dev.js"
