@@ -26851,7 +26851,7 @@ var external_path_ = __nccwpck_require__(6928);
 
 
 
-const generateSvg = async (userName, githubToken,) => {
+const generateSvg = async (userName, githubToken, theme) => {
 	return new Promise((resolve, reject) => {
 		const conf = {
 			platform: "github",

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { PacmanRenderer } from 'pacman-contribution-graph';
 import * as path from 'path';
 
-const generateSvg = async (userName, githubToken,) => {
+const generateSvg = async (userName, githubToken, theme) => {
 	return new Promise((resolve, reject) => {
 		const conf = {
 			platform: "github",
