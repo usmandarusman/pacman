@@ -6,6 +6,7 @@ const generateAnimatedSVG = (store: StoreType) => {
 	const svgWidth = GRID_WIDTH * (CELL_SIZE + GAP_SIZE);
 	const svgHeight = GRID_HEIGHT * (CELL_SIZE + GAP_SIZE) + 20;
 	let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+	svg += `<desc>Generated with https://github.com/abozanona/pacman-contribution-graph</desc>`;
 	svg += `<rect width="100%" height="100%" fill="${Utils.getCurrentTheme(store).gridBackground}"/>`;
 
 	svg += generateGhostsPredefinition();

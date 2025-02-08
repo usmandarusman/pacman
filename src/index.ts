@@ -29,11 +29,11 @@ export class PacmanRenderer {
 
 		switch (this.conf.platform) {
 			case 'gitlab':
-				this.store.contributions = await Utils.getGitlabContribution(this.conf.username);
+				this.store.contributions = await Utils.getGitlabContribution(this.store);
 				break;
 
 			case 'github':
-				this.store.contributions = await Utils.getGithubContribution(this.conf.username);
+				this.store.contributions = await Utils.getGithubContribution(this.store);
 				break;
 		}
 

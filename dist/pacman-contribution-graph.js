@@ -388,15 +388,17 @@ const startGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
         _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().startDefaultSound();
         yield _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.BEGINNING);
     }
-    placePacman(store);
-    placeGhosts(store);
+    const remainingCells = () => store.grid.some((row) => row.some((cell) => cell.intensity > 0));
+    if (remainingCells()) {
+        placePacman(store);
+        placeGhosts(store);
+    }
     _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.blinky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.blinky.imgDate;
     _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.clyde.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.clyde.imgDate;
     _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.inky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.inky.imgDate;
     _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.pinky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.pinky.imgDate;
     _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.scared.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.scared.imgDate;
     if (store.config.outputFormat == 'svg') {
-        const remainingCells = () => store.grid.some((row) => row.some((cell) => cell.intensity > 0));
         while (remainingCells()) {
             yield updateGame(store);
         }
@@ -642,10 +644,10 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 };
 var Sound;
 (function (Sound) {
-    Sound["DEFAULT"] = "https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_chomp.wav";
-    Sound["BEGINNING"] = "https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_beginning.wav";
-    Sound["GAME_OVER"] = "https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_death.wav";
-    Sound["EAT_GHOST"] = "https://cdn.jsdelivr.net/gh/abozanona/pacman-contribution-graph@1.0.2/src/assets/sounds/pacman_eatghost.wav";
+    Sound["DEFAULT"] = "https://cdn.jsdelivr.net/npm/pacman-contribution-graph/src/assets/sounds/pacman_chomp.wav";
+    Sound["BEGINNING"] = "https://cdn.jsdelivr.net/npm/pacman-contribution-graph/src/assets/sounds/pacman_beginning.wav";
+    Sound["GAME_OVER"] = "https://cdn.jsdelivr.net/npm/pacman-contribution-graph/src/assets/sounds/pacman_death.wav";
+    Sound["EAT_GHOST"] = "https://cdn.jsdelivr.net/npm/pacman-contribution-graph/src/assets/sounds/pacman_eatghost.wav";
 })(Sound || (Sound = {}));
 class MusicPlayer {
     constructor() {
@@ -806,6 +808,7 @@ const generateAnimatedSVG = (store) => {
     const svgWidth = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
     const svgHeight = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 20;
     let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<desc>Generated with https://github.com/abozanona/pacman-contribution-graph</desc>`;
     svg += `<rect width="100%" height="100%" fill="${_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).gridBackground}"/>`;
     svg += generateGhostsPredefinition();
     // Month labels
@@ -971,19 +974,40 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
     });
 };
 
-const getGitlabContribution = (username) => __awaiter(void 0, void 0, void 0, function* () {
+const getGitlabContribution = (store) => __awaiter(void 0, void 0, void 0, function* () {
     // const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
-    const response = yield fetch(`https://v0-new-project-q1hhrdodoye-abozanona-gmailcoms-projects.vercel.app/api/contributions?username=${username}`);
+    const response = yield fetch(`https://v0-new-project-q1hhrdodoye-abozanona-gmailcoms-projects.vercel.app/api/contributions?username=${store.config.username}`);
     const contributionsList = yield response.json();
     return Object.entries(contributionsList).map(([date, count]) => ({
         date: new Date(date),
         count: Number(count)
     }));
 });
-const getGithubContribution = (username) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield fetch(`https://api.github.com/search/commits?q=author:${username}&sort=author-date&order=desc&page=1&per_page=1000`);
-    const contributionsList = yield response.json();
-    return Array.from(contributionsList.items
+const getGithubContribution = (store) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const commits = [];
+    let isComplete = false;
+    let page = 1;
+    // TODO: Consider using GraphQL endpoint when user has an access token?
+    do {
+        try {
+            const headers = {};
+            if ((_a = store.config.githubSettings) === null || _a === void 0 ? void 0 : _a.accessToken) {
+                headers['Authorization'] = 'Bearer ' + store.config.githubSettings.accessToken;
+            }
+            const response = yield fetch(`https://api.github.com/search/commits?q=author:${store.config.username}&sort=author-date&order=desc&page=${page}&per_page=1000`, {
+                headers
+            });
+            const contributionsList = yield response.json();
+            isComplete = contributionsList.items.length === 0;
+            commits.push(...contributionsList.items);
+            page++;
+        }
+        catch (ex) {
+            isComplete = true;
+        }
+    } while (!isComplete);
+    return Array.from(commits
         .reduce((map, item) => {
         const dateString = item.commit.committer.date.split('T')[0];
         const date = new Date(dateString);
@@ -1115,10 +1139,10 @@ class PacmanRenderer {
             this.store.config = Object.assign(Object.assign({}, defaultConfing), this.conf);
             switch (this.conf.platform) {
                 case 'gitlab':
-                    this.store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGitlabContribution(this.conf.username);
+                    this.store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGitlabContribution(this.store);
                     break;
                 case 'github':
-                    this.store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGithubContribution(this.conf.username);
+                    this.store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGithubContribution(this.store);
                     break;
             }
             _game__WEBPACK_IMPORTED_MODULE_0__.Game.startGame(this.store);

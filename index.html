@@ -102,6 +102,8 @@
 								<option value="gitlab">GitLab</option>
 							</select>
 						</div>
+					</div>
+					<div class="col-md-6">
 						<div class="mb-3">
 							<label for="output" class="form-label">Output format</label>
 							<select id="output" class="form-select">
@@ -109,6 +111,10 @@
 								<option value="svg">SVG</option>
 							</select>
 						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
 						<div class="mb-3">
 							<label for="username" class="form-label">Username:</label>
 							<div class="input-group">
@@ -126,11 +132,6 @@
 					</div>
 					<div class="col-md-6">
 						<div class="mb-3">
-							<label for="gameSpeed" class="form-label">Game Speed:</label>
-							<input type="range" class="form-range" id="gameSpeed" min="1" max="10" value="1" />
-							<span id="gameSpeedValue">1</span>
-						</div>
-						<div class="mb-3">
 							<label for="theme" class="form-label">Theme:</label>
 							<select id="theme" class="form-select">
 								<option value="github">GitHub</option>
@@ -139,16 +140,50 @@
 								<option value="gitlab-dark">GitLab Dark</option>
 							</select>
 						</div>
-						<div class="mb-3">
-							<label for="enableSounds" class="form-label">Sounds:</label>
-							<select id="enableSounds" class="form-select">
-								<option value="disabled">Disabled</option>
-								<option value="enabled">Enabled</option>
-							</select>
+					</div>
+				</div>
+				<div class="mb-5">
+					<button class="btn btn-secondary mb-1" data-bs-toggle="collapse" data-bs-target="#additionalSettings">
+						Toggle Additional Settings
+					</button>
+					<div id="additionalSettings" class="collapse">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="enableSounds" class="form-label">Sounds:</label>
+									<select id="enableSounds" class="form-select">
+										<option value="disabled">Disabled</option>
+										<option value="enabled">Enabled</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="gameSpeed" class="form-label">Game Speed:</label>
+									<input type="range" class="form-range" id="gameSpeed" min="1" max="10" value="1" />
+									<span id="gameSpeedValue">1</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="githubAccessToken" class="form-label"
+										>Github Access Token(<a target="__blank" href="https://github.com/settings/tokens">Generate one</a
+										>):
+									</label>
+									<input
+										type="text"
+										id="githubAccessToken"
+										class="form-control"
+										placeholder="Enter Github Access Token"
+									/>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-				<button id="generate" class="btn btn-primary">Generate</button>
+				<button id="generate" class="btn btn-primary">Generate</button> It might take a second or two
 			</div>
 
 			<div class="section">
@@ -293,6 +328,7 @@ pr.start();
 			const userAvatar = document.getElementById('userAvatar');
 			const userNotFound = document.getElementById('userNotFound');
 			const points = document.getElementById('points');
+			const githubAccessToken = document.getElementById('githubAccessToken');
 
 			generateButton.disabled = true;
 
@@ -376,7 +412,10 @@ pr.start();
 					outputFormat: outputSelect.value,
 					gameSpeed: parseInt(gameSpeedInput.value),
 					gameTheme: themeSelect.value,
-					enableSounds: enableSounds.value === 'enabled'
+					enableSounds: enableSounds.value === 'enabled',
+					githubSettings: {
+						accessToken: githubAccessToken.value
+					}
 				};
 
 				if (config.outputFormat === 'canvas') {
@@ -391,7 +430,6 @@ pr.start();
 						canvas: canvas,
 						gameOverCallback: () => {
 							console.log('Game Over');
-							setTimeout(() => pr.start(), 3000);
 						},
 						pointsIncreasedCallback: (pointsSum) => {
 							points.innerText = pointsSum;

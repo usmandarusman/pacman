@@ -114,8 +114,11 @@ const startGame = async (store: StoreType) => {
 		await MusicPlayer.getInstance().play(Sound.BEGINNING);
 	}
 
-	placePacman(store);
-	placeGhosts(store);
+	const remainingCells = () => store.grid.some((row) => row.some((cell) => cell.intensity > 0));
+	if (remainingCells()) {
+		placePacman(store);
+		placeGhosts(store);
+	}
 
 	GHOSTS.blinky.img.src = GHOSTS.blinky.imgDate;
 	GHOSTS.clyde.img.src = GHOSTS.clyde.imgDate;
@@ -124,7 +127,6 @@ const startGame = async (store: StoreType) => {
 	GHOSTS.scared.img.src = GHOSTS.scared.imgDate;
 
 	if (store.config.outputFormat == 'svg') {
-		const remainingCells = () => store.grid.some((row) => row.some((cell) => cell.intensity > 0));
 		while (remainingCells()) {
 			await updateGame(store);
 		}

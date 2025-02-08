@@ -51,6 +51,9 @@ export interface Config {
 	gameSpeed: number;
 	enableSounds: boolean;
 	pointsIncreasedCallback: (pointsSum: number) => void;
+	githubSettings?: {
+		accessToken: string;
+	};
 }
 
 export type ThemeKeys = 'github' | 'github-dark' | 'gitlab' | 'gitlab-dark';
