@@ -1,6 +1,5 @@
 import { GAME_THEMES } from './constants';
-import { Store } from './store';
-import type { Contribution, GameTheme } from './types';
+import type { Contribution, GameTheme, StoreType } from './types';
 
 const getGitlabContribution = async (username: string): Promise<Contribution[]> => {
 	// const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
@@ -31,8 +30,8 @@ const getGithubContribution = async (username: string): Promise<Contribution[]> 
 	);
 };
 
-const getCurrentTheme = (): GameTheme => {
-	return GAME_THEMES[Store.config.gameTheme] ?? GAME_THEMES['github'];
+const getCurrentTheme = (store: StoreType): GameTheme => {
+	return GAME_THEMES[store.config.gameTheme] ?? GAME_THEMES['github'];
 };
 
 function hexToRGBA(hex: string, alpha: number): string {
