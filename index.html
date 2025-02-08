@@ -288,14 +288,63 @@ pr.start();
 &lt;/script&gt;</code></pre>
 
 				<h3>Method 3: Iframe/Image Embedding</h3>
-				<pre>
+				<pre><code>
 &lt;!-- For canvas --&gt;
 <code>&lt;iframe src="https://abozanona.github.io/pacman-contribution-graph/embeded/canvas.html?username=yourusername&platform=github" 
     width="800" height="600" frameborder="0"&gt;&lt;/iframe&gt;</code>
 &lt;!-- For SVG --&gt;
 <code>&lt;img src="https://abozanona.github.io/pacman-contribution-graph/embeded/svg.html?username=yourusername&platform=github" /&gt;</code>
-</pre>
+</code></pre>
 			</div>
+
+			<h3>Method 4: Github Actions</h3>
+			<ol>
+				<li>Create a new repository with the same name as your github username</li>
+				<li>
+					Create <code>.github/workflows/main.yml</code> in your github repo with the following content
+					<pre><code>name: generate pacman game
+
+on:
+	schedule: # run automatically every 24 hours
+	- cron: "0 */24 * * *"
+	workflow_dispatch: # allows to manually run the job at any time
+	push: # run on every push on the master branch
+	branches:
+		- main
+
+jobs:
+	generate:
+	permissions:
+		contents: write
+	runs-on: ubuntu-latest
+	timeout-minutes: 5
+
+	steps:
+		- name: generate pacman-contribution-graph.svg
+		uses: abozanona/pacman-contribution-graph/github-action@main
+		with:
+			github_user_name: ${{ github.repository_owner }}
+
+		# push the content of <build_dir> to a branch
+		# the content will be available at https://raw.githubusercontent.com/<github_user>/<repository>/<target_branch>/<file> , or as github page
+		- name: push pacman-contribution-graph.svg to the output branch
+		uses: crazy-max/ghaction-github-pages@v3.1.0
+		with:
+			target_branch: output
+			build_dir: dist
+		env:
+			GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}</code></pre>
+				</li>
+				<li>Create <code>README.md</code> file in your github repo with the following content
+				<pre><code>&lt;picture>
+&lt;source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/abozanona/abozanona/output/pacman-contribution-graph-dark.svg">
+&lt;source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/abozanona/abozanona/output/pacman-contribution-graph.svg">
+&lt;img alt="pacman contribution graph" src="https://raw.githubusercontent.com/platane/platane/output/pacman-contribution-graph.svg">
+&lt;/picture>
+
+_generated with [abozanona/pacman-contribution-graph](https://abozanona.github.io/pacman-contribution-graph/)_</code></pre></li>
+<li>That's it! You can also check my github repo <a target="__blank" href="https://github.com/abozanona/abozanona">@abozanona</a> for an example </li>
+			</ol>
 		</div>
 
 		<footer class="bg-light py-3 mt-5 invisible">
