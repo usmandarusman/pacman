@@ -22,7 +22,7 @@ export class PacmanRenderer {
 			gameOverCallback: () => () => {},
 			gameTheme: 'github',
 			gameSpeed: 1,
-			enableSounds: true,
+			enableSounds: false,
 			pointsIncreasedCallback: (_: number) => {}
 		};
 		this.store.config = { ...defaultConfing, ...this.conf };
