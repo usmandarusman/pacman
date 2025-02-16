@@ -36,10 +36,8 @@ const generateAnimatedSVG = (store: StoreType) => {
 		for (let y = 0; y < GRID_WIDTH; y++) {
 			const cellX = y * (CELL_SIZE + GAP_SIZE);
 			const cellY = x * (CELL_SIZE + GAP_SIZE) + 15;
-			const intensity = store.gameHistory[0].grid[x][y];
-			const color = intensity > 0 ? getContributionColor(store, intensity) : Utils.getCurrentTheme(store).emptyContributionBoxColor;
 			const cellColorAnimation = generateChangingValuesAnimation(store, generateCellColorValues(store, x, y));
-			svg += `<rect id="c-${x}-${y}" x="${cellX}" y="${cellY}" width="${CELL_SIZE}" height="${CELL_SIZE}" rx="5" fill="${color}">
+			svg += `<rect id="c-${x}-${y}" x="${cellX}" y="${cellY}" width="${CELL_SIZE}" height="${CELL_SIZE}" rx="5" fill="${Utils.getCurrentTheme(store).emptyContributionBoxColor}">
                 <animate attributeName="fill" dur="${store.gameHistory.length * DELTA_TIME}ms" repeatCount="indefinite" 
                     values="${cellColorAnimation.values}" 
                     keyTimes="${cellColorAnimation.keyTimes}"/>
@@ -50,14 +48,20 @@ const generateAnimatedSVG = (store: StoreType) => {
 	// Pacman
 	const pacmanColorAnimation = generateChangingValuesAnimation(store, generatePacManColors(store));
 	const pacmanPositionAnimation = generateChangingValuesAnimation(store, generatePacManPositions(store));
+	const pacmanRotationAnimation = generateChangingValuesAnimation(store, generatePacManRotations(store));
 	svg += `<path id="pacman" d="${generatePacManPath(0.55)}"
-        transform="translate(${store.pacman.y * (CELL_SIZE + GAP_SIZE)}, ${store.pacman.x * (CELL_SIZE + GAP_SIZE) + 15})">
+        >
 		<animate attributeName="fill" dur="${store.gameHistory.length * DELTA_TIME}ms" repeatCount="indefinite"
-                keyTimes="${pacmanColorAnimation.keyTimes}"
-                values="${pacmanColorAnimation.values}"/>
+            keyTimes="${pacmanColorAnimation.keyTimes}"
+            values="${pacmanColorAnimation.values}"/>
         <animateTransform attributeName="transform" type="translate" dur="${store.gameHistory.length * DELTA_TIME}ms" repeatCount="indefinite"
             keyTimes="${pacmanPositionAnimation.keyTimes}"
-            values="${pacmanPositionAnimation.values}"/>
+            values="${pacmanPositionAnimation.values}"
+            additive="sum"/>
+        <animateTransform attributeName="transform" type="rotate" dur="${store.gameHistory.length * DELTA_TIME}ms" repeatCount="indefinite"
+            keyTimes="${pacmanRotationAnimation.keyTimes}"
+            values="${pacmanRotationAnimation.values}"
+            additive="sum"/>
         <animate attributeName="d" dur="0.5s" repeatCount="indefinite"
             values="${generatePacManPath(0.55)};${generatePacManPath(0.05)};${generatePacManPath(0.55)}"/>
     </path>`;
@@ -99,6 +103,24 @@ const generatePacManPositions = (store: StoreType): string[] => {
 	});
 };
 
+const generatePacManRotations = (store: StoreType): string[] => {
+	const pivit = CELL_SIZE / 2;
+	return store.gameHistory.map((state) => {
+		switch (state.pacman.direction) {
+			case 'right':
+				return `0 ${pivit} ${pivit}`;
+			case 'left':
+				return `180 ${pivit} ${pivit}`;
+			case 'up':
+				return `270 ${pivit} ${pivit}`;
+			case 'down':
+				return `90 ${pivit} ${pivit}`;
+			default:
+				return `0 ${pivit} ${pivit}`;
+		}
+	});
+};
+
 const generatePacManColors = (store: StoreType): string[] => {
 	return store.gameHistory.map((state) => {
 		if (state.pacman.deadRemainingDuration) {
@@ -114,13 +136,13 @@ const generatePacManColors = (store: StoreType): string[] => {
 const generateCellColorValues = (store: StoreType, x: number, y: number): string[] => {
 	return store.gameHistory.map((state) => {
 		const intensity = state.grid[x][y];
-		return intensity > 0 ? getContributionColor(store, intensity) : Utils.getCurrentTheme(store).emptyContributionBoxColor;
+		if (intensity > 0) {
+			const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
+			return Utils.hexToHexAlpha(Utils.getCurrentTheme(store).contributionBoxColor, adjustedIntensity);
+		} else {
+			return Utils.getCurrentTheme(store).emptyContributionBoxColor;
+		}
 	});
-};
-
-const getContributionColor = (store: StoreType, intensity: number) => {
-	const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
-	return Utils.hexToHexAlpha(Utils.getCurrentTheme(store).contributionBoxColor, adjustedIntensity);
 };
 
 const generateGhostPositions = (store: StoreType, ghostIndex: number): string[] => {

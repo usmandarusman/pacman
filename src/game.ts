@@ -66,7 +66,6 @@ const placePacman = (store: StoreType) => {
 
 const placeGhosts = (store: StoreType) => {
 	store.ghosts = [];
-	store.scaredGhostsDestinations = [];
 	for (let i = 0; i < 4; i++) {
 		let x, y;
 		do {
@@ -74,7 +73,6 @@ const placeGhosts = (store: StoreType) => {
 			y = Math.floor(Math.random() * GRID_WIDTH);
 		} while (store.grid[x][y].intensity === 0);
 		store.ghosts.push({ x, y, name: GHOST_NAMES[i], scared: false, target: undefined });
-		store.scaredGhostsDestinations.push({ x: 0, y: 0 });
 	}
 	if (store.config.outputFormat == 'canvas') Canvas.drawGhosts(store);
 };

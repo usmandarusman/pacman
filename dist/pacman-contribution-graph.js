@@ -357,7 +357,6 @@ const placePacman = (store) => {
 };
 const placeGhosts = (store) => {
     store.ghosts = [];
-    store.scaredGhostsDestinations = [];
     for (let i = 0; i < 4; i++) {
         let x, y;
         do {
@@ -365,7 +364,6 @@ const placeGhosts = (store) => {
             y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
         } while (store.grid[x][y].intensity === 0);
         store.ghosts.push({ x, y, name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[i], scared: false, target: undefined });
-        store.scaredGhostsDestinations.push({ x: 0, y: 0 });
     }
     if (store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGhosts(store);
@@ -777,7 +775,6 @@ const Store = {
     monthLabels: [],
     pacmanMouthOpen: true,
     gameInterval: 0,
-    scaredGhostsDestinations: [],
     gameHistory: [],
     config: undefined
 };
@@ -820,10 +817,8 @@ const generateAnimatedSVG = (store) => {
         for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
             const cellX = y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
             const cellY = x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
-            const intensity = store.gameHistory[0].grid[x][y];
-            const color = intensity > 0 ? getContributionColor(store, intensity) : _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).emptyContributionBoxColor;
             const cellColorAnimation = generateChangingValuesAnimation(store, generateCellColorValues(store, x, y));
-            svg += `<rect id="c-${x}-${y}" x="${cellX}" y="${cellY}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" rx="5" fill="${color}">
+            svg += `<rect id="c-${x}-${y}" x="${cellX}" y="${cellY}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" rx="5" fill="${_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).emptyContributionBoxColor}">
                 <animate attributeName="fill" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite" 
                     values="${cellColorAnimation.values}" 
                     keyTimes="${cellColorAnimation.keyTimes}"/>
@@ -833,14 +828,20 @@ const generateAnimatedSVG = (store) => {
     // Pacman
     const pacmanColorAnimation = generateChangingValuesAnimation(store, generatePacManColors(store));
     const pacmanPositionAnimation = generateChangingValuesAnimation(store, generatePacManPositions(store));
+    const pacmanRotationAnimation = generateChangingValuesAnimation(store, generatePacManRotations(store));
     svg += `<path id="pacman" d="${generatePacManPath(0.55)}"
-        transform="translate(${store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE)}, ${store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15})">
+        >
 		<animate attributeName="fill" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite"
-                keyTimes="${pacmanColorAnimation.keyTimes}"
-                values="${pacmanColorAnimation.values}"/>
+            keyTimes="${pacmanColorAnimation.keyTimes}"
+            values="${pacmanColorAnimation.values}"/>
         <animateTransform attributeName="transform" type="translate" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite"
             keyTimes="${pacmanPositionAnimation.keyTimes}"
-            values="${pacmanPositionAnimation.values}"/>
+            values="${pacmanPositionAnimation.values}"
+            additive="sum"/>
+        <animateTransform attributeName="transform" type="rotate" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite"
+            keyTimes="${pacmanRotationAnimation.keyTimes}"
+            values="${pacmanRotationAnimation.values}"
+            additive="sum"/>
         <animate attributeName="d" dur="0.5s" repeatCount="indefinite"
             values="${generatePacManPath(0.55)};${generatePacManPath(0.05)};${generatePacManPath(0.55)}"/>
     </path>`;
@@ -876,6 +877,23 @@ const generatePacManPositions = (store) => {
         return `${x},${y}`;
     });
 };
+const generatePacManRotations = (store) => {
+    const pivit = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
+    return store.gameHistory.map((state) => {
+        switch (state.pacman.direction) {
+            case 'right':
+                return `0 ${pivit} ${pivit}`;
+            case 'left':
+                return `180 ${pivit} ${pivit}`;
+            case 'up':
+                return `270 ${pivit} ${pivit}`;
+            case 'down':
+                return `90 ${pivit} ${pivit}`;
+            default:
+                return `0 ${pivit} ${pivit}`;
+        }
+    });
+};
 const generatePacManColors = (store) => {
     return store.gameHistory.map((state) => {
         if (state.pacman.deadRemainingDuration) {
@@ -892,12 +910,14 @@ const generatePacManColors = (store) => {
 const generateCellColorValues = (store, x, y) => {
     return store.gameHistory.map((state) => {
         const intensity = state.grid[x][y];
-        return intensity > 0 ? getContributionColor(store, intensity) : _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).emptyContributionBoxColor;
+        if (intensity > 0) {
+            const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
+            return _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.hexToHexAlpha(_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).contributionBoxColor, adjustedIntensity);
+        }
+        else {
+            return _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).emptyContributionBoxColor;
+        }
     });
-};
-const getContributionColor = (store, intensity) => {
-    const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
-    return _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.hexToHexAlpha(_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).contributionBoxColor, adjustedIntensity);
 };
 const generateGhostPositions = (store, ghostIndex) => {
     return store.gameHistory.map((state) => {

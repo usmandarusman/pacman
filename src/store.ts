@@ -17,7 +17,6 @@ export const Store: StoreType = {
 	monthLabels: [],
 	pacmanMouthOpen: true,
 	gameInterval: 0,
-	scaredGhostsDestinations: [],
 	gameHistory: [],
 	config: undefined as unknown as Config
 };

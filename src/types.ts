@@ -31,7 +31,6 @@ export interface StoreType {
 	monthLabels: string[];
 	pacmanMouthOpen: boolean;
 	gameInterval: number;
-	scaredGhostsDestinations: { x: number; y: number }[];
 	gameHistory: {
 		pacman: Pacman;
 		ghosts: Ghost[];
