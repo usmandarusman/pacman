@@ -90,6 +90,16 @@ const drawPacman = (store: StoreType) => {
 	store.config.canvas.getContext('2d')!.fill();
 };
 
+const preloadedImages: { [key: string]: HTMLImageElement } = {};
+const getLoadedImage = (key: string, imgDate: string): HTMLImageElement => {
+	if (!preloadedImages[key]) {
+		const image = new Image();
+		image.src = imgDate;
+		preloadedImages[key] = image;
+	}
+	return preloadedImages[key];
+};
+
 const drawGhosts = (store: StoreType) => {
 	store.ghosts.forEach((ghost) => {
 		const x = ghost.y * (CELL_SIZE + GAP_SIZE);
@@ -98,9 +108,9 @@ const drawGhosts = (store: StoreType) => {
 
 		const ctx = store.config.canvas.getContext('2d')!;
 		if (ghost.scared) {
-			ctx.drawImage(GHOSTS['scared'].img!, x, y, size, size);
+			ctx.drawImage(getLoadedImage('scared', GHOSTS['scared'].imgDate), x, y, size, size);
 		} else {
-			ctx.drawImage(GHOSTS[ghost.name].img!, x, y, size, size);
+			ctx.drawImage(getLoadedImage(ghost.name, GHOSTS[ghost.name].imgDate), x, y, size, size);
 		}
 	});
 };

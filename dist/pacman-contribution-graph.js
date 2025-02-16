@@ -95,6 +95,15 @@ const drawPacman = (store) => {
     store.config.canvas.getContext('2d').lineTo(x, y);
     store.config.canvas.getContext('2d').fill();
 };
+const preloadedImages = {};
+const getLoadedImage = (key, imgDate) => {
+    if (!preloadedImages[key]) {
+        const image = new Image();
+        image.src = imgDate;
+        preloadedImages[key] = image;
+    }
+    return preloadedImages[key];
+};
 const drawGhosts = (store) => {
     store.ghosts.forEach((ghost) => {
         const x = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
@@ -102,10 +111,10 @@ const drawGhosts = (store) => {
         const size = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE;
         const ctx = store.config.canvas.getContext('2d');
         if (ghost.scared) {
-            ctx.drawImage(_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['scared'].img, x, y, size, size);
+            ctx.drawImage(getLoadedImage('scared', _constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['scared'].imgDate), x, y, size, size);
         }
         else {
-            ctx.drawImage(_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS[ghost.name].img, x, y, size, size);
+            ctx.drawImage(getLoadedImage(ghost.name, _constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS[ghost.name].imgDate), x, y, size, size);
         }
     });
 };
@@ -213,7 +222,7 @@ const PACMAN_COLOR_POWERUP = 'red';
 const PACMAN_COLOR_DEAD = '#80808064';
 const GHOST_NAMES = ['blinky', 'clyde', 'inky', 'pinky'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const DELTA_TIME = 250;
+const DELTA_TIME = 200;
 const PACMAN_DEATH_DURATION = 10;
 const PACMAN_POWERUP_DURATION = 15;
 const GAME_THEMES = {
@@ -244,24 +253,19 @@ const GAME_THEMES = {
 };
 const GHOSTS = {
     blinky: {
-        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAfUlEQVQ4T+2TUQ7AIAhDy/0PzQIRAqxmLtnn/DJPWypBAVkKKOMCyOQN7IRElLrcnIrDLNK4wVtxNbkb6Hq+jOcSbim6QVzKEstkw92gxVeFrMpqokix4wA+NvCOnvfArvcEbHoe2G9QmmhDMUc65p3xYC6q3zQPxtdl3NgF5QpL/b/rs3IAAAAASUVORK5CYIIA',
-        img: new Image()
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAfUlEQVQ4T+2TUQ7AIAhDy/0PzQIRAqxmLtnn/DJPWypBAVkKKOMCyOQN7IRElLrcnIrDLNK4wVtxNbkb6Hq+jOcSbim6QVzKEstkw92gxVeFrMpqokix4wA+NvCOnvfArvcEbHoe2G9QmmhDMUc65p3xYC6q3zQPxtdl3NgF5QpL/b/rs3IAAAAASUVORK5CYIIA'
     },
     clyde: {
-        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAgUlEQVQ4T+2T0Q6AIAhFLx9sH1MfTIPCAeLKrcd8PHqP4JBQLN7BFacNlHkAs+AQcqIueBs2mVWjgtWwl4yCdrd/pHYLLlVEgR2yK0wy4SoI5TcGXU4wM+AEJQfwsUCuXngDOR4rqKbngf0C94gyFHmkbd4rbkxD/pv2jfR1Ky7sBNrzXbHpnBX+AAAAAElFTkSuQmCC',
-        img: new Image()
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAgUlEQVQ4T+2T0Q6AIAhFLx9sH1MfTIPCAeLKrcd8PHqP4JBQLN7BFacNlHkAs+AQcqIueBs2mVWjgtWwl4yCdrd/pHYLLlVEgR2yK0wy4SoI5TcGXU4wM+AEJQfwsUCuXngDOR4rqKbngf0C94gyFHmkbd4rbkxD/pv2jfR1Ky7sBNrzXbHpnBX+AAAAAElFTkSuQmCC'
     },
     inky: {
-        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAg0lEQVQ4T+WTWxKAIAhFuQvK/a+jFoT5QAVxypn+6vMEx6sDIO/jk12OAMs1WDVOXV3UBW+bRVbTFMFu8yCZBExH/g26VHCXI0AJpKgdUCUrTlkwxE+FECdzS7HiJemXgvyeO29gE7jD8wDVFX4vSLNtR1q2z+OVlaZxTaXYrq7HbxYBS8VgMVrqzkEAAAAASUVORK5CYIIA',
-        img: new Image()
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAg0lEQVQ4T+WTWxKAIAhFuQvK/a+jFoT5QAVxypn+6vMEx6sDIO/jk12OAMs1WDVOXV3UBW+bRVbTFMFu8yCZBExH/g26VHCXI0AJpKgdUCUrTlkwxE+FECdzS7HiJemXgvyeO29gE7jD8wDVFX4vSLNtR1q2z+OVlaZxTaXYrq7HbxYBS8VgMVrqzkEAAAAASUVORK5CYIIA'
     },
     pinky: {
-        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAhklEQVQ4T+2T0Q2AIAwF281wC50Qt9DNagoptqVESfyUz4N3vJCCECxaD4o47gt6bsAo2IWUqAnehkUmbYpgNqwlvSCnur+dtnnAuYUVyCGJimTAi8DUzwmwOoGI7hYjDgAfC/jqiTfg47ZBND0P7BeoR+Sh8CMt8x5xYSWkv2nbcF834swuA/9u49Yy5bgAAAAASUVORK5CYIIA',
-        img: new Image()
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAhklEQVQ4T+2T0Q2AIAwF281wC50Qt9DNagoptqVESfyUz4N3vJCCECxaD4o47gt6bsAo2IWUqAnehkUmbYpgNqwlvSCnur+dtnnAuYUVyCGJimTAi8DUzwmwOoGI7hYjDgAfC/jqiTfg47ZBND0P7BeoR+Sh8CMt8x5xYSWkv2nbcF834swuA/9u49Yy5bgAAAAASUVORK5CYIIA'
     },
     scared: {
-        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAeUlEQVQ4T82TUQ6AMAhD7UX0/sdyF0GREVmDmTN+bH9r6Bs0A0t2VpFULwDrrfBkZFcA3YC3ZodViAFGzQHyP0B2w2NrB0/1AoDbHwLoQ5/nrw1OBuD5e/crbM9Aiz35njHWzpSB/m3+0r40mV41M8U19WJe3Uw/tQOKt08pUUbBEQAAAABJRU5ErkJgggAA',
-        img: new Image()
+        imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAeUlEQVQ4T82TUQ6AMAhD7UX0/sdyF0GREVmDmTN+bH9r6Bs0A0t2VpFULwDrrfBkZFcA3YC3ZodViAFGzQHyP0B2w2NrB0/1AoDbHwLoQ5/nrw1OBuD5e/crbM9Aiz35njHWzpSB/m3+0r40mV41M8U19WJe3Uw/tQOKt08pUUbBEQAAAABJRU5ErkJgggAA'
     }
 };
 
@@ -393,11 +397,6 @@ const startGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
         placePacman(store);
         placeGhosts(store);
     }
-    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.blinky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.blinky.imgDate;
-    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.clyde.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.clyde.imgDate;
-    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.inky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.inky.imgDate;
-    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.pinky.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.pinky.imgDate;
-    _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.scared.img.src = _constants__WEBPACK_IMPORTED_MODULE_1__.GHOSTS.scared.imgDate;
     if (store.config.outputFormat == 'svg') {
         while (remainingCells()) {
             yield updateGame(store);
@@ -804,7 +803,7 @@ const generateAnimatedSVG = (store) => {
     const svgWidth = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
     const svgHeight = _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 20;
     let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
-    svg += `<desc>Generated with https://github.com/abozanona/pacman-contribution-graph</desc>`;
+    svg += `<desc>Generated with https://github.com/abozanona/pacman-contribution-graph on ${new Date()}</desc>`;
     svg += `<rect width="100%" height="100%" fill="${_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).gridBackground}"/>`;
     svg += generateGhostsPredefinition();
     // Month labels
@@ -823,38 +822,42 @@ const generateAnimatedSVG = (store) => {
             const cellY = x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
             const intensity = store.gameHistory[0].grid[x][y];
             const color = intensity > 0 ? getContributionColor(store, intensity) : _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).emptyContributionBoxColor;
-            svg += `<rect id="cell-${x}-${y}" x="${cellX}" y="${cellY}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" rx="5" fill="${color}">
-                <animate attributeName="fill" dur="${store.gameHistory.length * 300}ms" repeatCount="indefinite" 
-                    values="${generateCellColorValues(store, x, y)}" 
-                    keyTimes="${generateKeyTimes(store)}"/>
+            const cellColorAnimation = generateChangingValuesAnimation(store, generateCellColorValues(store, x, y));
+            svg += `<rect id="c-${x}-${y}" x="${cellX}" y="${cellY}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" rx="5" fill="${color}">
+                <animate attributeName="fill" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite" 
+                    values="${cellColorAnimation.values}" 
+                    keyTimes="${cellColorAnimation.keyTimes}"/>
             </rect>`;
         }
     }
     // Pacman
-    svg += `<path id="pacman" d="${generatePacManPath(0.35)}"
+    const pacmanColorAnimation = generateChangingValuesAnimation(store, generatePacManColors(store));
+    const pacmanPositionAnimation = generateChangingValuesAnimation(store, generatePacManPositions(store));
+    svg += `<path id="pacman" d="${generatePacManPath(0.55)}"
         transform="translate(${store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE)}, ${store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15})">
-		<animate attributeName="fill" dur="${store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes(store)}"
-                values="${generatePacManColors(store)}"/>
-        <animateTransform attributeName="transform" type="translate" dur="${store.gameHistory.length * 300}ms" repeatCount="indefinite"
-            keyTimes="${generateKeyTimes(store)}"
-            values="${generatePacManPositions(store)}"/>
-        <animate attributeName="d" dur="0.2s" repeatCount="indefinite"
-            values="${generatePacManPath(0.25)};${generatePacManPath(0.05)};${generatePacManPath(0.25)}"/>
+		<animate attributeName="fill" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite"
+                keyTimes="${pacmanColorAnimation.keyTimes}"
+                values="${pacmanColorAnimation.values}"/>
+        <animateTransform attributeName="transform" type="translate" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite"
+            keyTimes="${pacmanPositionAnimation.keyTimes}"
+            values="${pacmanPositionAnimation.values}"/>
+        <animate attributeName="d" dur="0.5s" repeatCount="indefinite"
+            values="${generatePacManPath(0.55)};${generatePacManPath(0.05)};${generatePacManPath(0.55)}"/>
     </path>`;
     // Ghosts
     store.ghosts.forEach((ghost, index) => {
+        const ghostPositionAnimation = generateChangingValuesAnimation(store, generateGhostPositions(store, index));
+        const ghostColorAnimation = generateChangingValuesAnimation(store, generateGhostColors(store, index));
         svg += `<use id="ghost${index}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" href="#ghost-${ghost.name}">
-            <animateTransform attributeName="transform" type="translate" dur="${store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes(store)}"
-                values="${generateGhostPositions(store, index)}"/>
-            <animate attributeName="href" dur="${store.gameHistory.length * 300}ms" repeatCount="indefinite"
-                keyTimes="${generateKeyTimes(store)}"
-                values="${generateGhostColors(store, index)}"/>
+            <animateTransform attributeName="transform" type="translate" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite"
+                keyTimes="${ghostPositionAnimation.keyTimes}"
+                values="${ghostPositionAnimation.values}"/>
+            <animate attributeName="href" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite"
+                keyTimes="${ghostColorAnimation.keyTimes}"
+                values="${ghostColorAnimation.values}"/>
         </use>`;
     });
     svg += '</svg>';
-    // TODO: minify SVG
     return svg;
 };
 const generatePacManPath = (mouthAngle) => {
@@ -866,21 +869,15 @@ const generatePacManPath = (mouthAngle) => {
             A ${radius},${radius} 0 1,1 ${radius + radius * Math.cos(endAngle)},${radius + radius * Math.sin(endAngle)}
             Z`;
 };
-const generateKeyTimes = (store) => {
-    return store.gameHistory.map((_, index) => index / (store.gameHistory.length - 1)).join(';');
-};
 const generatePacManPositions = (store) => {
-    return store.gameHistory
-        .map((state) => {
+    return store.gameHistory.map((state) => {
         const x = state.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
         const y = state.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
         return `${x},${y}`;
-    })
-        .join(';');
+    });
 };
 const generatePacManColors = (store) => {
-    return store.gameHistory
-        .map((state) => {
+    return store.gameHistory.map((state) => {
         if (state.pacman.deadRemainingDuration) {
             return _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
         }
@@ -890,57 +887,97 @@ const generatePacManColors = (store) => {
         else {
             return _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
         }
-    })
-        .join(';');
+    });
 };
 const generateCellColorValues = (store, x, y) => {
-    return store.gameHistory
-        .map((state) => {
+    return store.gameHistory.map((state) => {
         const intensity = state.grid[x][y];
         return intensity > 0 ? getContributionColor(store, intensity) : _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).emptyContributionBoxColor;
-    })
-        .join(';');
+    });
 };
 const getContributionColor = (store, intensity) => {
     const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
-    return _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.hexToRGBA(_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).contributionBoxColor, adjustedIntensity);
+    return _utils__WEBPACK_IMPORTED_MODULE_1__.Utils.hexToHexAlpha(_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).contributionBoxColor, adjustedIntensity);
 };
 const generateGhostPositions = (store, ghostIndex) => {
-    return store.gameHistory
-        .map((state) => {
+    return store.gameHistory.map((state) => {
         const ghost = state.ghosts[ghostIndex];
         const x = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
         const y = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
         return `${x},${y}`;
-    })
-        .join(';');
+    });
 };
 const generateGhostColors = (store, ghostIndex) => {
-    return store.gameHistory
-        .map((state) => {
+    return store.gameHistory.map((state) => {
         const ghost = state.ghosts[ghostIndex];
-        return ghost.scared ? '#scared' : '#' + ghost.name;
-    })
-        .join(';');
+        return '#' + (ghost.scared ? ghostShort('scared') : ghostShort(ghost.name));
+    });
 };
 const generateGhostsPredefinition = () => {
     return `<defs>
-		<symbol id="blinky" viewBox="0 0 100 100">
+		<symbol id="${ghostShort('blinky')}" viewBox="0 0 100 100">
             <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['blinky'].imgDate}" width="100" height="100"/>
 		</symbol>
-		<symbol id="clyde" viewBox="0 0 100 100">
+		<symbol id="${ghostShort('clyde')}" viewBox="0 0 100 100">
             <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['clyde'].imgDate}" width="100" height="100"/>
 		</symbol>
-		<symbol id="inky" viewBox="0 0 100 100">
+		<symbol id="${ghostShort('inky')}" viewBox="0 0 100 100">
             <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['inky'].imgDate}" width="100" height="100"/>
 		</symbol>
-		<symbol id="pinky" viewBox="0 0 100 100">
+		<symbol id="${ghostShort('pinky')}" viewBox="0 0 100 100">
             <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['pinky'].imgDate}" width="100" height="100"/>
 		</symbol>
-		<symbol id="scared" viewBox="0 0 100 100">
+		<symbol id="${ghostShort('scared')}" viewBox="0 0 100 100">
             <image href="${_constants__WEBPACK_IMPORTED_MODULE_0__.GHOSTS['scared'].imgDate}" width="100" height="100"/>
 		</symbol>
 	</defs>`;
+};
+const ghostShort = (ghostName) => {
+    switch (ghostName) {
+        case 'blinky':
+            return 'gb';
+        case 'clyde':
+            return 'gc';
+        case 'inky':
+            return 'gi';
+        case 'pinky':
+            return 'gp';
+        case 'scared':
+            return 'gs';
+        default:
+            return ghostName;
+    }
+};
+const generateChangingValuesAnimation = (store, changingValues) => {
+    if (store.gameHistory.length !== changingValues.length) {
+        throw new Error('The length of changingValues must match the length of gameHistory');
+    }
+    const totalFrames = store.gameHistory.length;
+    let keyTimes = [];
+    let values = [];
+    let lastValue = null;
+    changingValues.forEach((currentValue, index) => {
+        if (currentValue !== lastValue) {
+            if (lastValue !== null) {
+                // Add a keyframe right before the color change
+                keyTimes.push(Number(((index - 0.000001) / (totalFrames - 1)).toFixed(6)));
+                values.push(lastValue);
+            }
+            // Add the new color keyframe
+            keyTimes.push(Number((index / (totalFrames - 1)).toFixed(6)));
+            values.push(currentValue);
+            lastValue = currentValue;
+        }
+    });
+    // Ensure the last frame is always included
+    if (keyTimes[keyTimes.length - 1] !== 1) {
+        keyTimes.push(1);
+        values.push(lastValue);
+    }
+    return {
+        keyTimes: keyTimes.join(';'),
+        values: values.join(';')
+    };
 };
 const SVG = {
     generateAnimatedSVG
@@ -1016,17 +1053,28 @@ const getCurrentTheme = (store) => {
     var _a;
     return (_a = _constants__WEBPACK_IMPORTED_MODULE_0__.GAME_THEMES[store.config.gameTheme]) !== null && _a !== void 0 ? _a : _constants__WEBPACK_IMPORTED_MODULE_0__.GAME_THEMES['github'];
 };
-function hexToRGBA(hex, alpha) {
+const hexToRGBA = (hex, alpha) => {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
+};
+const hexToHexAlpha = (hex, alpha) => {
+    hex = hex.replace(/^#/, '');
+    if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    const alphaHex = Math.round(alpha * 255)
+        .toString(16)
+        .padStart(2, '0');
+    return `#${hex}${alphaHex}`;
+};
 const Utils = {
     getGitlabContribution,
     getGithubContribution,
     getCurrentTheme,
-    hexToRGBA
+    hexToRGBA,
+    hexToHexAlpha
 };
 
 
@@ -1129,7 +1177,7 @@ class PacmanRenderer {
                 gameOverCallback: () => () => { },
                 gameTheme: 'github',
                 gameSpeed: 1,
-                enableSounds: true,
+                enableSounds: false,
                 pointsIncreasedCallback: (_) => { }
             };
             this.store.config = Object.assign(Object.assign({}, defaultConfing), this.conf);

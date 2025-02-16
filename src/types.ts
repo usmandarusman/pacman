@@ -64,3 +64,8 @@ export interface GameTheme {
 	contributionBoxColor: string;
 	emptyContributionBoxColor: string;
 }
+
+export interface AnimationData {
+	keyTimes: string;
+	values: string;
+}

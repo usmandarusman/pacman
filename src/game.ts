@@ -1,14 +1,5 @@
 import { Canvas } from './canvas';
-import {
-	DELTA_TIME,
-	GHOST_NAMES,
-	GHOSTS,
-	GRID_HEIGHT,
-	GRID_WIDTH,
-	MONTHS,
-	PACMAN_DEATH_DURATION,
-	PACMAN_POWERUP_DURATION
-} from './constants';
+import { DELTA_TIME, GHOST_NAMES, GRID_HEIGHT, GRID_WIDTH, MONTHS, PACMAN_DEATH_DURATION, PACMAN_POWERUP_DURATION } from './constants';
 import { MusicPlayer, Sound } from './music-player';
 import { SVG } from './svg';
 import { StoreType } from './types';
@@ -118,20 +109,6 @@ const startGame = async (store: StoreType) => {
 	if (remainingCells()) {
 		placePacman(store);
 		placeGhosts(store);
-	}
-
-	if (store.config.outputFormat == 'canvas') {
-		GHOSTS.blinky.img = new Image();
-		GHOSTS.clyde.img = new Image();
-		GHOSTS.inky.img = new Image();
-		GHOSTS.pinky.img = new Image();
-		GHOSTS.scared.img = new Image();
-
-		GHOSTS.blinky.img.src = GHOSTS.blinky.imgDate;
-		GHOSTS.clyde.img.src = GHOSTS.clyde.imgDate;
-		GHOSTS.inky.img.src = GHOSTS.inky.imgDate;
-		GHOSTS.pinky.img.src = GHOSTS.pinky.imgDate;
-		GHOSTS.scared.img.src = GHOSTS.scared.imgDate;
 	}
 
 	if (store.config.outputFormat == 'svg') {
