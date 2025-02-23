@@ -6,7 +6,7 @@
 	},
 	"dependencies": {
 		"@actions/core": "1.10.1",
-		"pacman-contribution-graph": "^1.0.8"
+		"pacman-contribution-graph": "^1.0.9"
 	},
 	"devDependencies": {
 		"@vercel/ncc": "^0.38.3"

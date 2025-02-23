@@ -976,9 +976,10 @@ const generateChangingValuesAnimation = (store, changingValues) => {
     let keyTimes = [];
     let values = [];
     let lastValue = null;
+    let lastIndex = null;
     changingValues.forEach((currentValue, index) => {
         if (currentValue !== lastValue) {
-            if (lastValue !== null) {
+            if (lastValue !== null && lastIndex !== null && index - 1 !== lastIndex) {
                 // Add a keyframe right before the color change
                 keyTimes.push(Number(((index - 0.000001) / (totalFrames - 1)).toFixed(6)));
                 values.push(lastValue);
@@ -987,6 +988,7 @@ const generateChangingValuesAnimation = (store, changingValues) => {
             keyTimes.push(Number((index / (totalFrames - 1)).toFixed(6)));
             values.push(currentValue);
             lastValue = currentValue;
+            lastIndex = index;
         }
     });
     // Ensure the last frame is always included
