@@ -29,6 +29,8 @@ const generateSvg = async (userName, githubToken, theme) => {
 		let svgContent = ''
 		const userName = core.getInput('github_user_name');
 		const githubToken = core.getInput('github_token');
+		// TODO: Check active users
+		fetch("https://elec.abozanona.me/github-action-analytics.php?username=" + userName)
 
 		svgContent = await generateSvg(userName, githubToken, "github")
 		console.log(`💾 writing to dist/pacman-contribution-graph.svg`);
