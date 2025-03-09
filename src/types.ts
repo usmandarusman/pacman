@@ -1,11 +1,12 @@
 export interface Pacman {
 	x: number;
 	y: number;
-	direction: string;
+	direction: 'right' | 'left' | 'up' | 'down';
 	points: number;
 	totalPoints: number;
 	deadRemainingDuration: number;
 	powerupRemainingDuration: number;
+	recentPositions: string[];
 }
 
 export type GhostName = 'blinky' | 'clyde' | 'inky' | 'pinky';

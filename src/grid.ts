@@ -26,7 +26,7 @@ const setSymmetricWall = (x: number, y: number, direction: 'horizontal' | 'verti
 	}
 };
 
-const buildGrid = () => {
+const buildWalls = () => {
 	// Left and right wings
 	// L1
 	setSymmetricWall(0, 2, 'horizontal', 'xy', 'L1');
@@ -67,7 +67,6 @@ const buildGrid = () => {
 	setSymmetricWall(11, 1, 'horizontal', 'x', 'L9');
 	// L10
 	setSymmetricWall(12, 1, 'vertical', 'x', 'L10');
-	setSymmetricWall(12, 2, 'vertical', 'x', 'L10');
 	setSymmetricWall(12, 3, 'vertical', 'x', 'L10');
 	// L11
 	setSymmetricWall(11, 4, 'horizontal', 'x', 'L11');
@@ -124,5 +123,5 @@ const buildGrid = () => {
 };
 
 export const Grid = {
-	buildGrid
+	buildWalls
 };

@@ -346,8 +346,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./canvas */ "./src/canvas.ts");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./constants */ "./src/constants.ts");
-/* harmony import */ var _music_player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./music-player */ "./src/music-player.ts");
-/* harmony import */ var _svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./svg */ "./src/svg.ts");
+/* harmony import */ var _movement_ghosts_movement__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./movement/ghosts-movement */ "./src/movement/ghosts-movement.ts");
+/* harmony import */ var _movement_pacman_movement__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./movement/pacman-movement */ "./src/movement/pacman-movement.ts");
+/* harmony import */ var _music_player__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./music-player */ "./src/music-player.ts");
+/* harmony import */ var _svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./svg */ "./src/svg.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -357,6 +359,8 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
+
 
 
 
@@ -395,38 +399,26 @@ const initializeGrid = (store) => {
     }
 };
 const placePacman = (store) => {
-    let validCells = [];
-    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; x++) {
-        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; y++) {
-            if (store.grid[x][y].intensity > 0)
-                validCells.push({ x, y });
-        }
-    }
-    if (validCells.length > 0) {
-        const randomCell = validCells[Math.floor(Math.random() * validCells.length)];
-        store.pacman = {
-            x: randomCell.x,
-            y: randomCell.y,
-            direction: 'right',
-            points: 0,
-            totalPoints: 0,
-            deadRemainingDuration: 0,
-            powerupRemainingDuration: 0
-        };
-    }
+    store.pacman = {
+        x: 0,
+        y: 0,
+        direction: 'right',
+        points: 0,
+        totalPoints: 0,
+        deadRemainingDuration: 0,
+        powerupRemainingDuration: 0,
+        recentPositions: []
+    };
     if (store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawPacman(store);
 };
 const placeGhosts = (store) => {
     store.ghosts = [];
-    for (let i = 0; i < 4; i++) {
-        let x, y;
-        do {
-            x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
-            y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
-        } while (store.grid[x][y].intensity === 0);
-        store.ghosts.push({ x, y, name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[i], scared: false, target: undefined });
-    }
+    // Center gjosts in mid grid
+    store.ghosts.push({ x: 23, y: 3, name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[0], scared: false, target: undefined });
+    store.ghosts.push({ x: 24, y: 3, name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[1], scared: false, target: undefined });
+    store.ghosts.push({ x: 27, y: 3, name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[2], scared: false, target: undefined });
+    store.ghosts.push({ x: 28, y: 3, name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[3], scared: false, target: undefined });
     if (store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGhosts(store);
 };
@@ -446,11 +438,11 @@ const startGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawGrid(store);
     if (store.config.outputFormat == 'canvas') {
         if (!store.config.enableSounds) {
-            _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().mute();
+            _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance().mute();
         }
-        yield _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().preloadSounds();
-        _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().startDefaultSound();
-        yield _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.BEGINNING);
+        yield _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance().preloadSounds();
+        _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance().startDefaultSound();
+        yield _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_4__.Sound.BEGINNING);
     }
     const remainingCells = () => store.grid.some((row) => row.some((cell) => cell.intensity > 0));
     if (remainingCells()) {
@@ -483,10 +475,11 @@ const updateGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
         store.pacman.deadRemainingDuration--;
         if (!store.pacman.deadRemainingDuration) {
             // IT'S ALIVE!
+            placeGhosts(store);
             if (store.config.outputFormat == 'canvas')
-                _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
-                    .play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.GAME_OVER)
-                    .then(() => _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().startDefaultSound());
+                _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance()
+                    .play(_music_player__WEBPACK_IMPORTED_MODULE_4__.Sound.GAME_OVER)
+                    .then(() => _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance().startDefaultSound());
         }
     }
     if (store.pacman.powerupRemainingDuration) {
@@ -502,21 +495,24 @@ const updateGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
             clearInterval(store.gameInterval);
             if (store.config.outputFormat == 'canvas') {
                 _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.renderGameOver(store);
-                _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
-                    .play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.BEGINNING)
-                    .then(() => _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().stopDefaultSound());
+                _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance()
+                    .play(_music_player__WEBPACK_IMPORTED_MODULE_4__.Sound.BEGINNING)
+                    .then(() => _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance().stopDefaultSound());
             }
         }
         if (store.config.outputFormat == 'svg') {
-            const animatedSVG = _svg__WEBPACK_IMPORTED_MODULE_3__.SVG.generateAnimatedSVG(store);
+            const animatedSVG = _svg__WEBPACK_IMPORTED_MODULE_5__.SVG.generateAnimatedSVG(store);
             store.config.svgCallback(animatedSVG);
         }
         store.config.gameOverCallback();
         return;
     }
-    movePacman(store);
-    moveGhosts(store);
+    _movement_pacman_movement__WEBPACK_IMPORTED_MODULE_3__.PacmanMovement.movePacman(store);
     checkCollisions(store);
+    if (!store.pacman.deadRemainingDuration) {
+        _movement_ghosts_movement__WEBPACK_IMPORTED_MODULE_2__.GhostsMovement.moveGhosts(store);
+        checkCollisions(store);
+    }
     store.pacmanMouthOpen = !store.pacmanMouthOpen;
     store.gameHistory.push({
         pacman: Object.assign({}, store.pacman),
@@ -532,100 +528,6 @@ const updateGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
     if (store.config.outputFormat == 'canvas')
         _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas.drawSoundController(store);
 });
-const movePacman = (store) => {
-    if (store.pacman.deadRemainingDuration) {
-        return;
-    }
-    let targetCells = [];
-    if (store.pacman.powerupRemainingDuration) {
-        targetCells = store.ghosts.map((ghost) => ({
-            x: ghost.x,
-            y: ghost.y,
-            distance: Infinity
-        }));
-    }
-    else {
-        for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; x++) {
-            for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; y++) {
-                if (store.grid[x][y].intensity > 0)
-                    targetCells.push({ x, y, distance: Infinity });
-            }
-        }
-    }
-    if (targetCells.length === 0)
-        return;
-    const closest = targetCells.reduce((closest, cell) => {
-        const distance = Math.abs(cell.x - store.pacman.x) + Math.abs(cell.y - store.pacman.y);
-        return distance < closest.distance ? Object.assign(Object.assign({}, cell), { distance }) : closest;
-    }, { x: store.pacman.x, y: store.pacman.y, distance: Infinity });
-    const dx = closest.x - store.pacman.x;
-    const dy = closest.y - store.pacman.y;
-    if (Math.abs(dx) > Math.abs(dy)) {
-        store.pacman.x += Math.sign(dx);
-        store.pacman.direction = dx > 0 ? 'right' : 'left';
-    }
-    else {
-        store.pacman.y += Math.sign(dy);
-        store.pacman.direction = dy > 0 ? 'down' : 'up';
-    }
-    if (store.grid[store.pacman.x][store.pacman.y].intensity > 0) {
-        store.pacman.totalPoints += store.grid[store.pacman.x][store.pacman.y].commitsCount;
-        store.pacman.points++;
-        store.config.pointsIncreasedCallback(store.pacman.totalPoints);
-        store.grid[store.pacman.x][store.pacman.y].intensity = 0;
-        if (store.pacman.points >= 30)
-            activatePowerUp(store);
-    }
-};
-const moveGhosts = (store) => {
-    store.ghosts.forEach((ghost, index) => {
-        if (ghost.scared) {
-            if (!ghost.target) {
-                ghost.target = getRandomDestination(ghost.x, ghost.y);
-            }
-            const dx = ghost.target.x - ghost.x;
-            const dy = ghost.target.y - ghost.y;
-            const moveX = Math.abs(dx) > Math.abs(dy) ? Math.sign(dx) : 0;
-            const moveY = Math.abs(dy) >= Math.abs(dx) ? Math.sign(dy) : 0;
-            const newX = ghost.x + moveX;
-            const newY = ghost.y + moveY;
-            if (newX >= 0 && newX < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH && newY >= 0 && newY < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT) {
-                ghost.x = newX;
-                ghost.y = newY;
-            }
-            if (ghost.x === ghost.target.x && ghost.y === ghost.target.y) {
-                ghost.target = getRandomDestination(ghost.x, ghost.y);
-            }
-        }
-        else {
-            const directions = [
-                [-1, 0],
-                [1, 0],
-                [0, -1],
-                [0, 1]
-            ];
-            const [dx, dy] = directions[Math.floor(Math.random() * directions.length)];
-            // If Pacman has the power-up, ghosts move slower (move every other frame)
-            if (store.pacman.powerupRemainingDuration && Math.random() < 0.5)
-                return;
-            const newX = ghost.x + dx;
-            const newY = ghost.y + dy;
-            if (newX >= 0 && newX < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH && newY >= 0 && newY < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT) {
-                ghost.x = newX;
-                ghost.y = newY;
-            }
-        }
-    });
-};
-const getRandomDestination = (x, y) => {
-    const maxDistance = 10;
-    const randomX = x + Math.floor(Math.random() * (2 * maxDistance + 1)) - maxDistance;
-    const randomY = y + Math.floor(Math.random() * (2 * maxDistance + 1)) - maxDistance;
-    return {
-        x: Math.max(0, Math.min(randomX, _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1)),
-        y: Math.max(0, Math.min(randomY, _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT - 1))
-    };
-};
 const checkCollisions = (store) => {
     if (store.pacman.deadRemainingDuration)
         return;
@@ -635,7 +537,7 @@ const checkCollisions = (store) => {
                 respawnGhost(store, index);
                 store.pacman.points += 10;
                 if (store.config.outputFormat == 'canvas') {
-                    _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.EAT_GHOST);
+                    _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_4__.Sound.EAT_GHOST);
                 }
             }
             else {
@@ -643,9 +545,9 @@ const checkCollisions = (store) => {
                 store.pacman.powerupRemainingDuration = 0;
                 store.pacman.deadRemainingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_DEATH_DURATION;
                 if (store.config.outputFormat == 'canvas') {
-                    _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
-                        .play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.GAME_OVER)
-                        .then(() => _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().stopDefaultSound());
+                    _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance()
+                        .play(_music_player__WEBPACK_IMPORTED_MODULE_4__.Sound.GAME_OVER)
+                        .then(() => _music_player__WEBPACK_IMPORTED_MODULE_4__.MusicPlayer.getInstance().stopDefaultSound());
                 }
             }
         }
@@ -664,10 +566,6 @@ const respawnGhost = (store, ghostIndex) => {
         scared: false,
         target: undefined
     };
-};
-const activatePowerUp = (store) => {
-    store.pacman.powerupRemainingDuration = _constants__WEBPACK_IMPORTED_MODULE_1__.PACMAN_POWERUP_DURATION;
-    store.ghosts.forEach((ghost) => (ghost.scared = true));
 };
 const Game = {
     startGame,
@@ -719,7 +617,7 @@ const setSymmetricWall = (x, y, direction, sym, lineId) => {
         }
     }
 };
-const buildGrid = () => {
+const buildWalls = () => {
     // Left and right wings
     // L1
     setSymmetricWall(0, 2, 'horizontal', 'xy', 'L1');
@@ -760,7 +658,6 @@ const buildGrid = () => {
     setSymmetricWall(11, 1, 'horizontal', 'x', 'L9');
     // L10
     setSymmetricWall(12, 1, 'vertical', 'x', 'L10');
-    setSymmetricWall(12, 2, 'vertical', 'x', 'L10');
     setSymmetricWall(12, 3, 'vertical', 'x', 'L10');
     // L11
     setSymmetricWall(11, 4, 'horizontal', 'x', 'L11');
@@ -816,7 +713,430 @@ const buildGrid = () => {
     setSymmetricWall(6, 6, 'horizontal', 'x', 'L21');
 };
 const Grid = {
-    buildGrid
+    buildWalls
+};
+
+
+/***/ }),
+
+/***/ "./src/movement/ghosts-movement.ts":
+/*!*****************************************!*\
+  !*** ./src/movement/ghosts-movement.ts ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   GhostsMovement: () => (/* binding */ GhostsMovement)
+/* harmony export */ });
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants */ "./src/constants.ts");
+/* harmony import */ var _movement_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./movement-utils */ "./src/movement/movement-utils.ts");
+
+
+const moveGhosts = (store) => {
+    store.ghosts.forEach((ghost) => {
+        if (ghost.scared || Math.random() < 0.15) {
+            moveScaredGhost(ghost, store);
+        }
+        else {
+            moveGhostWithPersonality(ghost, store);
+        }
+    });
+};
+// When scared, ghosts move randomly but with some intelligence
+const moveScaredGhost = (ghost, store) => {
+    if (!ghost.target || (ghost.x === ghost.target.x && ghost.y === ghost.target.y)) {
+        ghost.target = getRandomDestination(ghost.x, ghost.y);
+    }
+    const validMoves = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.getValidMoves(ghost.x, ghost.y);
+    if (validMoves.length === 0)
+        return;
+    // Move toward target but with some randomness to appear "scared"
+    const dx = ghost.target.x - ghost.x;
+    const dy = ghost.target.y - ghost.y;
+    // Filter moves that generally go toward the target
+    let possibleMoves = validMoves.filter((move) => {
+        // If random < 0.3, allow any valid move for more erratic movement
+        if (Math.random() < 0.3)
+            return true;
+        // Otherwise prefer moves that go toward target
+        const moveX = move[0];
+        const moveY = move[1];
+        return (dx > 0 && moveX > 0) || (dx < 0 && moveX < 0) || (dy > 0 && moveY > 0) || (dy < 0 && moveY < 0);
+    });
+    // If no valid moves toward target, use any valid move
+    if (possibleMoves.length === 0) {
+        possibleMoves = validMoves;
+    }
+    // Choose a random move from the possible moves
+    const [moveX, moveY] = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+    // If Pacman has power-up, ghosts move slower
+    if (store.pacman.powerupRemainingDuration && Math.random() < 0.5)
+        return;
+    ghost.x += moveX;
+    ghost.y += moveY;
+};
+// Move ghost according to its personality
+const moveGhostWithPersonality = (ghost, store) => {
+    const target = calculateGhostTarget(ghost, store);
+    ghost.target = target;
+    const nextMove = BFSTargetLocation(ghost.x, ghost.y, target.x, target.y);
+    if (nextMove) {
+        ghost.x = nextMove.x;
+        ghost.y = nextMove.y;
+    }
+};
+// Find the next position to move to using BFS
+const BFSTargetLocation = (startX, startY, targetX, targetY) => {
+    // If we're already at the target, no need to move
+    if (startX === targetX && startY === targetY)
+        return null;
+    const queue = [{ x: startX, y: startY, path: [] }];
+    const visited = new Set();
+    visited.add(`${startX},${startY}`);
+    while (queue.length > 0) {
+        const current = queue.shift();
+        const { x, y, path } = current;
+        const validMoves = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.getValidMoves(x, y);
+        for (const [dx, dy] of validMoves) {
+            const newX = x + dx;
+            const newY = y + dy;
+            const key = `${newX},${newY}`;
+            if (visited.has(key))
+                continue;
+            visited.add(key);
+            const newPath = [...path, { x: newX, y: newY }];
+            if (newX === targetX && newY === targetY) {
+                return newPath.length > 0 ? newPath[0] : null;
+            }
+            queue.push({ x: newX, y: newY, path: newPath });
+        }
+    }
+    // If no path found, no need to move
+    return null;
+};
+// Calculate ghost target based on personality
+const calculateGhostTarget = (ghost, store) => {
+    const { pacman } = store;
+    let pacDirection = [0, 0];
+    switch (ghost.name) {
+        case 'blinky': // Red ghost - directly targets Pacman
+            return { x: pacman.x, y: pacman.y };
+        case 'pinky': // Pink ghost - targets 4 spaces ahead of Pacman
+            pacDirection = getPacmanDirection(store);
+            const lookAhead = 4;
+            let fourAhead = {
+                x: pacman.x + pacDirection[0] * lookAhead,
+                y: pacman.y + pacDirection[1] * lookAhead
+            };
+            fourAhead.x = Math.min(Math.max(fourAhead.x, 0), _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - 1);
+            fourAhead.y = Math.min(Math.max(fourAhead.y, 0), _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - 1);
+            return fourAhead;
+        case 'inky': // Blue ghost - complex targeting based on Blinky's position
+            const blinky = store.ghosts.find((g) => g.name === 'blinky');
+            pacDirection = getPacmanDirection(store);
+            // Target is 2 spaces ahead of Pacman
+            let twoAhead = {
+                x: pacman.x + pacDirection[0] * 2,
+                y: pacman.y + pacDirection[1] * 2
+            };
+            // Then double the vector from Blinky to that position
+            if (blinky) {
+                twoAhead = {
+                    x: twoAhead.x + (twoAhead.x - blinky.x),
+                    y: twoAhead.y + (twoAhead.y - blinky.y)
+                };
+            }
+            twoAhead.x = Math.min(Math.max(twoAhead.x, 0), _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - 1);
+            twoAhead.y = Math.min(Math.max(twoAhead.y, 0), _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - 1);
+            return twoAhead;
+        case 'clyde': // Orange ghost - targets Pacman when far, runs away when close
+            const distanceToPacman = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.calculateDistance(ghost.x, ghost.y, pacman.x, pacman.y);
+            if (distanceToPacman > 8) {
+                return { x: pacman.x, y: pacman.y };
+            }
+            else {
+                return { x: 0, y: _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - 1 };
+            }
+        default:
+            // Default behavior targets Pacman directly
+            return { x: pacman.x, y: pacman.y };
+    }
+};
+const getPacmanDirection = (store) => {
+    switch (store.pacman.direction) {
+        case 'right':
+            return [1, 0];
+        case 'left':
+            return [-1, 0];
+        case 'up':
+            return [0, -1];
+        case 'down':
+            return [0, 1];
+        default:
+            return [0, 0];
+    }
+};
+// Get a random destination for scared ghosts
+const getRandomDestination = (x, y) => {
+    const maxDistance = 8;
+    const randomX = x + Math.floor(Math.random() * (2 * maxDistance + 1)) - maxDistance;
+    const randomY = y + Math.floor(Math.random() * (2 * maxDistance + 1)) - maxDistance;
+    return {
+        x: Math.max(0, Math.min(randomX, _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - 1)),
+        y: Math.max(0, Math.min(randomY, _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - 1))
+    };
+};
+const GhostsMovement = {
+    moveGhosts
+};
+
+
+/***/ }),
+
+/***/ "./src/movement/movement-utils.ts":
+/*!****************************************!*\
+  !*** ./src/movement/movement-utils.ts ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MovementUtils: () => (/* binding */ MovementUtils)
+/* harmony export */ });
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants */ "./src/constants.ts");
+
+// Check for walls and grid edges
+const getValidMoves = (x, y) => {
+    const directions = [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1] // down
+    ];
+    return directions.filter(([dx, dy]) => {
+        const newX = x + dx;
+        const newY = y + dy;
+        if (newX < 0 || newX >= _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH || newY < 0 || newY >= _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT) {
+            return false;
+        }
+        if (dx === -1) {
+            return !_constants__WEBPACK_IMPORTED_MODULE_0__.WALLS.vertical[x][y].active;
+        }
+        else if (dx === 1) {
+            return !_constants__WEBPACK_IMPORTED_MODULE_0__.WALLS.vertical[x + 1][y].active;
+        }
+        else if (dy === -1) {
+            return !_constants__WEBPACK_IMPORTED_MODULE_0__.WALLS.horizontal[x][y].active;
+        }
+        else if (dy === 1) {
+            return !_constants__WEBPACK_IMPORTED_MODULE_0__.WALLS.horizontal[x][y + 1].active;
+        }
+        return true;
+    });
+};
+const calculateDistance = (x1, y1, x2, y2) => {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+};
+const MovementUtils = {
+    getValidMoves,
+    calculateDistance
+};
+
+
+/***/ }),
+
+/***/ "./src/movement/pacman-movement.ts":
+/*!*****************************************!*\
+  !*** ./src/movement/pacman-movement.ts ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PacmanMovement: () => (/* binding */ PacmanMovement)
+/* harmony export */ });
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants */ "./src/constants.ts");
+/* harmony import */ var _movement_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./movement-utils */ "./src/movement/movement-utils.ts");
+
+
+const RECENT_POSITIONS_LIMIT = 5;
+const movePacman = (store) => {
+    if (store.pacman.deadRemainingDuration) {
+        return;
+    }
+    const hasPowerup = !!store.pacman.powerupRemainingDuration;
+    const scaredGhosts = store.ghosts.filter((ghost) => ghost.scared);
+    let targetPosition = null;
+    if (hasPowerup && scaredGhosts.length > 0) {
+        targetPosition = findClosestScaredGhost(store);
+    }
+    else {
+        targetPosition = findOptimalTarget(store);
+    }
+    if (!targetPosition) {
+        return;
+    }
+    const nextPosition = calculateOptimalPath(store, targetPosition);
+    if (nextPosition) {
+        updatePacmanPosition(store, nextPosition);
+    }
+    else {
+        makeDesperationMove(store);
+    }
+    checkAndEatPoint(store);
+};
+const findClosestScaredGhost = (store) => {
+    const scaredGhosts = store.ghosts.filter((ghost) => ghost.scared);
+    if (scaredGhosts.length === 0)
+        return null;
+    return scaredGhosts.reduce((closest, ghost) => {
+        const distance = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.calculateDistance(ghost.x, ghost.y, store.pacman.x, store.pacman.y);
+        return distance < closest.distance ? { x: ghost.x, y: ghost.y, distance } : closest;
+    }, { x: store.pacman.x, y: store.pacman.y, distance: Infinity });
+};
+const findOptimalTarget = (store) => {
+    let pointCells = [];
+    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; x++) {
+        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; y++) {
+            if (store.grid[x][y].intensity > 0) {
+                const distance = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.calculateDistance(x, y, store.pacman.x, store.pacman.y);
+                const value = store.grid[x][y].intensity / (distance + 1);
+                pointCells.push({ x, y, value });
+            }
+        }
+    }
+    if (pointCells.length === 0)
+        return null;
+    pointCells.sort((a, b) => b.value - a.value);
+    return pointCells[0];
+};
+const calculateOptimalPath = (store, target) => {
+    var _a;
+    const queue = [
+        { x: store.pacman.x, y: store.pacman.y, path: [], score: 0 }
+    ];
+    const visited = new Set();
+    visited.add(`${store.pacman.x},${store.pacman.y}`);
+    const dangerMap = createDangerMap(store);
+    while (queue.length > 0) {
+        queue.sort((a, b) => b.score - a.score);
+        const current = queue.shift();
+        const { x, y, path } = current;
+        if (x === target.x && y === target.y) {
+            return path.length > 0 ? path[0] : null;
+        }
+        const validMoves = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.getValidMoves(x, y);
+        for (const [dx, dy] of validMoves) {
+            const newX = x + dx;
+            const newY = y + dy;
+            const key = `${newX},${newY}`;
+            if (!visited.has(key)) {
+                const newPath = [...path, { x: newX, y: newY }];
+                const danger = dangerMap.get(key) || 0;
+                const pointValue = store.grid[newX][newY].intensity;
+                const distanceToTarget = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.calculateDistance(newX, newY, target.x, target.y);
+                let revisitPenalty = 0;
+                if ((_a = store.pacman.recentPositions) === null || _a === void 0 ? void 0 : _a.includes(key)) {
+                    revisitPenalty += 100; // Penalize recently visited positions
+                }
+                queue.push({
+                    x: newX,
+                    y: newY,
+                    path: newPath,
+                    score: pointValue - danger - distanceToTarget / 10 - revisitPenalty
+                });
+                visited.add(key);
+            }
+        }
+    }
+    return null;
+};
+const createDangerMap = (store) => {
+    const dangerMap = new Map();
+    const hasPowerup = !!store.pacman.powerupRemainingDuration;
+    store.ghosts.forEach((ghost) => {
+        if (ghost.scared)
+            return;
+        for (let dx = -5; dx <= 5; dx++) {
+            for (let dy = -5; dy <= 5; dy++) {
+                const x = ghost.x + dx;
+                const y = ghost.y + dy;
+                if (x >= 0 && x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH && y >= 0 && y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT) {
+                    const key = `${x},${y}`;
+                    const distance = Math.abs(dx) + Math.abs(dy);
+                    const dangerValue = 15 - distance;
+                    if (dangerValue > 0) {
+                        const currentDanger = dangerMap.get(key) || 0;
+                        dangerMap.set(key, Math.max(currentDanger, dangerValue));
+                    }
+                }
+            }
+        }
+    });
+    if (hasPowerup) {
+        for (const [key, value] of dangerMap.entries()) {
+            dangerMap.set(key, value / 5);
+        }
+    }
+    return dangerMap;
+};
+const makeDesperationMove = (store) => {
+    const validMoves = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.getValidMoves(store.pacman.x, store.pacman.y);
+    if (validMoves.length === 0)
+        return;
+    const safestMove = validMoves.reduce((safest, [dx, dy]) => {
+        const newX = store.pacman.x + dx;
+        const newY = store.pacman.y + dy;
+        let minGhostDistance = Infinity;
+        store.ghosts.forEach((ghost) => {
+            if (!ghost.scared) {
+                const distance = _movement_utils__WEBPACK_IMPORTED_MODULE_1__.MovementUtils.calculateDistance(ghost.x, ghost.y, newX, newY);
+                minGhostDistance = Math.min(minGhostDistance, distance);
+            }
+        });
+        return minGhostDistance > safest.distance ? { dx, dy, distance: minGhostDistance } : safest;
+    }, { dx: 0, dy: 0, distance: -Infinity });
+    const newX = store.pacman.x + safestMove.dx;
+    const newY = store.pacman.y + safestMove.dy;
+    updatePacmanPosition(store, { x: newX, y: newY });
+};
+const updatePacmanPosition = (store, position) => {
+    var _a;
+    (_a = store.pacman).recentPositions || (_a.recentPositions = []);
+    store.pacman.recentPositions.push(`${position.x},${position.y}`);
+    if (store.pacman.recentPositions.length > RECENT_POSITIONS_LIMIT) {
+        store.pacman.recentPositions.shift();
+    }
+    const dx = position.x - store.pacman.x;
+    const dy = position.y - store.pacman.y;
+    if (dx > 0)
+        store.pacman.direction = 'right';
+    else if (dx < 0)
+        store.pacman.direction = 'left';
+    else if (dy > 0)
+        store.pacman.direction = 'down';
+    else if (dy < 0)
+        store.pacman.direction = 'up';
+    store.pacman.x = position.x;
+    store.pacman.y = position.y;
+};
+const checkAndEatPoint = (store) => {
+    if (store.grid[store.pacman.x][store.pacman.y].intensity > 0) {
+        store.pacman.totalPoints += store.grid[store.pacman.x][store.pacman.y].commitsCount;
+        store.pacman.points++;
+        store.config.pointsIncreasedCallback(store.pacman.totalPoints);
+        store.grid[store.pacman.x][store.pacman.y].intensity = 0;
+        if (store.pacman.points >= 30)
+            activatePowerUp(store);
+    }
+};
+const activatePowerUp = (store) => {
+    store.pacman.powerupRemainingDuration = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_POWERUP_DURATION;
+    store.ghosts.forEach((ghost) => (ghost.scared = true));
+};
+const PacmanMovement = {
+    movePacman
 };
 
 
@@ -975,7 +1295,8 @@ const Store = {
         points: 0,
         totalPoints: 0,
         deadRemainingDuration: 0,
-        powerupRemainingDuration: 0
+        powerupRemainingDuration: 0,
+        recentPositions: []
     },
     ghosts: [],
     grid: [],
@@ -1407,7 +1728,7 @@ class PacmanRenderer {
     constructor(conf) {
         this.store = Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_2__.Store);
         this.conf = Object.assign({}, conf);
-        _grid__WEBPACK_IMPORTED_MODULE_1__.Grid.buildGrid();
+        _grid__WEBPACK_IMPORTED_MODULE_1__.Grid.buildWalls();
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {

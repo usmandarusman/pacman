@@ -11,7 +11,7 @@ export class PacmanRenderer {
 	constructor(conf: Config) {
 		this.store = { ...Store };
 		this.conf = { ...conf };
-		Grid.buildGrid();
+		Grid.buildWalls();
 	}
 
 	public async start() {
