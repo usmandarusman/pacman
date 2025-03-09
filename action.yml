@@ -4,7 +4,7 @@ author: 'abozanona'
 
 runs:
     using: node20
-    main: dist/index.js
+    main: github-action/dist/index.js
 
 inputs:
     github_user_name:
