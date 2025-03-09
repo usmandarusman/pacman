@@ -23,51 +23,72 @@ const resizeCanvas = (store) => {
     store.config.canvas.height = canvasHeight;
 };
 const drawGrid = (store) => {
-    store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).gridBackground;
-    store.config.canvas.getContext('2d').fillRect(0, 0, store.config.canvas.width, store.config.canvas.height);
-    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; x++) {
-        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
+    const ctx = store.config.canvas.getContext('2d');
+    ctx.fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).gridBackground;
+    ctx.fillRect(0, 0, store.config.canvas.width, store.config.canvas.height);
+    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; x++) {
+        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; y++) {
             const intensity = store.grid[x][y].intensity;
             if (intensity > 0) {
                 const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
                 const color = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.hexToRGBA(_utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).contributionBoxColor, adjustedIntensity);
-                store.config.canvas.getContext('2d').fillStyle = color;
+                ctx.fillStyle = color;
             }
             else {
-                store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).emptyContributionBoxColor;
+                ctx.fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).emptyContributionBoxColor;
             }
-            store.config.canvas.getContext('2d').beginPath();
+            ctx.beginPath();
             store.config.canvas
                 .getContext('2d')
-                .roundRect(y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE), x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, 5);
-            store.config.canvas.getContext('2d').fill();
+                .roundRect(x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE), y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE, 5);
+            ctx.fill();
         }
     }
-    store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).textColor;
-    store.config.canvas.getContext('2d').font = '10px Arial';
-    store.config.canvas.getContext('2d').textAlign = 'center';
+    ctx.fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).wallColor;
+    for (let x = 0; x <= _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; x++) {
+        for (let y = 0; y <= _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; y++) {
+            // Draw horizontal walls
+            if (_constants__WEBPACK_IMPORTED_MODULE_0__.WALLS.horizontal[x][y].active) {
+                ctx.fillRect(x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) - _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE, y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) - _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE + 15, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE, _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
+                // // TODO: For debug only
+                // ctx.fillStyle = '#000';
+                // ctx.fillText(WALLS.horizontal[x][y].id, x * (GAP_SIZE + CELL_SIZE), y * (GAP_SIZE + CELL_SIZE));
+            }
+            // Draw vertical walls
+            if (_constants__WEBPACK_IMPORTED_MODULE_0__.WALLS.vertical[x][y].active) {
+                ctx.fillRect(x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) - _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE, y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) - _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE + 15, _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE, _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
+                // // TODO: For debug only
+                // ctx.fillStyle = '#000';
+                // ctx.fillText(WALLS.vertical[x][y].id, x * (GAP_SIZE + CELL_SIZE), (y + 1) * (GAP_SIZE + CELL_SIZE));
+            }
+        }
+    }
+    ctx.fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).textColor;
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
     let lastMonth = '';
-    for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
-        if (store.monthLabels[y] !== lastMonth) {
-            const xPos = y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-            store.config.canvas.getContext('2d').fillText(store.monthLabels[y], xPos, 10);
-            lastMonth = store.monthLabels[y];
+    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; x++) {
+        if (store.monthLabels[x] !== lastMonth) {
+            const xPos = x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
+            ctx.fillText(store.monthLabels[x], xPos, 10);
+            lastMonth = store.monthLabels[x];
         }
     }
 };
 const drawPacman = (store) => {
-    const x = store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
-    const y = store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
+    const ctx = store.config.canvas.getContext('2d');
+    const x = store.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
+    const y = store.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2 + 15;
     const radius = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE / 2;
     // Change Pac-Man's color to red if he's on power-up, dead, else yellow
     if (store.pacman.deadRemainingDuration) {
-        store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
+        ctx.fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_DEAD;
     }
     else if (store.pacman.powerupRemainingDuration) {
-        store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_POWERUP;
+        ctx.fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR_POWERUP;
     }
     else {
-        store.config.canvas.getContext('2d').fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
+        ctx.fillStyle = _constants__WEBPACK_IMPORTED_MODULE_0__.PACMAN_COLOR;
     }
     const mouthAngle = store.pacmanMouthOpen ? 0.35 * Math.PI : 0.1 * Math.PI;
     let startAngle, endAngle;
@@ -90,10 +111,10 @@ const drawPacman = (store) => {
             endAngle = 2 * Math.PI - mouthAngle;
             break;
     }
-    store.config.canvas.getContext('2d').beginPath();
-    store.config.canvas.getContext('2d').arc(x, y, radius, startAngle, endAngle);
-    store.config.canvas.getContext('2d').lineTo(x, y);
-    store.config.canvas.getContext('2d').fill();
+    ctx.beginPath();
+    ctx.arc(x, y, radius, startAngle, endAngle);
+    ctx.lineTo(x, y);
+    ctx.fill();
 };
 const preloadedImages = {};
 const getLoadedImage = (key, imgDate) => {
@@ -106,8 +127,8 @@ const getLoadedImage = (key, imgDate) => {
 };
 const drawGhosts = (store) => {
     store.ghosts.forEach((ghost) => {
-        const x = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
-        const y = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
+        const x = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
+        const y = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
         const size = _constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE;
         const ctx = store.config.canvas.getContext('2d');
         if (ghost.scared) {
@@ -119,44 +140,46 @@ const drawGhosts = (store) => {
     });
 };
 const renderGameOver = (store) => {
-    store.config.canvas.getContext('2d').fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).textColor;
-    store.config.canvas.getContext('2d').font = '20px Arial';
-    store.config.canvas.getContext('2d').textAlign = 'center';
-    store.config.canvas.getContext('2d').fillText('Game Over', store.config.canvas.width / 2, store.config.canvas.height / 2);
+    const ctx = store.config.canvas.getContext('2d');
+    ctx.fillStyle = _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getCurrentTheme(store).textColor;
+    ctx.font = '20px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Game Over', store.config.canvas.width / 2, store.config.canvas.height / 2);
 };
 const drawSoundController = (store) => {
     if (!store.config.enableSounds) {
         return;
     }
+    const ctx = store.config.canvas.getContext('2d');
     const width = 30, height = 30, left = store.config.canvas.width - width - 10, top = 10;
-    store.config.canvas.getContext('2d').fillStyle = `rgba(0, 0, 0, ${_music_player__WEBPACK_IMPORTED_MODULE_1__.MusicPlayer.getInstance().isMuted ? 0.3 : 0.5})`;
-    store.config.canvas.getContext('2d').beginPath();
-    store.config.canvas.getContext('2d').moveTo(left + 10, top + 10);
-    store.config.canvas.getContext('2d').lineTo(left + 20, top + 5);
-    store.config.canvas.getContext('2d').lineTo(left + 20, top + 25);
-    store.config.canvas.getContext('2d').lineTo(left + 10, top + 20);
-    store.config.canvas.getContext('2d').closePath();
-    store.config.canvas.getContext('2d').fill();
+    ctx.fillStyle = `rgba(0, 0, 0, ${_music_player__WEBPACK_IMPORTED_MODULE_1__.MusicPlayer.getInstance().isMuted ? 0.3 : 0.5})`;
+    ctx.beginPath();
+    ctx.moveTo(left + 10, top + 10);
+    ctx.lineTo(left + 20, top + 5);
+    ctx.lineTo(left + 20, top + 25);
+    ctx.lineTo(left + 10, top + 20);
+    ctx.closePath();
+    ctx.fill();
     if (!_music_player__WEBPACK_IMPORTED_MODULE_1__.MusicPlayer.getInstance().isMuted) {
-        store.config.canvas.getContext('2d').strokeStyle = `rgba(0, 0, 0, 0.4)`;
-        store.config.canvas.getContext('2d').lineWidth = 2;
+        ctx.strokeStyle = `rgba(0, 0, 0, 0.4)`;
+        ctx.lineWidth = 2;
         // First wave
-        store.config.canvas.getContext('2d').beginPath();
-        store.config.canvas.getContext('2d').arc(left + 25, top + 15, 5, 0, Math.PI * 2);
-        store.config.canvas.getContext('2d').stroke();
+        ctx.beginPath();
+        ctx.arc(left + 25, top + 15, 5, 0, Math.PI * 2);
+        ctx.stroke();
         // Second wave
-        store.config.canvas.getContext('2d').beginPath();
-        store.config.canvas.getContext('2d').arc(left + 25, top + 15, 8, 0, Math.PI * 2);
-        store.config.canvas.getContext('2d').stroke();
+        ctx.beginPath();
+        ctx.arc(left + 25, top + 15, 8, 0, Math.PI * 2);
+        ctx.stroke();
     }
     else {
         // Mute line
-        store.config.canvas.getContext('2d').strokeStyle = 'rgba(255, 0, 0, 0.6)';
-        store.config.canvas.getContext('2d').lineWidth = 3;
-        store.config.canvas.getContext('2d').beginPath();
-        store.config.canvas.getContext('2d').moveTo(left + 25, top + 5);
-        store.config.canvas.getContext('2d').lineTo(left + 5, top + 25);
-        store.config.canvas.getContext('2d').stroke();
+        ctx.strokeStyle = 'rgba(255, 0, 0, 0.6)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(left + 25, top + 5);
+        ctx.lineTo(left + 5, top + 25);
+        ctx.stroke();
     }
 };
 const listenToSoundController = (store) => {
@@ -211,7 +234,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   PACMAN_COLOR_DEAD: () => (/* binding */ PACMAN_COLOR_DEAD),
 /* harmony export */   PACMAN_COLOR_POWERUP: () => (/* binding */ PACMAN_COLOR_POWERUP),
 /* harmony export */   PACMAN_DEATH_DURATION: () => (/* binding */ PACMAN_DEATH_DURATION),
-/* harmony export */   PACMAN_POWERUP_DURATION: () => (/* binding */ PACMAN_POWERUP_DURATION)
+/* harmony export */   PACMAN_POWERUP_DURATION: () => (/* binding */ PACMAN_POWERUP_DURATION),
+/* harmony export */   WALLS: () => (/* binding */ WALLS),
+/* harmony export */   hasWall: () => (/* binding */ hasWall),
+/* harmony export */   setWall: () => (/* binding */ setWall)
 /* harmony export */ });
 const CELL_SIZE = 20;
 const GAP_SIZE = 2;
@@ -230,25 +256,29 @@ const GAME_THEMES = {
         textColor: '#586069',
         gridBackground: '#ffffff',
         contributionBoxColor: '#9be9a8',
-        emptyContributionBoxColor: '#ebedf0'
+        emptyContributionBoxColor: '#ebedf0',
+        wallColor: '#000000'
     },
     'github-dark': {
         textColor: '#8b949e',
         gridBackground: '#0d1117',
         contributionBoxColor: '#26a641',
-        emptyContributionBoxColor: '#161b22'
+        emptyContributionBoxColor: '#161b22',
+        wallColor: '#FFFFFF'
     },
     gitlab: {
         textColor: '#626167',
         gridBackground: '#ffffff',
         contributionBoxColor: '#7992f5',
-        emptyContributionBoxColor: '#ececef'
+        emptyContributionBoxColor: '#ececef',
+        wallColor: '#000000'
     },
     'gitlab-dark': {
         textColor: '#999999',
         gridBackground: '#1f1f1f',
         contributionBoxColor: '#2e7db1',
-        emptyContributionBoxColor: '#2d2d2d'
+        emptyContributionBoxColor: '#2d2d2d',
+        wallColor: '#FFFFFF'
     }
 };
 const GHOSTS = {
@@ -266,6 +296,38 @@ const GHOSTS = {
     },
     scared: {
         imgDate: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAeUlEQVQ4T82TUQ6AMAhD7UX0/sdyF0GREVmDmTN+bH9r6Bs0A0t2VpFULwDrrfBkZFcA3YC3ZodViAFGzQHyP0B2w2NrB0/1AoDbHwLoQ5/nrw1OBuD5e/crbM9Aiz35njHWzpSB/m3+0r40mV41M8U19WJe3Uw/tQOKt08pUUbBEQAAAABJRU5ErkJgggAA'
+    }
+};
+const WALLS = {
+    horizontal: Array(GRID_WIDTH + 1)
+        .fill(null)
+        .map(() => Array(GRID_HEIGHT + 1).fill({ active: false, id: '' })),
+    vertical: Array(GRID_WIDTH + 1)
+        .fill(null)
+        .map(() => Array(GRID_HEIGHT + 1).fill({ active: false, id: '' }))
+};
+const setWall = (x, y, direction, lineId) => {
+    if (direction === 'horizontal') {
+        if (x >= 0 && x < WALLS.horizontal.length && y >= 0 && y < WALLS.horizontal[0].length) {
+            WALLS.horizontal[x][y] = { active: true, id: lineId };
+        }
+    }
+    else {
+        if (x >= 0 && x < WALLS.vertical.length && y >= 0 && y < WALLS.vertical[0].length) {
+            WALLS.vertical[x][y] = { active: true, id: lineId };
+        }
+    }
+};
+const hasWall = (x, y, direction) => {
+    switch (direction) {
+        case 'up':
+            return WALLS.horizontal[x][y].active;
+        case 'down':
+            return WALLS.horizontal[x + 1][y].active;
+        case 'left':
+            return WALLS.vertical[x][y].active;
+        case 'right':
+            return WALLS.vertical[x][y + 1].active;
     }
 };
 
@@ -302,7 +364,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 const initializeGrid = (store) => {
     store.pacman.points = 0;
     store.pacman.totalPoints = 0;
-    store.grid = Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT }, () => Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH }, () => ({ commitsCount: 0, intensity: 0 })));
+    store.grid = Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH }, () => Array.from({ length: _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT }, () => ({ commitsCount: 0, intensity: 0 })));
     store.monthLabels = Array(_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH).fill('');
     let maxCommits = 1;
     const now = new Date();
@@ -313,29 +375,29 @@ const initializeGrid = (store) => {
         const dayOfWeek = contributionDate.getDay();
         const weeksAgo = Math.floor((+startOfCurrentWeek - +contributionDate) / (1000 * 60 * 60 * 24 * 7));
         if (weeksAgo >= 0 && weeksAgo < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH && dayOfWeek >= 0 && dayOfWeek < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT) {
-            store.grid[dayOfWeek][_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - weeksAgo] = { commitsCount: contribution.count, intensity: 0 };
+            store.grid[_constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - weeksAgo][dayOfWeek] = { commitsCount: contribution.count, intensity: 0 };
             if (contribution.count > maxCommits)
                 maxCommits = contribution.count;
         }
     });
-    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
-        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
+    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; x++) {
+        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; y++) {
             if (store.grid[x][y].commitsCount > 0) {
                 store.grid[x][y].intensity = store.grid[x][y].commitsCount / maxCommits;
             }
         }
     }
-    for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
-        const weeksAgo = _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - y;
+    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; x++) {
+        const weeksAgo = _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1 - x;
         const columnDate = new Date(startOfCurrentWeek);
         columnDate.setDate(columnDate.getDate() - weeksAgo * 7);
-        store.monthLabels[y] = _constants__WEBPACK_IMPORTED_MODULE_1__.MONTHS[columnDate.getMonth()];
+        store.monthLabels[x] = _constants__WEBPACK_IMPORTED_MODULE_1__.MONTHS[columnDate.getMonth()];
     }
 };
 const placePacman = (store) => {
     let validCells = [];
-    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
-        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
+    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; x++) {
+        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; y++) {
             if (store.grid[x][y].intensity > 0)
                 validCells.push({ x, y });
         }
@@ -360,8 +422,8 @@ const placeGhosts = (store) => {
     for (let i = 0; i < 4; i++) {
         let x, y;
         do {
-            x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
-            y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
+            x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
+            y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
         } while (store.grid[x][y].intensity === 0);
         store.ghosts.push({ x, y, name: _constants__WEBPACK_IMPORTED_MODULE_1__.GHOST_NAMES[i], scared: false, target: undefined });
     }
@@ -483,8 +545,8 @@ const movePacman = (store) => {
         }));
     }
     else {
-        for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; x++) {
-            for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; y++) {
+        for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH; x++) {
+            for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT; y++) {
                 if (store.grid[x][y].intensity > 0)
                     targetCells.push({ x, y, distance: Infinity });
             }
@@ -500,11 +562,11 @@ const movePacman = (store) => {
     const dy = closest.y - store.pacman.y;
     if (Math.abs(dx) > Math.abs(dy)) {
         store.pacman.x += Math.sign(dx);
-        store.pacman.direction = dx > 0 ? 'down' : 'up';
+        store.pacman.direction = dx > 0 ? 'right' : 'left';
     }
     else {
         store.pacman.y += Math.sign(dy);
-        store.pacman.direction = dy > 0 ? 'right' : 'left';
+        store.pacman.direction = dy > 0 ? 'down' : 'up';
     }
     if (store.grid[store.pacman.x][store.pacman.y].intensity > 0) {
         store.pacman.totalPoints += store.grid[store.pacman.x][store.pacman.y].commitsCount;
@@ -527,7 +589,7 @@ const moveGhosts = (store) => {
             const moveY = Math.abs(dy) >= Math.abs(dx) ? Math.sign(dy) : 0;
             const newX = ghost.x + moveX;
             const newY = ghost.y + moveY;
-            if (newX >= 0 && newX < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT && newY >= 0 && newY < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH) {
+            if (newX >= 0 && newX < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH && newY >= 0 && newY < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT) {
                 ghost.x = newX;
                 ghost.y = newY;
             }
@@ -548,7 +610,7 @@ const moveGhosts = (store) => {
                 return;
             const newX = ghost.x + dx;
             const newY = ghost.y + dy;
-            if (newX >= 0 && newX < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT && newY >= 0 && newY < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH) {
+            if (newX >= 0 && newX < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH && newY >= 0 && newY < _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT) {
                 ghost.x = newX;
                 ghost.y = newY;
             }
@@ -560,8 +622,8 @@ const getRandomDestination = (x, y) => {
     const randomX = x + Math.floor(Math.random() * (2 * maxDistance + 1)) - maxDistance;
     const randomY = y + Math.floor(Math.random() * (2 * maxDistance + 1)) - maxDistance;
     return {
-        x: Math.max(0, Math.min(randomX, _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT - 1)),
-        y: Math.max(0, Math.min(randomY, _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1))
+        x: Math.max(0, Math.min(randomX, _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH - 1)),
+        y: Math.max(0, Math.min(randomY, _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT - 1))
     };
 };
 const checkCollisions = (store) => {
@@ -592,8 +654,8 @@ const checkCollisions = (store) => {
 const respawnGhost = (store, ghostIndex) => {
     let x, y;
     do {
-        x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
-        y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
+        x = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_WIDTH);
+        y = Math.floor(Math.random() * _constants__WEBPACK_IMPORTED_MODULE_1__.GRID_HEIGHT);
     } while ((Math.abs(x - store.pacman.x) <= 2 && Math.abs(y - store.pacman.y) <= 2) || store.grid[x][y].intensity === 0);
     store.ghosts[ghostIndex] = {
         x,
@@ -610,6 +672,151 @@ const activatePowerUp = (store) => {
 const Game = {
     startGame,
     stopGame
+};
+
+
+/***/ }),
+
+/***/ "./src/grid.ts":
+/*!*********************!*\
+  !*** ./src/grid.ts ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Grid: () => (/* binding */ Grid)
+/* harmony export */ });
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./constants */ "./src/constants.ts");
+
+const setSymmetricWall = (x, y, direction, sym, lineId) => {
+    if (direction == 'horizontal') {
+        (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(x, y, 'horizontal', lineId);
+        if (sym == 'x') {
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(_constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - x - 1, y, 'horizontal', lineId);
+        }
+        else if (sym == 'y') {
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(x, _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - y, 'horizontal', lineId);
+        }
+        else if (sym == 'xy') {
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(_constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - x - 1, y, 'horizontal', lineId);
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(x, _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - y, 'horizontal', lineId);
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(_constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - x - 1, _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - y, 'horizontal', lineId);
+        }
+    }
+    else {
+        (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(x, y, 'vertical', lineId);
+        if (sym == 'x') {
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(_constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - x, y, 'vertical', lineId);
+        }
+        else if (sym == 'y') {
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(x, _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - y - 1, 'vertical', lineId);
+        }
+        else if (sym == 'xy') {
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(_constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - x, y, 'vertical', lineId);
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(x, _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - y - 1, 'vertical', lineId);
+            (0,_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(_constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH - x, _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT - y - 1, 'vertical', lineId);
+        }
+    }
+};
+const buildGrid = () => {
+    // Left and right wings
+    // L1
+    setSymmetricWall(0, 2, 'horizontal', 'xy', 'L1');
+    setSymmetricWall(1, 2, 'horizontal', 'xy', 'L1');
+    // L2
+    setSymmetricWall(4, 0, 'vertical', 'x', 'L2');
+    setSymmetricWall(4, 1, 'vertical', 'x', 'L2');
+    setSymmetricWall(4, 2, 'vertical', 'x', 'L2');
+    setSymmetricWall(4, 3, 'vertical', 'x', 'L2');
+    setSymmetricWall(4, 4, 'vertical', 'x', 'L2');
+    // L3
+    setSymmetricWall(3, 3, 'horizontal', 'x', 'L3');
+    setSymmetricWall(2, 3, 'horizontal', 'x', 'L3');
+    // L4
+    setSymmetricWall(4, 5, 'horizontal', 'x', 'L4');
+    // L5
+    setSymmetricWall(6, 4, 'vertical', 'x', 'L5');
+    setSymmetricWall(6, 3, 'vertical', 'x', 'L5');
+    setSymmetricWall(6, 2, 'vertical', 'x', 'L5');
+    // L6
+    setSymmetricWall(6, 2, 'horizontal', 'x', 'L6');
+    setSymmetricWall(7, 2, 'horizontal', 'x', 'L6');
+    setSymmetricWall(8, 2, 'horizontal', 'x', 'L6');
+    setSymmetricWall(9, 2, 'horizontal', 'x', 'L6');
+    // L7
+    setSymmetricWall(13, 2, 'horizontal', 'xy', 'L7');
+    setSymmetricWall(14, 2, 'horizontal', 'xy', 'L7');
+    setSymmetricWall(15, 2, 'horizontal', 'xy', 'L7');
+    setSymmetricWall(16, 2, 'horizontal', 'xy', 'L7');
+    setSymmetricWall(17, 2, 'horizontal', 'xy', 'L7');
+    setSymmetricWall(18, 2, 'horizontal', 'xy', 'L7');
+    // L8
+    setSymmetricWall(16, 2, 'vertical', 'xy', 'L8');
+    // L9
+    setSymmetricWall(8, 1, 'horizontal', 'x', 'L9');
+    setSymmetricWall(9, 1, 'horizontal', 'x', 'L9');
+    setSymmetricWall(10, 1, 'horizontal', 'x', 'L9');
+    setSymmetricWall(11, 1, 'horizontal', 'x', 'L9');
+    // L10
+    setSymmetricWall(12, 1, 'vertical', 'x', 'L10');
+    setSymmetricWall(12, 2, 'vertical', 'x', 'L10');
+    setSymmetricWall(12, 3, 'vertical', 'x', 'L10');
+    // L11
+    setSymmetricWall(11, 4, 'horizontal', 'x', 'L11');
+    setSymmetricWall(10, 4, 'horizontal', 'x', 'L11');
+    setSymmetricWall(9, 4, 'horizontal', 'x', 'L11');
+    setSymmetricWall(8, 4, 'horizontal', 'x', 'L11');
+    // L12
+    setSymmetricWall(8, 4, 'vertical', 'x', 'L12');
+    setSymmetricWall(8, 5, 'vertical', 'x', 'L12');
+    setSymmetricWall(8, 6, 'vertical', 'x', 'L12');
+    // L13
+    setSymmetricWall(23, 2, 'horizontal', 'x', 'L13');
+    setSymmetricWall(24, 2, 'horizontal', 'x', 'L13');
+    setSymmetricWall(23, 4, 'horizontal', 'x', 'L13');
+    setSymmetricWall(24, 4, 'horizontal', 'x', 'L13');
+    setSymmetricWall(25, 4, 'horizontal', 'x', 'L13');
+    // L14
+    setSymmetricWall(23, 2, 'vertical', 'x', 'L14');
+    setSymmetricWall(23, 3, 'vertical', 'x', 'L14');
+    // L15
+    setSymmetricWall(26, 4, 'vertical', 'x', 'L15');
+    setSymmetricWall(26, 5, 'vertical', 'x', 'L15');
+    // L16
+    setSymmetricWall(23, 6, 'horizontal', 'x', 'L16');
+    setSymmetricWall(24, 6, 'horizontal', 'x', 'L16');
+    setSymmetricWall(25, 6, 'horizontal', 'x', 'L16');
+    // L17
+    setSymmetricWall(26, 0, 'vertical', 'x', 'L17');
+    // L18
+    setSymmetricWall(24, 1, 'vertical', 'x', 'L18');
+    setSymmetricWall(23, 1, 'horizontal', 'x', 'L18');
+    setSymmetricWall(22, 1, 'horizontal', 'x', 'L18');
+    setSymmetricWall(21, 1, 'horizontal', 'x', 'L18');
+    setSymmetricWall(21, 1, 'vertical', 'x', 'L18');
+    setSymmetricWall(21, 2, 'vertical', 'x', 'L18');
+    setSymmetricWall(21, 3, 'vertical', 'x', 'L18');
+    setSymmetricWall(20, 4, 'horizontal', 'x', 'L18');
+    setSymmetricWall(19, 4, 'horizontal', 'x', 'L18');
+    setSymmetricWall(19, 3, 'vertical', 'x', 'L18');
+    setSymmetricWall(18, 3, 'horizontal', 'x', 'L18');
+    // L19
+    setSymmetricWall(22, 5, 'vertical', 'x', 'L19');
+    setSymmetricWall(21, 5, 'horizontal', 'x', 'L19');
+    setSymmetricWall(20, 5, 'horizontal', 'x', 'L19');
+    setSymmetricWall(20, 5, 'vertical', 'x', 'L19');
+    // L20
+    setSymmetricWall(1, 6, 'horizontal', 'x', 'L20');
+    setSymmetricWall(2, 6, 'horizontal', 'x', 'L20');
+    setSymmetricWall(3, 5, 'vertical', 'x', 'L20');
+    setSymmetricWall(3, 4, 'vertical', 'x', 'L20');
+    // L21
+    setSymmetricWall(5, 6, 'horizontal', 'x', 'L21');
+    setSymmetricWall(6, 6, 'horizontal', 'x', 'L21');
+};
+const Grid = {
+    buildGrid
 };
 
 
@@ -813,16 +1020,27 @@ const generateAnimatedSVG = (store) => {
         }
     }
     // Grid
-    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; x++) {
-        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; y++) {
-            const cellX = y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
-            const cellY = x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
+    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; x++) {
+        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; y++) {
+            const cellX = x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
+            const cellY = y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
             const cellColorAnimation = generateChangingValuesAnimation(store, generateCellColorValues(store, x, y));
             svg += `<rect id="c-${x}-${y}" x="${cellX}" y="${cellY}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE}" rx="5" fill="${_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).emptyContributionBoxColor}">
                 <animate attributeName="fill" dur="${store.gameHistory.length * _constants__WEBPACK_IMPORTED_MODULE_0__.DELTA_TIME}ms" repeatCount="indefinite" 
                     values="${cellColorAnimation.values}" 
                     keyTimes="${cellColorAnimation.keyTimes}"/>
             </rect>`;
+        }
+    }
+    // Walls
+    for (let x = 0; x < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_WIDTH; x++) {
+        for (let y = 0; y < _constants__WEBPACK_IMPORTED_MODULE_0__.GRID_HEIGHT; y++) {
+            if (_constants__WEBPACK_IMPORTED_MODULE_0__.WALLS.horizontal[x][y].active) {
+                svg += `<rect id="wh-${x}-${y}" x="${x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) - _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE}" y="${y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) - _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE + 15}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE}" rx="5" fill="${_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).wallColor}"></rect>`;
+            }
+            if (_constants__WEBPACK_IMPORTED_MODULE_0__.WALLS.vertical[x][y].active) {
+                svg += `<rect id="wv-${x}-${y}" x="${x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) - _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE}" y="${y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) - _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE + 15}" width="${_constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE}" height="${_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE}" rx="5" fill="${_utils__WEBPACK_IMPORTED_MODULE_1__.Utils.getCurrentTheme(store).wallColor}"></rect>`;
+            }
         }
     }
     // Pacman
@@ -872,8 +1090,8 @@ const generatePacManPath = (mouthAngle) => {
 };
 const generatePacManPositions = (store) => {
     return store.gameHistory.map((state) => {
-        const x = state.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
-        const y = state.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
+        const x = state.pacman.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
+        const y = state.pacman.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
         return `${x},${y}`;
     });
 };
@@ -922,8 +1140,8 @@ const generateCellColorValues = (store, x, y) => {
 const generateGhostPositions = (store, ghostIndex) => {
     return store.gameHistory.map((state) => {
         const ghost = state.ghosts[ghostIndex];
-        const x = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
-        const y = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
+        const x = ghost.x * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE);
+        const y = ghost.y * (_constants__WEBPACK_IMPORTED_MODULE_0__.CELL_SIZE + _constants__WEBPACK_IMPORTED_MODULE_0__.GAP_SIZE) + 15;
         return `${x},${y}`;
     });
 };
@@ -980,11 +1198,11 @@ const generateChangingValuesAnimation = (store, changingValues) => {
     changingValues.forEach((currentValue, index) => {
         if (currentValue !== lastValue) {
             if (lastValue !== null && lastIndex !== null && index - 1 !== lastIndex) {
-                // Add a keyframe right before the color change
+                // Add a keyframe right before the value change
                 keyTimes.push(Number(((index - 0.000001) / (totalFrames - 1)).toFixed(6)));
                 values.push(lastValue);
             }
-            // Add the new color keyframe
+            // Add the new value keyframe
             keyTimes.push(Number((index / (totalFrames - 1)).toFixed(6)));
             values.push(currentValue);
             lastValue = currentValue;
@@ -1169,8 +1387,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   PacmanRenderer: () => (/* binding */ PacmanRenderer)
 /* harmony export */ });
 /* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./game */ "./src/game.ts");
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store */ "./src/store.ts");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _grid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./grid */ "./src/grid.ts");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./src/store.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -1183,10 +1402,12 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
+
 class PacmanRenderer {
     constructor(conf) {
-        this.store = Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_1__.Store);
+        this.store = Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_2__.Store);
         this.conf = Object.assign({}, conf);
+        _grid__WEBPACK_IMPORTED_MODULE_1__.Grid.buildGrid();
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -1205,10 +1426,10 @@ class PacmanRenderer {
             this.store.config = Object.assign(Object.assign({}, defaultConfing), this.conf);
             switch (this.conf.platform) {
                 case 'gitlab':
-                    this.store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGitlabContribution(this.store);
+                    this.store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_3__.Utils.getGitlabContribution(this.store);
                     break;
                 case 'github':
-                    this.store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_2__.Utils.getGithubContribution(this.store);
+                    this.store.contributions = yield _utils__WEBPACK_IMPORTED_MODULE_3__.Utils.getGithubContribution(this.store);
                     break;
             }
             _game__WEBPACK_IMPORTED_MODULE_0__.Game.startGame(this.store);

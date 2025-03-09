@@ -1,4 +1,5 @@
 import { Game } from './game';
+import { Grid } from './grid';
 import { Store } from './store';
 import { Config, StoreType } from './types';
 import { Utils } from './utils';
@@ -10,6 +11,7 @@ export class PacmanRenderer {
 	constructor(conf: Config) {
 		this.store = { ...Store };
 		this.conf = { ...conf };
+		Grid.buildGrid();
 	}
 
 	public async start() {

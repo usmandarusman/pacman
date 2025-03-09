@@ -17,25 +17,29 @@ export const GAME_THEMES: { [key in ThemeKeys]: GameTheme } = {
 		textColor: '#586069',
 		gridBackground: '#ffffff',
 		contributionBoxColor: '#9be9a8',
-		emptyContributionBoxColor: '#ebedf0'
+		emptyContributionBoxColor: '#ebedf0',
+		wallColor: '#000000'
 	},
 	'github-dark': {
 		textColor: '#8b949e',
 		gridBackground: '#0d1117',
 		contributionBoxColor: '#26a641',
-		emptyContributionBoxColor: '#161b22'
+		emptyContributionBoxColor: '#161b22',
+		wallColor: '#FFFFFF'
 	},
 	gitlab: {
 		textColor: '#626167',
 		gridBackground: '#ffffff',
 		contributionBoxColor: '#7992f5',
-		emptyContributionBoxColor: '#ececef'
+		emptyContributionBoxColor: '#ececef',
+		wallColor: '#000000'
 	},
 	'gitlab-dark': {
 		textColor: '#999999',
 		gridBackground: '#1f1f1f',
 		contributionBoxColor: '#2e7db1',
-		emptyContributionBoxColor: '#2d2d2d'
+		emptyContributionBoxColor: '#2d2d2d',
+		wallColor: '#FFFFFF'
 	}
 };
 export const GHOSTS: { [key in GhostName | 'scared']: { imgDate: string } } = {
@@ -58,5 +62,41 @@ export const GHOSTS: { [key in GhostName | 'scared']: { imgDate: string } } = {
 	scared: {
 		imgDate:
 			'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAeUlEQVQ4T82TUQ6AMAhD7UX0/sdyF0GREVmDmTN+bH9r6Bs0A0t2VpFULwDrrfBkZFcA3YC3ZodViAFGzQHyP0B2w2NrB0/1AoDbHwLoQ5/nrw1OBuD5e/crbM9Aiz35njHWzpSB/m3+0r40mV41M8U19WJe3Uw/tQOKt08pUUbBEQAAAABJRU5ErkJgggAA'
+	}
+};
+export const WALLS: {
+	horizontal: { active: boolean; id: string }[][];
+	vertical: { active: boolean; id: string }[][];
+} = {
+	horizontal: Array(GRID_WIDTH + 1)
+		.fill(null)
+		.map(() => Array(GRID_HEIGHT + 1).fill({ active: false, id: '' })),
+	vertical: Array(GRID_WIDTH + 1)
+		.fill(null)
+		.map(() => Array(GRID_HEIGHT + 1).fill({ active: false, id: '' }))
+};
+
+export const setWall = (x: number, y: number, direction: 'horizontal' | 'vertical', lineId: string) => {
+	if (direction === 'horizontal') {
+		if (x >= 0 && x < WALLS.horizontal.length && y >= 0 && y < WALLS.horizontal[0].length) {
+			WALLS.horizontal[x][y] = { active: true, id: lineId };
+		}
+	} else {
+		if (x >= 0 && x < WALLS.vertical.length && y >= 0 && y < WALLS.vertical[0].length) {
+			WALLS.vertical[x][y] = { active: true, id: lineId };
+		}
+	}
+};
+
+export const hasWall = (x: number, y: number, direction: 'up' | 'down' | 'left' | 'right'): boolean => {
+	switch (direction) {
+		case 'up':
+			return WALLS.horizontal[x][y].active;
+		case 'down':
+			return WALLS.horizontal[x + 1][y].active;
+		case 'left':
+			return WALLS.vertical[x][y].active;
+		case 'right':
+			return WALLS.vertical[x][y + 1].active;
 	}
 };

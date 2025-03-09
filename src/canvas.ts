@@ -1,4 +1,14 @@
-import { CELL_SIZE, GAP_SIZE, GHOSTS, GRID_HEIGHT, GRID_WIDTH, PACMAN_COLOR, PACMAN_COLOR_DEAD, PACMAN_COLOR_POWERUP } from './constants';
+import {
+	CELL_SIZE,
+	GAP_SIZE,
+	GHOSTS,
+	GRID_HEIGHT,
+	GRID_WIDTH,
+	PACMAN_COLOR,
+	PACMAN_COLOR_DEAD,
+	PACMAN_COLOR_POWERUP,
+	WALLS
+} from './constants';
 import { MusicPlayer } from './music-player';
 import { StoreType } from './types';
 import { Utils } from './utils';
@@ -12,53 +22,87 @@ const resizeCanvas = (store: StoreType) => {
 };
 
 const drawGrid = (store: StoreType) => {
-	store.config.canvas.getContext('2d')!.fillStyle = Utils.getCurrentTheme(store).gridBackground;
-	store.config.canvas.getContext('2d')!.fillRect(0, 0, store.config.canvas.width, store.config.canvas.height);
+	const ctx = store.config.canvas.getContext('2d')!;
+	ctx.fillStyle = Utils.getCurrentTheme(store).gridBackground;
+	ctx.fillRect(0, 0, store.config.canvas.width, store.config.canvas.height);
 
-	for (let x = 0; x < GRID_HEIGHT; x++) {
-		for (let y = 0; y < GRID_WIDTH; y++) {
+	for (let x = 0; x < GRID_WIDTH; x++) {
+		for (let y = 0; y < GRID_HEIGHT; y++) {
 			const intensity = store.grid[x][y].intensity;
 			if (intensity > 0) {
 				const adjustedIntensity = intensity < 0.2 ? 0.3 : intensity;
 				const color = Utils.hexToRGBA(Utils.getCurrentTheme(store).contributionBoxColor, adjustedIntensity);
-				store.config.canvas.getContext('2d')!.fillStyle = color;
+				ctx.fillStyle = color;
 			} else {
-				store.config.canvas.getContext('2d')!.fillStyle = Utils.getCurrentTheme(store).emptyContributionBoxColor;
+				ctx.fillStyle = Utils.getCurrentTheme(store).emptyContributionBoxColor;
 			}
-			store.config.canvas.getContext('2d')!.beginPath();
+			ctx.beginPath();
 			store.config.canvas
 				.getContext('2d')!
-				.roundRect(y * (CELL_SIZE + GAP_SIZE), x * (CELL_SIZE + GAP_SIZE) + 15, CELL_SIZE, CELL_SIZE, 5);
-			store.config.canvas.getContext('2d')!.fill();
+				.roundRect(x * (CELL_SIZE + GAP_SIZE), y * (CELL_SIZE + GAP_SIZE) + 15, CELL_SIZE, CELL_SIZE, 5);
+			ctx.fill();
 		}
 	}
 
-	store.config.canvas.getContext('2d')!.fillStyle = Utils.getCurrentTheme(store).textColor;
-	store.config.canvas.getContext('2d')!.font = '10px Arial';
-	store.config.canvas.getContext('2d')!.textAlign = 'center';
+	ctx.fillStyle = Utils.getCurrentTheme(store).wallColor;
+	for (let x = 0; x <= GRID_WIDTH; x++) {
+		for (let y = 0; y <= GRID_HEIGHT; y++) {
+			// Draw horizontal walls
+			if (WALLS.horizontal[x][y].active) {
+				ctx.fillRect(
+					x * (CELL_SIZE + GAP_SIZE) - GAP_SIZE,
+					y * (CELL_SIZE + GAP_SIZE) - GAP_SIZE + 15,
+					CELL_SIZE + GAP_SIZE,
+					GAP_SIZE
+				);
+				// // TODO: For debug only
+				// ctx.fillStyle = '#000';
+				// ctx.fillText(WALLS.horizontal[x][y].id, x * (GAP_SIZE + CELL_SIZE), y * (GAP_SIZE + CELL_SIZE));
+			}
+
+			// Draw vertical walls
+			if (WALLS.vertical[x][y].active) {
+				ctx.fillRect(
+					x * (CELL_SIZE + GAP_SIZE) - GAP_SIZE,
+					y * (CELL_SIZE + GAP_SIZE) - GAP_SIZE + 15,
+					GAP_SIZE,
+					CELL_SIZE + GAP_SIZE
+				);
+				// // TODO: For debug only
+				// ctx.fillStyle = '#000';
+				// ctx.fillText(WALLS.vertical[x][y].id, x * (GAP_SIZE + CELL_SIZE), (y + 1) * (GAP_SIZE + CELL_SIZE));
+			}
+		}
+	}
+
+	ctx.fillStyle = Utils.getCurrentTheme(store).textColor;
+	ctx.font = '10px Arial';
+	ctx.textAlign = 'center';
 
 	let lastMonth = '';
-	for (let y = 0; y < GRID_WIDTH; y++) {
-		if (store.monthLabels[y] !== lastMonth) {
-			const xPos = y * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2;
-			store.config.canvas.getContext('2d')!.fillText(store.monthLabels[y], xPos, 10);
-			lastMonth = store.monthLabels[y];
+
+	for (let x = 0; x < GRID_WIDTH; x++) {
+		if (store.monthLabels[x] !== lastMonth) {
+			const xPos = x * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2;
+			ctx.fillText(store.monthLabels[x], xPos, 10);
+			lastMonth = store.monthLabels[x];
 		}
 	}
 };
 
 const drawPacman = (store: StoreType) => {
-	const x = store.pacman.y * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2;
-	const y = store.pacman.x * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2 + 15;
+	const ctx = store.config.canvas.getContext('2d')!;
+	const x = store.pacman.x * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2;
+	const y = store.pacman.y * (CELL_SIZE + GAP_SIZE) + CELL_SIZE / 2 + 15;
 	const radius = CELL_SIZE / 2;
 
 	// Change Pac-Man's color to red if he's on power-up, dead, else yellow
 	if (store.pacman.deadRemainingDuration) {
-		store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR_DEAD;
+		ctx.fillStyle = PACMAN_COLOR_DEAD;
 	} else if (store.pacman.powerupRemainingDuration) {
-		store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR_POWERUP;
+		ctx.fillStyle = PACMAN_COLOR_POWERUP;
 	} else {
-		store.config.canvas.getContext('2d')!.fillStyle = PACMAN_COLOR;
+		ctx.fillStyle = PACMAN_COLOR;
 	}
 
 	const mouthAngle = store.pacmanMouthOpen ? 0.35 * Math.PI : 0.1 * Math.PI;
@@ -84,10 +128,10 @@ const drawPacman = (store: StoreType) => {
 			break;
 	}
 
-	store.config.canvas.getContext('2d')!.beginPath();
-	store.config.canvas.getContext('2d')!.arc(x, y, radius, startAngle, endAngle);
-	store.config.canvas.getContext('2d')!.lineTo(x, y);
-	store.config.canvas.getContext('2d')!.fill();
+	ctx.beginPath();
+	ctx.arc(x, y, radius, startAngle, endAngle);
+	ctx.lineTo(x, y);
+	ctx.fill();
 };
 
 const preloadedImages: { [key: string]: HTMLImageElement } = {};
@@ -102,8 +146,8 @@ const getLoadedImage = (key: string, imgDate: string): HTMLImageElement => {
 
 const drawGhosts = (store: StoreType) => {
 	store.ghosts.forEach((ghost) => {
-		const x = ghost.y * (CELL_SIZE + GAP_SIZE);
-		const y = ghost.x * (CELL_SIZE + GAP_SIZE) + 15;
+		const x = ghost.x * (CELL_SIZE + GAP_SIZE);
+		const y = ghost.y * (CELL_SIZE + GAP_SIZE) + 15;
 		const size = CELL_SIZE;
 
 		const ctx = store.config.canvas.getContext('2d')!;
@@ -116,51 +160,53 @@ const drawGhosts = (store: StoreType) => {
 };
 
 const renderGameOver = (store: StoreType) => {
-	store.config.canvas.getContext('2d')!.fillStyle = Utils.getCurrentTheme(store).textColor;
-	store.config.canvas.getContext('2d')!.font = '20px Arial';
-	store.config.canvas.getContext('2d')!.textAlign = 'center';
-	store.config.canvas.getContext('2d')!.fillText('Game Over', store.config.canvas.width / 2, store.config.canvas.height / 2);
+	const ctx = store.config.canvas.getContext('2d')!;
+	ctx.fillStyle = Utils.getCurrentTheme(store).textColor;
+	ctx.font = '20px Arial';
+	ctx.textAlign = 'center';
+	ctx.fillText('Game Over', store.config.canvas.width / 2, store.config.canvas.height / 2);
 };
 
 const drawSoundController = (store: StoreType) => {
 	if (!store.config.enableSounds) {
 		return;
 	}
+	const ctx = store.config.canvas.getContext('2d')!;
 
 	const width = 30,
 		height = 30,
 		left = store.config.canvas.width - width - 10,
 		top = 10;
-	store.config.canvas.getContext('2d')!.fillStyle = `rgba(0, 0, 0, ${MusicPlayer.getInstance().isMuted ? 0.3 : 0.5})`;
-	store.config.canvas.getContext('2d')!.beginPath();
-	store.config.canvas.getContext('2d')!.moveTo(left + 10, top + 10);
-	store.config.canvas.getContext('2d')!.lineTo(left + 20, top + 5);
-	store.config.canvas.getContext('2d')!.lineTo(left + 20, top + 25);
-	store.config.canvas.getContext('2d')!.lineTo(left + 10, top + 20);
-	store.config.canvas.getContext('2d')!.closePath();
-	store.config.canvas.getContext('2d')!.fill();
+	ctx.fillStyle = `rgba(0, 0, 0, ${MusicPlayer.getInstance().isMuted ? 0.3 : 0.5})`;
+	ctx.beginPath();
+	ctx.moveTo(left + 10, top + 10);
+	ctx.lineTo(left + 20, top + 5);
+	ctx.lineTo(left + 20, top + 25);
+	ctx.lineTo(left + 10, top + 20);
+	ctx.closePath();
+	ctx.fill();
 
 	if (!MusicPlayer.getInstance().isMuted) {
-		store.config.canvas.getContext('2d')!.strokeStyle = `rgba(0, 0, 0, 0.4)`;
-		store.config.canvas.getContext('2d')!.lineWidth = 2;
+		ctx.strokeStyle = `rgba(0, 0, 0, 0.4)`;
+		ctx.lineWidth = 2;
 
 		// First wave
-		store.config.canvas.getContext('2d')!.beginPath();
-		store.config.canvas.getContext('2d')!.arc(left + 25, top + 15, 5, 0, Math.PI * 2);
-		store.config.canvas.getContext('2d')!.stroke();
+		ctx.beginPath();
+		ctx.arc(left + 25, top + 15, 5, 0, Math.PI * 2);
+		ctx.stroke();
 
 		// Second wave
-		store.config.canvas.getContext('2d')!.beginPath();
-		store.config.canvas.getContext('2d')!.arc(left + 25, top + 15, 8, 0, Math.PI * 2);
-		store.config.canvas.getContext('2d')!.stroke();
+		ctx.beginPath();
+		ctx.arc(left + 25, top + 15, 8, 0, Math.PI * 2);
+		ctx.stroke();
 	} else {
 		// Mute line
-		store.config.canvas.getContext('2d')!.strokeStyle = 'rgba(255, 0, 0, 0.6)';
-		store.config.canvas.getContext('2d')!.lineWidth = 3;
-		store.config.canvas.getContext('2d')!.beginPath();
-		store.config.canvas.getContext('2d')!.moveTo(left + 25, top + 5);
-		store.config.canvas.getContext('2d')!.lineTo(left + 5, top + 25);
-		store.config.canvas.getContext('2d')!.stroke();
+		ctx.strokeStyle = 'rgba(255, 0, 0, 0.6)';
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.moveTo(left + 25, top + 5);
+		ctx.lineTo(left + 5, top + 25);
+		ctx.stroke();
 	}
 };
 

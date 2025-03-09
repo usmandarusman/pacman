@@ -62,6 +62,7 @@ export interface GameTheme {
 	gridBackground: string;
 	contributionBoxColor: string;
 	emptyContributionBoxColor: string;
+	wallColor: string;
 }
 
 export interface AnimationData {

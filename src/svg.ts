@@ -7,7 +7,8 @@ import {
 	GRID_WIDTH,
 	PACMAN_COLOR,
 	PACMAN_COLOR_DEAD,
-	PACMAN_COLOR_POWERUP
+	PACMAN_COLOR_POWERUP,
+	WALLS
 } from './constants';
 import { AnimationData, StoreType } from './types';
 import { Utils } from './utils';
@@ -32,16 +33,28 @@ const generateAnimatedSVG = (store: StoreType) => {
 	}
 
 	// Grid
-	for (let x = 0; x < GRID_HEIGHT; x++) {
-		for (let y = 0; y < GRID_WIDTH; y++) {
-			const cellX = y * (CELL_SIZE + GAP_SIZE);
-			const cellY = x * (CELL_SIZE + GAP_SIZE) + 15;
+	for (let x = 0; x < GRID_WIDTH; x++) {
+		for (let y = 0; y < GRID_HEIGHT; y++) {
+			const cellX = x * (CELL_SIZE + GAP_SIZE);
+			const cellY = y * (CELL_SIZE + GAP_SIZE) + 15;
 			const cellColorAnimation = generateChangingValuesAnimation(store, generateCellColorValues(store, x, y));
 			svg += `<rect id="c-${x}-${y}" x="${cellX}" y="${cellY}" width="${CELL_SIZE}" height="${CELL_SIZE}" rx="5" fill="${Utils.getCurrentTheme(store).emptyContributionBoxColor}">
                 <animate attributeName="fill" dur="${store.gameHistory.length * DELTA_TIME}ms" repeatCount="indefinite" 
                     values="${cellColorAnimation.values}" 
                     keyTimes="${cellColorAnimation.keyTimes}"/>
             </rect>`;
+		}
+	}
+
+	// Walls
+	for (let x = 0; x < GRID_WIDTH; x++) {
+		for (let y = 0; y < GRID_HEIGHT; y++) {
+			if (WALLS.horizontal[x][y].active) {
+				svg += `<rect id="wh-${x}-${y}" x="${x * (CELL_SIZE + GAP_SIZE) - GAP_SIZE}" y="${y * (CELL_SIZE + GAP_SIZE) - GAP_SIZE + 15}" width="${CELL_SIZE + GAP_SIZE}" height="${GAP_SIZE}" rx="5" fill="${Utils.getCurrentTheme(store).wallColor}"></rect>`;
+			}
+			if (WALLS.vertical[x][y].active) {
+				svg += `<rect id="wv-${x}-${y}" x="${x * (CELL_SIZE + GAP_SIZE) - GAP_SIZE}" y="${y * (CELL_SIZE + GAP_SIZE) - GAP_SIZE + 15}" width="${GAP_SIZE}" height="${CELL_SIZE + GAP_SIZE}" rx="5" fill="${Utils.getCurrentTheme(store).wallColor}"></rect>`;
+			}
 		}
 	}
 
@@ -97,8 +110,8 @@ const generatePacManPath = (mouthAngle: number) => {
 
 const generatePacManPositions = (store: StoreType): string[] => {
 	return store.gameHistory.map((state) => {
-		const x = state.pacman.y * (CELL_SIZE + GAP_SIZE);
-		const y = state.pacman.x * (CELL_SIZE + GAP_SIZE) + 15;
+		const x = state.pacman.x * (CELL_SIZE + GAP_SIZE);
+		const y = state.pacman.y * (CELL_SIZE + GAP_SIZE) + 15;
 		return `${x},${y}`;
 	});
 };
@@ -148,8 +161,8 @@ const generateCellColorValues = (store: StoreType, x: number, y: number): string
 const generateGhostPositions = (store: StoreType, ghostIndex: number): string[] => {
 	return store.gameHistory.map((state) => {
 		const ghost = state.ghosts[ghostIndex];
-		const x = ghost.y * (CELL_SIZE + GAP_SIZE);
-		const y = ghost.x * (CELL_SIZE + GAP_SIZE) + 15;
+		const x = ghost.x * (CELL_SIZE + GAP_SIZE);
+		const y = ghost.y * (CELL_SIZE + GAP_SIZE) + 15;
 		return `${x},${y}`;
 	});
 };
@@ -212,11 +225,11 @@ const generateChangingValuesAnimation = (store: StoreType, changingValues: strin
 	changingValues.forEach((currentValue, index) => {
 		if (currentValue !== lastValue) {
 			if (lastValue !== null && lastIndex !== null && index - 1 !== lastIndex) {
-				// Add a keyframe right before the color change
+				// Add a keyframe right before the value change
 				keyTimes.push(Number(((index - 0.000001) / (totalFrames - 1)).toFixed(6)));
 				values.push(lastValue);
 			}
-			// Add the new color keyframe
+			// Add the new value keyframe
 			keyTimes.push(Number((index / (totalFrames - 1)).toFixed(6)));
 			values.push(currentValue);
 			lastValue = currentValue;

@@ -7,7 +7,7 @@ import { StoreType } from './types';
 const initializeGrid = (store: StoreType) => {
 	store.pacman.points = 0;
 	store.pacman.totalPoints = 0;
-	store.grid = Array.from({ length: GRID_HEIGHT }, () => Array.from({ length: GRID_WIDTH }, () => ({ commitsCount: 0, intensity: 0 })));
+	store.grid = Array.from({ length: GRID_WIDTH }, () => Array.from({ length: GRID_HEIGHT }, () => ({ commitsCount: 0, intensity: 0 })));
 	store.monthLabels = Array(GRID_WIDTH).fill('');
 	let maxCommits = 1;
 
@@ -21,31 +21,31 @@ const initializeGrid = (store: StoreType) => {
 		const weeksAgo = Math.floor((+startOfCurrentWeek - +contributionDate) / (1000 * 60 * 60 * 24 * 7));
 
 		if (weeksAgo >= 0 && weeksAgo < GRID_WIDTH && dayOfWeek >= 0 && dayOfWeek < GRID_HEIGHT) {
-			store.grid[dayOfWeek][GRID_WIDTH - 1 - weeksAgo] = { commitsCount: contribution.count, intensity: 0 };
+			store.grid[GRID_WIDTH - 1 - weeksAgo][dayOfWeek] = { commitsCount: contribution.count, intensity: 0 };
 			if (contribution.count > maxCommits) maxCommits = contribution.count;
 		}
 	});
 
-	for (let x = 0; x < GRID_HEIGHT; x++) {
-		for (let y = 0; y < GRID_WIDTH; y++) {
+	for (let x = 0; x < GRID_WIDTH; x++) {
+		for (let y = 0; y < GRID_HEIGHT; y++) {
 			if (store.grid[x][y].commitsCount > 0) {
 				store.grid[x][y].intensity = store.grid[x][y].commitsCount / maxCommits;
 			}
 		}
 	}
 
-	for (let y = 0; y < GRID_WIDTH; y++) {
-		const weeksAgo = GRID_WIDTH - 1 - y;
+	for (let x = 0; x < GRID_WIDTH; x++) {
+		const weeksAgo = GRID_WIDTH - 1 - x;
 		const columnDate = new Date(startOfCurrentWeek);
 		columnDate.setDate(columnDate.getDate() - weeksAgo * 7);
-		store.monthLabels[y] = MONTHS[columnDate.getMonth()];
+		store.monthLabels[x] = MONTHS[columnDate.getMonth()];
 	}
 };
 
 const placePacman = (store: StoreType) => {
 	let validCells = [];
-	for (let x = 0; x < GRID_HEIGHT; x++) {
-		for (let y = 0; y < GRID_WIDTH; y++) {
+	for (let x = 0; x < GRID_WIDTH; x++) {
+		for (let y = 0; y < GRID_HEIGHT; y++) {
 			if (store.grid[x][y].intensity > 0) validCells.push({ x, y });
 		}
 	}
@@ -69,8 +69,8 @@ const placeGhosts = (store: StoreType) => {
 	for (let i = 0; i < 4; i++) {
 		let x, y;
 		do {
-			x = Math.floor(Math.random() * GRID_HEIGHT);
-			y = Math.floor(Math.random() * GRID_WIDTH);
+			x = Math.floor(Math.random() * GRID_WIDTH);
+			y = Math.floor(Math.random() * GRID_HEIGHT);
 		} while (store.grid[x][y].intensity === 0);
 		store.ghosts.push({ x, y, name: GHOST_NAMES[i], scared: false, target: undefined });
 	}
@@ -203,8 +203,8 @@ const movePacman = (store: StoreType) => {
 			distance: Infinity
 		}));
 	} else {
-		for (let x = 0; x < GRID_HEIGHT; x++) {
-			for (let y = 0; y < GRID_WIDTH; y++) {
+		for (let x = 0; x < GRID_WIDTH; x++) {
+			for (let y = 0; y < GRID_HEIGHT; y++) {
 				if (store.grid[x][y].intensity > 0) targetCells.push({ x, y, distance: Infinity });
 			}
 		}
@@ -225,10 +225,10 @@ const movePacman = (store: StoreType) => {
 
 	if (Math.abs(dx) > Math.abs(dy)) {
 		store.pacman.x += Math.sign(dx);
-		store.pacman.direction = dx > 0 ? 'down' : 'up';
+		store.pacman.direction = dx > 0 ? 'right' : 'left';
 	} else {
 		store.pacman.y += Math.sign(dy);
-		store.pacman.direction = dy > 0 ? 'right' : 'left';
+		store.pacman.direction = dy > 0 ? 'down' : 'up';
 	}
 
 	if (store.grid[store.pacman.x][store.pacman.y].intensity > 0) {
@@ -256,7 +256,7 @@ const moveGhosts = (store: StoreType) => {
 			const newX = ghost.x + moveX;
 			const newY = ghost.y + moveY;
 
-			if (newX >= 0 && newX < GRID_HEIGHT && newY >= 0 && newY < GRID_WIDTH) {
+			if (newX >= 0 && newX < GRID_WIDTH && newY >= 0 && newY < GRID_HEIGHT) {
 				ghost.x = newX;
 				ghost.y = newY;
 			}
@@ -279,7 +279,7 @@ const moveGhosts = (store: StoreType) => {
 			const newX = ghost.x + dx;
 			const newY = ghost.y + dy;
 
-			if (newX >= 0 && newX < GRID_HEIGHT && newY >= 0 && newY < GRID_WIDTH) {
+			if (newX >= 0 && newX < GRID_WIDTH && newY >= 0 && newY < GRID_HEIGHT) {
 				ghost.x = newX;
 				ghost.y = newY;
 			}
@@ -292,8 +292,8 @@ const getRandomDestination = (x: number, y: number) => {
 	const randomX = x + Math.floor(Math.random() * (2 * maxDistance + 1)) - maxDistance;
 	const randomY = y + Math.floor(Math.random() * (2 * maxDistance + 1)) - maxDistance;
 	return {
-		x: Math.max(0, Math.min(randomX, GRID_HEIGHT - 1)),
-		y: Math.max(0, Math.min(randomY, GRID_WIDTH - 1))
+		x: Math.max(0, Math.min(randomX, GRID_WIDTH - 1)),
+		y: Math.max(0, Math.min(randomY, GRID_HEIGHT - 1))
 	};
 };
 
@@ -325,8 +325,8 @@ const checkCollisions = (store: StoreType) => {
 const respawnGhost = (store: StoreType, ghostIndex: number) => {
 	let x, y;
 	do {
-		x = Math.floor(Math.random() * GRID_HEIGHT);
-		y = Math.floor(Math.random() * GRID_WIDTH);
+		x = Math.floor(Math.random() * GRID_WIDTH);
+		y = Math.floor(Math.random() * GRID_HEIGHT);
 	} while ((Math.abs(x - store.pacman.x) <= 2 && Math.abs(y - store.pacman.y) <= 2) || store.grid[x][y].intensity === 0);
 	store.ghosts[ghostIndex] = {
 		x,
