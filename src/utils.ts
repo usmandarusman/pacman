@@ -4,7 +4,8 @@ import type { Contribution, GameTheme, StoreType } from './types';
 const getGitlabContribution = async (store: StoreType): Promise<Contribution[]> => {
 	// const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
 	const response = await fetch(
-		`https://v0-new-project-q1hhrdodoye-abozanona-gmailcoms-projects.vercel.app/api/contributions?username=${store.config.username}`
+		`https://v0-new-project-q1hhrdodoye-abozanona-gmailcoms-projects.vercel.app/api/contributions?username=${store.config.username}`,
+		{ cache: 'no-store' }
 	);
 	const contributionsList = await response.json();
 	return Object.entries(contributionsList).map(([date, count]) => ({
@@ -24,10 +25,12 @@ const getGithubContribution = async (store: StoreType): Promise<Contribution[]> 
 			if (store.config.githubSettings?.accessToken) {
 				headers['Authorization'] = 'Bearer ' + store.config.githubSettings.accessToken;
 			}
+			headers['Cache-Control'] = 'no-cache';
 			const response = await fetch(
 				`https://api.github.com/search/commits?q=author:${store.config.username}&sort=author-date&order=desc&page=${page}&per_page=1000`,
 				{
-					headers
+					headers,
+					cache: 'no-store'
 				}
 			);
 			const contributionsList = await response.json();
