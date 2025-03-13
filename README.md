@@ -21,8 +21,7 @@ Elevate your GitHub profile with the Pac-Man Contribution Graph Game and add a p
 
 Experience the game firsthand:
 
-- **Live Demo**: [Pac-Man Contribution Game](https://abozanona.github.io/pacman-contribution-graph/)
-- **Author's GitHub Profile**: [@abozanona](https://github.com/abozanona)
+**Live Demo**: [Pac-Man Contribution Game](https://abozanona.github.io/pacman-contribution-graph/)
 
 ## Installation
 
@@ -131,7 +130,7 @@ To showcase the Pac-Man game on your GitHub profile, follow these steps:
 4. **Commit and Push**:
     - Push the changes to GitHub. The GitHub Actions workflow will run daily, updating the Pac-Man game on your profile.
 
-For a detailed guide, refer to the author's blog post: [Integrate Pac-Man Contribution Graph into Your GitHub Profile](https://abozanona.me/integrate-pacman-contribution-graph-into-github/)
+For a detailed guide, refer to the blog post: [Integrate Pac-Man Contribution Graph into Your GitHub Profile](https://abozanona.me/integrate-pacman-contribution-graph-into-github/)
 
 ## Contributing
 
