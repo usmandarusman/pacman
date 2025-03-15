@@ -9,7 +9,7 @@ export class PacmanRenderer {
 	conf: Config;
 
 	constructor(conf: Config) {
-		this.store = { ...Store };
+		this.store = structuredClone(Store);
 		this.conf = { ...conf };
 		Grid.buildWalls();
 	}

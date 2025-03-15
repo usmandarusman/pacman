@@ -1570,7 +1570,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 const getGitlabContribution = (store) => __awaiter(void 0, void 0, void 0, function* () {
     // const response = await fetch(`https://gitlab.com/users/${username}/calendar.json`);
-    const response = yield fetch(`https://v0-new-project-q1hhrdodoye-abozanona-gmailcoms-projects.vercel.app/api/contributions?username=${store.config.username}`, { cache: 'no-store' });
+    const response = yield fetch(`https://v0-new-project-q1hhrdodoye-abozanona-gmailcoms-projects.vercel.app/api/contributions?username=${store.config.username}`);
     const contributionsList = yield response.json();
     return Object.entries(contributionsList).map(([date, count]) => ({
         date: new Date(date),
@@ -1589,10 +1589,8 @@ const getGithubContribution = (store) => __awaiter(void 0, void 0, void 0, funct
             if ((_a = store.config.githubSettings) === null || _a === void 0 ? void 0 : _a.accessToken) {
                 headers['Authorization'] = 'Bearer ' + store.config.githubSettings.accessToken;
             }
-            headers['Cache-Control'] = 'no-cache';
             const response = yield fetch(`https://api.github.com/search/commits?q=author:${store.config.username}&sort=author-date&order=desc&page=${page}&per_page=1000`, {
-                headers,
-                cache: 'no-store'
+                headers
             });
             const contributionsList = yield response.json();
             isComplete = contributionsList.items.length === 0;
@@ -1728,7 +1726,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 class PacmanRenderer {
     constructor(conf) {
-        this.store = Object.assign({}, _store__WEBPACK_IMPORTED_MODULE_2__.Store);
+        this.store = structuredClone(_store__WEBPACK_IMPORTED_MODULE_2__.Store);
         this.conf = Object.assign({}, conf);
         _grid__WEBPACK_IMPORTED_MODULE_1__.Grid.buildWalls();
     }
