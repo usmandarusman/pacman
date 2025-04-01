@@ -1,3 +1,8 @@
+export type Point2d = {
+	x: number;
+	y: number;
+};
+
 export interface Pacman {
 	x: number;
 	y: number;
@@ -7,6 +12,7 @@ export interface Pacman {
 	deadRemainingDuration: number;
 	powerupRemainingDuration: number;
 	recentPositions: string[];
+	target?: Point2d;
 }
 
 export type GhostName = 'blinky' | 'clyde' | 'inky' | 'pinky';
@@ -15,7 +21,7 @@ export interface Ghost {
 	y: number;
 	name: GhostName;
 	scared: boolean;
-	target?: { x: number; y: number };
+	target?: Point2d;
 }
 
 export interface Contribution {

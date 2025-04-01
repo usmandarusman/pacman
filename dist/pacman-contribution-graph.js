@@ -756,10 +756,6 @@ const moveScaredGhost = (ghost, store) => {
     const dy = ghost.target.y - ghost.y;
     // Filter moves that generally go toward the target
     let possibleMoves = validMoves.filter((move) => {
-        // If random < 0.3, allow any valid move for more erratic movement
-        if (Math.random() < 0.3)
-            return true;
-        // Otherwise prefer moves that go toward target
         const moveX = move[0];
         const moveY = move[1];
         return (dx > 0 && moveX > 0) || (dx < 0 && moveX < 0) || (dy > 0 && moveY > 0) || (dy < 0 && moveY < 0);
@@ -967,15 +963,28 @@ const movePacman = (store) => {
     }
     const hasPowerup = !!store.pacman.powerupRemainingDuration;
     const scaredGhosts = store.ghosts.filter((ghost) => ghost.scared);
-    let targetPosition = null;
+    let targetPosition;
     if (hasPowerup && scaredGhosts.length > 0) {
-        targetPosition = findClosestScaredGhost(store);
+        const ghostPosition = findClosestScaredGhost(store);
+        if (ghostPosition) {
+            targetPosition = ghostPosition;
+        }
+        else {
+            targetPosition = findOptimalTarget(store);
+        }
+    }
+    else if (store.pacman.target) {
+        if (store.pacman.target.x == store.pacman.x && store.pacman.target.y == store.pacman.y) {
+            targetPosition = findOptimalTarget(store);
+            store.pacman.target = { x: targetPosition === null || targetPosition === void 0 ? void 0 : targetPosition.x, y: targetPosition === null || targetPosition === void 0 ? void 0 : targetPosition.y };
+        }
+        else {
+            targetPosition = store.pacman.target;
+        }
     }
     else {
         targetPosition = findOptimalTarget(store);
-    }
-    if (!targetPosition) {
-        return;
+        store.pacman.target = { x: targetPosition === null || targetPosition === void 0 ? void 0 : targetPosition.x, y: targetPosition === null || targetPosition === void 0 ? void 0 : targetPosition.y };
     }
     const nextPosition = calculateOptimalPath(store, targetPosition);
     if (nextPosition) {
@@ -1006,8 +1015,6 @@ const findOptimalTarget = (store) => {
             }
         }
     }
-    if (pointCells.length === 0)
-        return null;
     pointCells.sort((a, b) => b.value - a.value);
     return pointCells[0];
 };
@@ -1127,7 +1134,7 @@ const checkAndEatPoint = (store) => {
         store.pacman.points++;
         store.config.pointsIncreasedCallback(store.pacman.totalPoints);
         store.grid[store.pacman.x][store.pacman.y].intensity = 0;
-        if (store.pacman.points >= 30)
+        if (store.pacman.points >= 10)
             activatePowerUp(store);
     }
 };

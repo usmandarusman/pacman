@@ -1,5 +1,5 @@
 import { GRID_HEIGHT, GRID_WIDTH } from '../constants';
-import { Ghost, StoreType } from '../types';
+import { Ghost, Point2d, StoreType } from '../types';
 import { MovementUtils } from './movement-utils';
 
 const moveGhosts = (store: StoreType) => {
@@ -27,10 +27,6 @@ const moveScaredGhost = (ghost: Ghost, store: StoreType) => {
 
 	// Filter moves that generally go toward the target
 	let possibleMoves = validMoves.filter((move) => {
-		// If random < 0.3, allow any valid move for more erratic movement
-		if (Math.random() < 0.3) return true;
-
-		// Otherwise prefer moves that go toward target
 		const moveX = move[0];
 		const moveY = move[1];
 		return (dx > 0 && moveX > 0) || (dx < 0 && moveX < 0) || (dy > 0 && moveY > 0) || (dy < 0 && moveY < 0);
@@ -64,11 +60,11 @@ const moveGhostWithPersonality = (ghost: Ghost, store: StoreType) => {
 };
 
 // Find the next position to move to using BFS
-const BFSTargetLocation = (startX: number, startY: number, targetX: number, targetY: number): { x: number; y: number } | null => {
+const BFSTargetLocation = (startX: number, startY: number, targetX: number, targetY: number): Point2d | null => {
 	// If we're already at the target, no need to move
 	if (startX === targetX && startY === targetY) return null;
 
-	const queue: { x: number; y: number; path: { x: number; y: number }[] }[] = [{ x: startX, y: startY, path: [] }];
+	const queue: { x: number; y: number; path: Point2d[] }[] = [{ x: startX, y: startY, path: [] }];
 	const visited = new Set<string>();
 	visited.add(`${startX},${startY}`);
 
@@ -101,7 +97,7 @@ const BFSTargetLocation = (startX: number, startY: number, targetX: number, targ
 };
 
 // Calculate ghost target based on personality
-const calculateGhostTarget = (ghost: Ghost, store: StoreType): { x: number; y: number } => {
+const calculateGhostTarget = (ghost: Ghost, store: StoreType): Point2d => {
 	const { pacman } = store;
 	let pacDirection = [0, 0];
 	switch (ghost.name) {

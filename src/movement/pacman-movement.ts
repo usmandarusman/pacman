@@ -1,5 +1,5 @@
 import { GRID_HEIGHT, GRID_WIDTH, PACMAN_POWERUP_DURATION } from '../constants';
-import { StoreType } from '../types';
+import { Point2d, StoreType } from '../types';
 import { MovementUtils } from './movement-utils';
 
 const RECENT_POSITIONS_LIMIT = 5;
@@ -12,16 +12,25 @@ const movePacman = (store: StoreType) => {
 	const hasPowerup = !!store.pacman.powerupRemainingDuration;
 	const scaredGhosts = store.ghosts.filter((ghost) => ghost.scared);
 
-	let targetPosition = null;
+	let targetPosition: Point2d;
 
 	if (hasPowerup && scaredGhosts.length > 0) {
-		targetPosition = findClosestScaredGhost(store);
+		const ghostPosition = findClosestScaredGhost(store);
+		if (ghostPosition) {
+			targetPosition = ghostPosition;
+		} else {
+			targetPosition = findOptimalTarget(store);
+		}
+	} else if (store.pacman.target) {
+		if (store.pacman.target.x == store.pacman.x && store.pacman.target.y == store.pacman.y) {
+			targetPosition = findOptimalTarget(store);
+			store.pacman.target = { x: targetPosition?.x, y: targetPosition?.y };
+		} else {
+			targetPosition = store.pacman.target;
+		}
 	} else {
 		targetPosition = findOptimalTarget(store);
-	}
-
-	if (!targetPosition) {
-		return;
+		store.pacman.target = { x: targetPosition?.x, y: targetPosition?.y };
 	}
 
 	const nextPosition = calculateOptimalPath(store, targetPosition);
@@ -62,14 +71,12 @@ const findOptimalTarget = (store: StoreType) => {
 		}
 	}
 
-	if (pointCells.length === 0) return null;
-
 	pointCells.sort((a, b) => b.value - a.value);
 	return pointCells[0];
 };
 
-const calculateOptimalPath = (store: StoreType, target: { x: number; y: number }) => {
-	const queue: { x: number; y: number; path: { x: number; y: number }[]; score: number }[] = [
+const calculateOptimalPath = (store: StoreType, target: Point2d) => {
+	const queue: { x: number; y: number; path: Point2d[]; score: number }[] = [
 		{ x: store.pacman.x, y: store.pacman.y, path: [], score: 0 }
 	];
 	const visited = new Set<string>();
@@ -183,7 +190,7 @@ const makeDesperationMove = (store: StoreType) => {
 	updatePacmanPosition(store, { x: newX, y: newY });
 };
 
-const updatePacmanPosition = (store: StoreType, position: { x: number; y: number }) => {
+const updatePacmanPosition = (store: StoreType, position: Point2d) => {
 	store.pacman.recentPositions ||= [];
 	store.pacman.recentPositions.push(`${position.x},${position.y}`);
 	if (store.pacman.recentPositions.length > RECENT_POSITIONS_LIMIT) {
@@ -209,7 +216,7 @@ const checkAndEatPoint = (store: StoreType) => {
 		store.config.pointsIncreasedCallback(store.pacman.totalPoints);
 		store.grid[store.pacman.x][store.pacman.y].intensity = 0;
 
-		if (store.pacman.points >= 30) activatePowerUp(store);
+		if (store.pacman.points >= 10) activatePowerUp(store);
 	}
 };
 
