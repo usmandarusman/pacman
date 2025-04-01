@@ -12,8 +12,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       pacman-contribution-graph:
-        specifier: ^1.0.13
-        version: 1.0.13
+        specifier: ^1.0.14
+        version: 1.0.14
     devDependencies:
       '@vercel/ncc':
         specifier: ^0.38.3
@@ -35,8 +35,8 @@ packages:
     resolution: {integrity: sha512-rnK6hJBS6mwc+Bkab+PGPs9OiS0i/3kdTO+CkI8V0/VrW3vmz7O2Pxjw/owOlmo6PKEIxRSeZKv/kuL9itnpYA==}
     hasBin: true
 
-  pacman-contribution-graph@1.0.13:
-    resolution: {integrity: sha512-SuUau0TvS6yYtfqySWkTh73n9c3sD1+OGW49wlZBy7+y8L36NcvF1E9/02OR5eg5OUZ1k7PA+McbjjjK4u2APA==}
+  pacman-contribution-graph@1.0.14:
+    resolution: {integrity: sha512-7aJIsX1Sxp/CerSWNXky5dOVvqzcgYumEN6r3FJnxzW32grXVZibYgB3kmYZoIpkv8zuUHiDwIKxEZagLB3dBA==}
 
   tunnel@0.0.6:
     resolution: {integrity: sha512-1h/Lnq9yajKY2PEbBadPXj3VxsDDu844OnaAo52UVmIzIvwwtBPIuNvkjuzBlTWpfJyUbG3ez0KSBibQkj4ojg==}
@@ -66,7 +66,7 @@ snapshots:
 
   '@vercel/ncc@0.38.3': {}
 
-  pacman-contribution-graph@1.0.13: {}
+  pacman-contribution-graph@1.0.14: {}
 
   tunnel@0.0.6: {}
 
