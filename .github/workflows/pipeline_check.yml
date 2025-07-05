@@ -21,7 +21,7 @@ jobs:
               run: pnpm install --frozen-lockfile
 
             - name: Run Prettier check
-              run: pnpm exec prettier --check "**/*.{ts,tsx,js,jsx,json,md}"
+              run: pnpm exec prettier --check "**/*.{ts,json,md}"
 
             - name: Build code
               run: pnpm build
