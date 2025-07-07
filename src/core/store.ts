@@ -1,4 +1,4 @@
-import type { Config, StoreType } from './types';
+import { type Config, type StoreType } from '../types';
 
 export const Store: StoreType = {
 	frameCount: 0,
@@ -19,5 +19,10 @@ export const Store: StoreType = {
 	pacmanMouthOpen: true,
 	gameInterval: 0,
 	gameHistory: [],
-	config: undefined as unknown as Config
+	config: undefined as unknown as Config,
+	useGithubThemeColor: true
 };
+
+export function registerPacmanDeath(store: StoreType) {
+	store.deathCount = (store.deathCount || 0) + 1;
+}

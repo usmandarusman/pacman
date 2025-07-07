@@ -1,45 +1,55 @@
-import { Game } from './game';
-import { Grid } from './grid';
-import { Store } from './store';
-import { Config, StoreType } from './types';
-import { Utils } from './utils';
+import { Game } from './core/game';
+import { Store } from './core/store';
+import { Providers } from './providers/providers';
+import { Config, PlayerStyle, StoreType } from './types';
+import { Grid } from './utils/grid';
+import { Utils } from './utils/utils';
 
 export class PacmanRenderer {
-	store: StoreType;
+	store!: StoreType;
 	conf: Config;
 
 	constructor(conf: Config) {
-		this.store = structuredClone(Store);
 		this.conf = { ...conf };
-		Grid.buildWalls();
 	}
 
 	public async start() {
-		const defaultConfing: Config = {
+		const defaultConfig: Config = {
 			platform: 'github',
 			username: '',
 			canvas: undefined as unknown as HTMLCanvasElement,
 			outputFormat: 'svg',
 			svgCallback: (_: string) => {},
-			gameOverCallback: () => () => {},
+			gameOverCallback: () => {},
 			gameTheme: 'github',
 			gameSpeed: 1,
 			enableSounds: false,
-			pointsIncreasedCallback: (_: number) => {}
+			pointsIncreasedCallback: (_: number) => {},
+			githubSettings: { accessToken: '' },
+			playerStyle: PlayerStyle.OPPORTUNISTIC
 		};
-		this.store.config = { ...defaultConfing, ...this.conf };
 
-		switch (this.conf.platform) {
+		// Reinicializa o store a cada chamada de start()
+		this.store = JSON.parse(JSON.stringify(Store));
+		this.store.config = { ...defaultConfig, ...this.conf };
+
+		switch (this.store.config.platform) {
 			case 'gitlab':
-				this.store.contributions = await Utils.getGitlabContribution(this.store);
+				this.store.contributions = await Providers.fetchGitlabContributions(this.store);
 				break;
-
 			case 'github':
-				this.store.contributions = await Utils.getGithubContribution(this.store);
+				this.store.contributions = await Providers.fetchGithubContributions(this.store);
 				break;
+			default:
+				throw new Error(`Unsupported platform: ${this.store.config.platform}`);
 		}
 
-		Game.startGame(this.store);
+		Grid.buildWalls();
+		Utils.buildGrid(this.store);
+		Utils.buildMonthLabels(this.store);
+
+		await Game.startGame(this.store);
+		return this.store;
 	}
 
 	public stop() {

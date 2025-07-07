@@ -180,6 +180,16 @@
 									/>
 								</div>
 							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="playerStyle" class="form-label">Player Style:</label>
+									<select id="playerStyle" class="form-select">
+										<option value="conservador">Conservador</option>
+										<option value="aggressive">Aggressive</option>
+										<option value="opportunistic">Opportunistic</option>
+									</select>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -247,6 +257,11 @@
 							<td><code>gameTheme</code></td>
 							<td>The visual theme of the game</td>
 							<td><code>github</code>, <code>github-dark</code>, <code>gitlab</code>, <code>gitlab-dark</code></td>
+						</tr>
+						<tr>
+							<td><code>playerStyle</code></td>
+							<td>Pacman movement style</td>
+							<td><code>github</code>, <code>conservador</code>, <code>aggressive</code>, <code>opportunistic</code></td>
 						</tr>
 						<tr>
 							<td><code>enableSounds</code></td>
@@ -370,6 +385,7 @@ _generated with [abozanona/pacman-contribution-graph](https://abozanona.github.i
 			const gameSpeedValue = document.getElementById('gameSpeedValue');
 			const themeSelect = document.getElementById('theme');
 			const enableSoundsSelect = document.getElementById('enableSounds');
+			const playerStyleSelect = document.getElementById('playerStyle');
 			const canvas = document.getElementById('canvas');
 			const svgContainer = document.getElementById('svgContainer');
 			const svgHolder = document.getElementById('svgholder');
@@ -462,6 +478,7 @@ _generated with [abozanona/pacman-contribution-graph](https://abozanona.github.i
 					gameSpeed: parseInt(gameSpeedInput.value),
 					gameTheme: themeSelect.value,
 					enableSounds: enableSounds.value === 'enabled',
+					playerStyle: playerStyle,
 					githubSettings: {
 						accessToken: githubAccessToken.value
 					}

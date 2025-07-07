@@ -1,4 +1,4 @@
-# Pac-Man Contribution Graph Game
+# 👻 Pac-Man Contribution Graph Game
 
 Transform your GitHub or GitLab contribution graph into an interactive Pac-Man game! This JavaScript library offers a unique and engaging way to visualize your coding activity over the past year.
 
@@ -8,22 +8,24 @@ Transform your GitHub or GitLab contribution graph into an interactive Pac-Man g
   <img alt="pacman contribution graph" src="https://raw.githubusercontent.com/abozanona/abozanona/output/pacman-contribution-graph.svg">
 </picture>
 
-## Features
+## 🎮 Features
 
 Elevate your GitHub profile with the Pac-Man Contribution Graph Game and add a playful touch to your coding journey!
 
 - **Contribution Visualization**: Converts your GitHub or GitLab contribution data into a colorful grid.
-- **Interactive Gameplay**: Navigate Pac-Man through your contributions, evading ghosts and collecting pellets.
+- **Pac-Man Gameplay**: Classic Pac-Man mechanics where commits are edible dots
 - **Multiple Themes**: Choose between different themes, such as GitHub Dark and GitLab Dark.
 - **Customizable Settings**: Adjust game speed, sound preferences, and output format (Canvas or SVG).
+- **GitHub Integration**: Automatically fetches your contribution data via GraphQL API
+- **GitHub Action**: Easy to add to your profile or website README
 
-## Demo
+## 🕹️ Demo
 
 Experience the game firsthand:
 
 **Live Demo**: [Pac-Man Contribution Game](https://abozanona.github.io/pacman-contribution-graph/)
 
-## Installation
+## 🔧 Installation
 
 To integrate the Pac-Man Contribution Graph into your project, you can install it via npm:
 
@@ -37,7 +39,7 @@ Alternatively, include it directly in your HTML using jsDelivr:
 <script src="https://cdn.jsdelivr.net/npm/pacman-contribution-graph@1.0.10/dist/index.min.js"></script>
 ```
 
-## Usage
+## 🧩 Usage
 
 Here's how to set up and run the Pac-Man Contribution Graph:
 
@@ -132,7 +134,48 @@ To showcase the Pac-Man game on your GitHub profile, follow these steps:
 
 For a detailed guide, refer to the blog post: [Integrate Pac-Man Contribution Graph into Your GitHub Profile](https://abozanona.me/integrate-pacman-contribution-graph-into-github/)
 
-## Contributing
+## ⏳ Run the Workflow Manually
+
+Once you have everything set up:
+
+- Go to the "Actions" tab in your repository
+- Click "Update Pac-Man Contribution"
+- Click "Run workflow" > "Run workflow"
+
+This will start the SVG generation process and you will then be able to see the animation working in your README!
+This implementation will allow your Pac-Man contribution graph to be automatically updated every day, keeping it always up to date with your latest contributions.
+
+## 🎯 How it Works
+
+The application uses your GitHub contribution data to:
+
+1. Create a grid where each cell represents a day of contribution
+2. Use the contribution intensity levels provided by the GitHub API:
+
+- NONE: Days with no contributions (empty spaces in the game)
+- FIRST_QUARTILE: Days with few contributions (small points, 1 point in the game)
+- SECOND_QUARTILE: Days with moderate contributions (medium points, 2 points)
+- THIRD_QUARTILE: Days with many contributions (large points, 5 points)
+- FOURTH_QUARTILE: Days with exceptional contributions (power pellets that activate ghost-eating mode)
+
+These levels are relative to each user's contribution pattern and are automatically calculated by GitHub, so the density of elements in the game will reflect each user's unique profile.
+
+3. Pac-Man navigates the grid using pathfinding algorithms
+4. Ghosts chase Pac-Man with unique behaviors (as in the original game)
+5. All gameplay is recorded and exported as an animated SVG
+
+## 👻 Ghosts Personalities
+
+Each ghost has been given new looks and personalities that are true to the original game.
+
+|       Ghost        |                                        Preview                                        | Behavior                                                                                                                                                                     |
+| :----------------: | :-----------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  **Blinky** (red)  |  <p align="center"><img src="assets/gifs/red_flip.gif" height="40" alt="Blinky"></p>  | An aggressive stalker who targets Pac-Man directly. He gets faster when there are only a few dots left on the map, which players call "Elroy mode".                          |
+|  **Pinky** (pink)  |  <p align="center"><img src="assets/gifs/pink_flip.gif" height="40" alt="Pinky"></p>  | Strategist who tries to ambush Pac-Man by positioning himself 4 spaces ahead of his current direction. He specializes in traps and ambushes.                                 |
+|  **Inky** (cyan)   |  <p align="center"><img src="assets/gifs/cyan_flip.gif" height="40" alt="Inky"></p>   | Unpredictable and complex. Uses Blinky's position as a reference for his movement, calculating a vector that passes through Pac-Man and then doubling that distance.         |
+| **Clyde** (orange) | <p align="center"><img src="assets/gifs/orange_flip.gif" height="40" alt="Clyde"></p> | Shy and erratic. Chases Pac-Man when he is far away, but when he gets closer than 8 spaces away, he runs away to his corner. This "shy" behavior makes him less predictable. |
+
+## 🤝 Contributing
 
 Contributions are welcome! To contribute:
 
@@ -142,10 +185,17 @@ Contributions are welcome! To contribute:
 4. Push to the branch: `git push origin feature-name`.
 5. Submit a pull request.
 
-## Acknowledgements
+## 🙏 Acknowledgements
 
 Inspired by the [snk](https://github.com/Platane/snk) project, which turns your GitHub contribution graph into a snake game. Special thanks to all contributors and the open-source community for their support.
 
-## Online tools that use Pac-Man Contribution Graph Game
+## 🌐 Online tools that use Pac-Man Contribution Graph Game
 
 - Profile Readme Generator: [Website](https://profile-readme-generator.com/) • [Pull Request](https://github.com/maurodesouza/profile-readme-generator/pull/98)
+
+---
+
+<p align="center">
+    These ghosts work hard! Leave a cuddle before you leave.<br>
+    <img src="assets/gifs/pink_pet_cafune.gif" alt="Ghost being petted" height="80">
+</p>
