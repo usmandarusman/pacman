@@ -71,7 +71,6 @@ export interface StoreType {
 	}[];
 	config: Config;
 	useGithubThemeColor: boolean;
-	deathCount?: number;
 }
 
 /* ───────────────────────── Settings ───────────────────────────── */

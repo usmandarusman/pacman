@@ -158,14 +158,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Game: () => (/* binding */ Game),
 /* harmony export */   determineGhostName: () => (/* binding */ determineGhostName)
 /* harmony export */ });
-/* harmony import */ var _core_store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/store */ "./src/core/store.ts");
-/* harmony import */ var _movement_ghosts_movement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../movement/ghosts-movement */ "./src/movement/ghosts-movement.ts");
-/* harmony import */ var _movement_pacman_movement__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../movement/pacman-movement */ "./src/movement/pacman-movement.ts");
-/* harmony import */ var _music_player__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../music-player */ "./src/music-player.ts");
-/* harmony import */ var _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../renderers/canvas */ "./src/renderers/canvas.ts");
-/* harmony import */ var _renderers_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../renderers/svg */ "./src/renderers/svg.ts");
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/utils */ "./src/utils/utils.ts");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./constants */ "./src/core/constants.ts");
+/* harmony import */ var _movement_ghosts_movement__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../movement/ghosts-movement */ "./src/movement/ghosts-movement.ts");
+/* harmony import */ var _movement_pacman_movement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../movement/pacman-movement */ "./src/movement/pacman-movement.ts");
+/* harmony import */ var _music_player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../music-player */ "./src/music-player.ts");
+/* harmony import */ var _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../renderers/canvas */ "./src/renderers/canvas.ts");
+/* harmony import */ var _renderers_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../renderers/svg */ "./src/renderers/svg.ts");
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/utils */ "./src/utils/utils.ts");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./constants */ "./src/core/constants.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -175,7 +174,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-
 
 
 
@@ -270,27 +268,27 @@ const stopGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
 const startGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
     if (store.config.outputFormat == 'canvas') {
         store.config.canvas = store.config.canvas;
-        _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__.Canvas.resizeCanvas(store);
-        _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__.Canvas.listenToSoundController(store);
+        _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas.resizeCanvas(store);
+        _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas.listenToSoundController(store);
     }
     store.frameCount = 0;
     store.gameHistory = []; // keeps clean
     store.ghosts.forEach((g) => (g.scared = false));
-    store.grid = _utils_utils__WEBPACK_IMPORTED_MODULE_6__.Utils.createGridFromData(store);
+    store.grid = _utils_utils__WEBPACK_IMPORTED_MODULE_5__.Utils.createGridFromData(store);
     const remainingCells = () => store.grid.some((row) => row.some((cell) => cell.commitsCount > 0));
     if (remainingCells()) {
         placePacman(store);
         placeGhosts(store);
     }
     if (store.config.outputFormat == 'canvas')
-        _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__.Canvas.drawGrid(store);
+        _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas.drawGrid(store);
     if (store.config.outputFormat == 'canvas') {
         if (!store.config.enableSounds) {
-            _music_player__WEBPACK_IMPORTED_MODULE_3__.MusicPlayer.getInstance().mute();
+            _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().mute();
         }
-        yield _music_player__WEBPACK_IMPORTED_MODULE_3__.MusicPlayer.getInstance().preloadSounds();
-        _music_player__WEBPACK_IMPORTED_MODULE_3__.MusicPlayer.getInstance().startDefaultSound();
-        yield _music_player__WEBPACK_IMPORTED_MODULE_3__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_3__.Sound.BEGINNING);
+        yield _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().preloadSounds();
+        _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().startDefaultSound();
+        yield _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.BEGINNING);
     }
     if (store.config.outputFormat === 'svg') {
         while (remainingCells()) {
@@ -301,7 +299,7 @@ const startGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
     }
     else {
         clearInterval(store.gameInterval);
-        store.gameInterval = setInterval(() => updateGame(store), _constants__WEBPACK_IMPORTED_MODULE_7__.DELTA_TIME);
+        store.gameInterval = setInterval(() => updateGame(store), _constants__WEBPACK_IMPORTED_MODULE_6__.DELTA_TIME);
     }
 });
 /* ---------- utilities ---------- */
@@ -364,20 +362,20 @@ const updateGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
     const remaining = store.grid.some((row) => row.some((c) => c.commitsCount > 0));
     if (!remaining) {
         if (store.config.outputFormat === 'svg') {
-            const svg = _renderers_svg__WEBPACK_IMPORTED_MODULE_5__.SVG.generateAnimatedSVG(store);
+            const svg = _renderers_svg__WEBPACK_IMPORTED_MODULE_4__.SVG.generateAnimatedSVG(store);
             store.config.svgCallback(svg);
         }
         if (store.config.outputFormat == 'canvas') {
-            _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__.Canvas.renderGameOver(store);
-            _music_player__WEBPACK_IMPORTED_MODULE_3__.MusicPlayer.getInstance()
-                .play(_music_player__WEBPACK_IMPORTED_MODULE_3__.Sound.BEGINNING)
-                .then(() => _music_player__WEBPACK_IMPORTED_MODULE_3__.MusicPlayer.getInstance().stopDefaultSound());
+            _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas.renderGameOver(store);
+            _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance()
+                .play(_music_player__WEBPACK_IMPORTED_MODULE_2__.Sound.BEGINNING)
+                .then(() => _music_player__WEBPACK_IMPORTED_MODULE_2__.MusicPlayer.getInstance().stopDefaultSound());
         }
         store.config.gameOverCallback();
         return;
     }
     /* -------- movements -------- */
-    _movement_pacman_movement__WEBPACK_IMPORTED_MODULE_2__.PacmanMovement.movePacman(store);
+    _movement_pacman_movement__WEBPACK_IMPORTED_MODULE_1__.PacmanMovement.movePacman(store);
     const cell = (_a = store.grid[store.pacman.x]) === null || _a === void 0 ? void 0 : _a[store.pacman.y];
     if (cell && cell.level === 'FOURTH_QUARTILE' && store.pacman.powerupRemainingDuration === 0) {
         store.pacman.powerupRemainingDuration = 30;
@@ -388,20 +386,20 @@ const updateGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
     }
     checkCollisions(store);
     if (store.pacman.deadRemainingDuration === 0) {
-        _movement_ghosts_movement__WEBPACK_IMPORTED_MODULE_1__.GhostsMovement.moveGhosts(store);
+        _movement_ghosts_movement__WEBPACK_IMPORTED_MODULE_0__.GhostsMovement.moveGhosts(store);
         checkCollisions(store);
     }
     store.pacmanMouthOpen = !store.pacmanMouthOpen;
     /* ---- single snapshot per frame ---- */
     pushSnapshot(store);
     if (store.config.outputFormat == 'canvas')
-        _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__.Canvas.drawGrid(store);
+        _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas.drawGrid(store);
     if (store.config.outputFormat == 'canvas')
-        _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__.Canvas.drawPacman(store);
+        _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas.drawPacman(store);
     if (store.config.outputFormat == 'canvas')
-        _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__.Canvas.drawGhosts(store);
+        _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas.drawGhosts(store);
     if (store.config.outputFormat == 'canvas')
-        _renderers_canvas__WEBPACK_IMPORTED_MODULE_4__.Canvas.drawSoundController(store);
+        _renderers_canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas.drawSoundController(store);
 });
 /* ---------- snapshot helper ---------- */
 const pushSnapshot = (store) => {
@@ -431,8 +429,7 @@ const checkCollisions = (store) => {
                 store.pacman.points = 0;
                 store.pacman.powerupRemainingDuration = 0;
                 if (store.pacman.deadRemainingDuration === 0) {
-                    store.pacman.deadRemainingDuration = _constants__WEBPACK_IMPORTED_MODULE_7__.PACMAN_DEATH_DURATION;
-                    (0,_core_store__WEBPACK_IMPORTED_MODULE_0__.registerPacmanDeath)(store); // ✅ correctly counts deaths
+                    store.pacman.deadRemainingDuration = _constants__WEBPACK_IMPORTED_MODULE_6__.PACMAN_DEATH_DURATION;
                 }
             }
         }
@@ -462,8 +459,7 @@ const Game = {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Store: () => (/* binding */ Store),
-/* harmony export */   registerPacmanDeath: () => (/* binding */ registerPacmanDeath)
+/* harmony export */   Store: () => (/* binding */ Store)
 /* harmony export */ });
 const Store = {
     frameCount: 0,
@@ -487,9 +483,6 @@ const Store = {
     config: undefined,
     useGithubThemeColor: true
 };
-function registerPacmanDeath(store) {
-    store.deathCount = (store.deathCount || 0) + 1;
-}
 
 
 /***/ }),
@@ -809,7 +802,7 @@ const moveGhostWithPersonality = (ghost, store) => {
 };
 // Improved version of BFS that respects the no-reversion rule
 const BFSTargetLocation = (startX, startY, targetX, targetY, currentDirection) => {
-    // Se já estamos no alvo, não precisa se mover
+    // If we are already on target, no need to move
     if (startX === targetX && startY === targetY)
         return null;
     const queue = [{ x: startX, y: startY, path: [], direction: currentDirection || 'right' }];
@@ -944,7 +937,7 @@ const calculateGhostTarget = (ghost, store) => {
             return { x: targetX, y: targetY };
         case 'inky': // Blue - Coordinated behavior with Blinky
             const blinky = store.ghosts.find((g) => g.name === 'blinky');
-            // Ponto de referência: 2 células à frente do Pac-Man
+            // Landmark: 2 cells ahead of Pac-Man
             let twoAhead = {
                 x: pacman.x + pacDirection[0] * 2,
                 y: pacman.y + pacDirection[1] * 2
@@ -2551,9 +2544,9 @@ const buildMonthLabels = (store) => {
     let lastMonth = '';
     for (let week = 0; week < realWidth; week++) {
         const date = new Date(startDate);
-        date.setUTCDate(date.getUTCDate() + week * 7); // ✅ corrigido: avanço correto
+        date.setUTCDate(date.getUTCDate() + week * 7);
         const currentMonth = date.toLocaleString('default', { month: 'short' });
-        // Só coloca o nome se mudou de mês em relação ao último
+        // Only enter the name if it has changed month in relation to the last one
         if (currentMonth !== lastMonth) {
             labels[week] = currentMonth;
             lastMonth = currentMonth;
@@ -2683,7 +2676,7 @@ class PacmanRenderer {
                 githubSettings: { accessToken: '' },
                 playerStyle: _types__WEBPACK_IMPORTED_MODULE_3__.PlayerStyle.OPPORTUNISTIC
             };
-            // Reinicializa o store a cada chamada de start()
+            // Reset the store on each call to start()
             this.store = JSON.parse(JSON.stringify(_core_store__WEBPACK_IMPORTED_MODULE_1__.Store));
             this.store.config = Object.assign(Object.assign({}, defaultConfig), this.conf);
             switch (this.store.config.platform) {

@@ -347,7 +347,7 @@ const BFSTargetLocation = (
 	targetY: number,
 	currentDirection?: 'right' | 'left' | 'up' | 'down'
 ): { x: number; y: number; direction?: 'right' | 'left' | 'up' | 'down' } | null => {
-	// Se já estamos no alvo, não precisa se mover
+	// If we are already on target, no need to move
 	if (startX === targetX && startY === targetY) return null;
 
 	// Define a specific type for queue and path items
@@ -515,7 +515,7 @@ const calculateGhostTarget = (ghost: Ghost, store: StoreType): Point2d => {
 		case 'inky': // Blue - Coordinated behavior with Blinky
 			const blinky = store.ghosts.find((g) => g.name === 'blinky');
 
-			// Ponto de referência: 2 células à frente do Pac-Man
+			// Landmark: 2 cells ahead of Pac-Man
 			let twoAhead = {
 				x: pacman.x + pacDirection[0] * 2,
 				y: pacman.y + pacDirection[1] * 2

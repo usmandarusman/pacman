@@ -29,7 +29,7 @@ export class PacmanRenderer {
 			playerStyle: PlayerStyle.OPPORTUNISTIC
 		};
 
-		// Reinicializa o store a cada chamada de start()
+		// Reset the store on each call to start()
 		this.store = JSON.parse(JSON.stringify(Store));
 		this.store.config = { ...defaultConfig, ...this.conf };
 

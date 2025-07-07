@@ -22,7 +22,3 @@ export const Store: StoreType = {
 	config: undefined as unknown as Config,
 	useGithubThemeColor: true
 };
-
-export function registerPacmanDeath(store: StoreType) {
-	store.deathCount = (store.deathCount || 0) + 1;
-}

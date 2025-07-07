@@ -90,11 +90,11 @@ export const buildMonthLabels = (store: StoreType) => {
 
 	for (let week = 0; week < realWidth; week++) {
 		const date = new Date(startDate);
-		date.setUTCDate(date.getUTCDate() + week * 7); // ✅ corrigido: avanço correto
+		date.setUTCDate(date.getUTCDate() + week * 7);
 
 		const currentMonth = date.toLocaleString('default', { month: 'short' });
 
-		// Só coloca o nome se mudou de mês em relação ao último
+		// Only enter the name if it has changed month in relation to the last one
 		if (currentMonth !== lastMonth) {
 			labels[week] = currentMonth;
 			lastMonth = currentMonth;

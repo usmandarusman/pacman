@@ -1,4 +1,3 @@
-import { registerPacmanDeath } from '../core/store';
 import { GhostsMovement } from '../movement/ghosts-movement';
 import { PacmanMovement } from '../movement/pacman-movement';
 import { MusicPlayer, Sound } from '../music-player';
@@ -278,7 +277,6 @@ const checkCollisions = (store: StoreType) => {
 				store.pacman.powerupRemainingDuration = 0;
 				if (store.pacman.deadRemainingDuration === 0) {
 					store.pacman.deadRemainingDuration = PACMAN_DEATH_DURATION;
-					registerPacmanDeath(store); // ✅ correctly counts deaths
 				}
 			}
 		}
