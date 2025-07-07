@@ -36,7 +36,7 @@ npm install pacman-contribution-graph
 Alternatively, include it directly in your HTML using jsDelivr:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pacman-contribution-graph@1.0.10/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pacman-contribution-graph@2.0.0/dist/index.min.js"></script>
 ```
 
 ## 🧩 Usage
