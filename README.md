@@ -134,6 +134,102 @@ To showcase the Pac-Man game on your GitHub profile, follow these steps:
 
 For a detailed guide, refer to the blog post: [Integrate Pac-Man Contribution Graph into Your GitHub Profile](https://abozanona.me/integrate-pacman-contribution-graph-into-github/)
 
+## Integrate into Your GitLab Profile
+
+To showcase the Pac-Man game on your GitLab profile, follow these steps:
+
+1. **Create a Special Repository**:
+
+    - Name a new repository exactly as your GitHub username (e.g., `username/username`).
+    - This repository powers your GitHub profile page.
+
+2. **Generate & Setup Push Token**:
+
+    - Open the repository, and from left sidebar navigate to settings => Access Token tab.
+    - Generate a new Access Token with the name `CI/CD Push Token` & scope `write_repository`. Access tokens are only valid for 1 year maximum.
+    - From left sidebar navigate to settings => CI/CD.
+    - In Variables section, add a new variable with the name `CI_PUSH_TOKEN` and the value of the Access Token. Make sure that the variable is `Masked` & `Protect`.
+
+3. **Set Up `gitlab-ci` File**:
+
+    - In the repository, create a `.gitlab-ci.yml` file with the following content.
+
+        ```yaml
+        stages:
+            - generate
+            - deploy
+
+        variables:
+            GIT_SUBMODULE_STRATEGY: recursive
+
+        generate_pacman_graph:
+            stage: generate
+            image: node:20
+            script:
+                - mkdir -p dist
+                - npm install -g pacman-contribution-graph
+                - pacman-contribution-graph --platform gitlab --username "$CI_PROJECT_NAMESPACE" --gameTheme gitlab --output pacman-contribution-graph-light.svg
+                - mv pacman-contribution-graph-light.svg dist/pacman-contribution-graph-light.svg
+                - pacman-contribution-graph --platform gitlab --username "$CI_PROJECT_NAMESPACE" --gameTheme gitlab-dark --output pacman-contribution-graph-dark.svg
+                - mv pacman-contribution-graph-dark.svg dist/pacman-contribution-graph-dark.svg
+            artifacts:
+                paths:
+                    - dist/pacman-contribution-graph-light.svg
+                    - dist/pacman-contribution-graph-dark.svg
+                expire_in: 1 hour
+            rules:
+                - if: '$CI_PIPELINE_SOURCE == "schedule"'
+                - if: '$CI_PIPELINE_SOURCE == "push"'
+
+        deploy_to_readme:
+            stage: deploy
+            image: alpine:latest
+            script:
+                - apk add --no-cache git
+                - mkdir -p output
+                - cp dist/pacman-contribution-graph-light.svg output/
+                - cp dist/pacman-contribution-graph-dark.svg output/
+                - git remote set-url origin https://gitlab-ci-token:${CI_PUSH_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git
+                - git config --global user.email "$GITLAB_USER_EMAIL"
+                - git config --global user.name "$GITLAB_USER_NAME"
+                - git add output/pacman-contribution-graph-light.svg output/pacman-contribution-graph-dark.svg
+                - git commit -m "Update Pac-Man contribution graph [ci skip]" || echo "No changes"
+                - git push origin HEAD:main
+            rules:
+                - if: '$CI_PIPELINE_SOURCE == "schedule"'
+                - if: '$CI_PIPELINE_SOURCE == "push"'
+        ```
+
+4. **Add to Profile README**:
+
+    - In your repository, create or edit the `README.md` file to include:
+
+        ```markdown
+        ## My Contribution Graph
+
+        <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="https://gitlab.com/[USERNAME]/[USERNAME]/-/raw/main/output/pacman-contribution-graph-dark.svg">
+            <source media="(prefers-color-scheme: light)" srcset="https://gitlab.com/[USERNAME]/[USERNAME]/-/raw/main/output/pacman-contribution-graph-light.svg">
+            <img alt="pacman contribution graph" src="https://gitlab.com/[USERNAME]/[USERNAME]/-/raw/main/output/pacman-contribution-graph-light.svg">
+        </picture>
+        ```
+
+5. **Commit and Push**:
+
+    - Push the changes to GitHub. The Gitlab pipeline will work once, updating the Pac-Man game on your profile.
+
+6. **Schedule pipeline running**
+    - Go to your project in GitLab
+    - In the left sidebar, navigate to Build > Pipeline schedules (sometimes under CI/CD > Schedules)
+    - Click New schedule
+    - In the form:
+        - Interval pattern: Enter a cron expression for daily runs. For example, `0 2 \* \* \*` to run every day at 2:00 AM (UTC).
+        - Timezone: Select your preferred timezone.
+        - Target branch: Choose the main branch.
+    - Click Save pipeline schedule (or Create pipeline schedule).
+
+Your pacman picture will now be generated automatically every day at the same time.
+
 ## ⏳ Run the Workflow Manually
 
 Once you have everything set up:
