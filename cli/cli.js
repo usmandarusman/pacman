@@ -4,7 +4,7 @@
 import fs from 'fs';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
-import { PacmanRenderer } from '../dist/pacman-contribution-graph.js'; // Adjust path as needed
+import { PacmanRenderer } from '../dist/pacman-contribution-graph.min.js';
 
 const argv = yargs(hideBin(process.argv))
     .option('platform', {
