@@ -190,8 +190,8 @@ To showcase the Pac-Man game on your GitLab profile, follow these steps:
                 - cp dist/pacman-contribution-graph-light.svg output/
                 - cp dist/pacman-contribution-graph-dark.svg output/
                 - git remote set-url origin https://gitlab-ci-token:${CI_PUSH_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git
-                - git config --global user.email "$GITLAB_USER_EMAIL"
-                - git config --global user.name "$GITLAB_USER_NAME"
+                - git config --global user.email "pacman-bot@example.com"
+                - git config --global user.name "Pacman Bot"
                 - git add output/pacman-contribution-graph-light.svg output/pacman-contribution-graph-dark.svg
                 - git commit -m "Update Pac-Man contribution graph [ci skip]" || echo "No changes"
                 - git push origin HEAD:main
