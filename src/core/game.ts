@@ -134,7 +134,7 @@ const startGame = async (store: StoreType) => {
 		await updateGame(store);
 	} else {
 		clearInterval(store.gameInterval as number);
-		store.gameInterval = setInterval(() => updateGame(store), DELTA_TIME) as unknown as number;
+		store.gameInterval = setInterval(() => updateGame(store), DELTA_TIME * store.config.gameSpeed) as unknown as number;
 	}
 };
 

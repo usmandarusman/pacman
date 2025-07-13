@@ -3,7 +3,6 @@ export declare const CELL_SIZE = 20;
 export declare const GAP_SIZE = 2;
 export declare const GRID_WIDTH = 53;
 export declare const GRID_HEIGHT = 7;
-export declare const GHOST_HOUSE_COLOR = "yellow";
 export declare const PACMAN_COLOR = "yellow";
 export declare const PACMAN_COLOR_POWERUP = "red";
 export declare const PACMAN_COLOR_DEAD = "#80808064";

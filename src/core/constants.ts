@@ -6,8 +6,6 @@ export const GAP_SIZE = 2;
 export const GRID_WIDTH = 53; // 52 weeks + current week
 export const GRID_HEIGHT = 7; // Sun … Sat
 
-export const GHOST_HOUSE_COLOR = 'yellow';
-
 export const PACMAN_COLOR = 'yellow';
 export const PACMAN_COLOR_POWERUP = 'red';
 export const PACMAN_COLOR_DEAD = '#80808064';

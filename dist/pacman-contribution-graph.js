@@ -13,7 +13,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   GAME_THEMES: () => (/* binding */ GAME_THEMES),
 /* harmony export */   GAP_SIZE: () => (/* binding */ GAP_SIZE),
 /* harmony export */   GHOSTS: () => (/* binding */ GHOSTS),
-/* harmony export */   GHOST_HOUSE_COLOR: () => (/* binding */ GHOST_HOUSE_COLOR),
 /* harmony export */   GHOST_NAMES: () => (/* binding */ GHOST_NAMES),
 /* harmony export */   GRID_HEIGHT: () => (/* binding */ GRID_HEIGHT),
 /* harmony export */   GRID_WIDTH: () => (/* binding */ GRID_WIDTH),
@@ -32,7 +31,6 @@ const CELL_SIZE = 20;
 const GAP_SIZE = 2;
 const GRID_WIDTH = 53; // 52 weeks + current week
 const GRID_HEIGHT = 7; // Sun … Sat
-const GHOST_HOUSE_COLOR = 'yellow';
 const PACMAN_COLOR = 'yellow';
 const PACMAN_COLOR_POWERUP = 'red';
 const PACMAN_COLOR_DEAD = '#80808064';
@@ -299,7 +297,7 @@ const startGame = (store) => __awaiter(void 0, void 0, void 0, function* () {
     }
     else {
         clearInterval(store.gameInterval);
-        store.gameInterval = setInterval(() => updateGame(store), _constants__WEBPACK_IMPORTED_MODULE_6__.DELTA_TIME);
+        store.gameInterval = setInterval(() => updateGame(store), _constants__WEBPACK_IMPORTED_MODULE_6__.DELTA_TIME * store.config.gameSpeed);
     }
 });
 /* ---------- utilities ---------- */
@@ -2433,7 +2431,6 @@ const buildWalls = () => {
     // Ghost House
     (0,_core_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(25, 2, 'horizontal', 'GH_TOP');
     (0,_core_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(27, 2, 'horizontal', 'GH_TOP');
-    //setWall(26, 2, 'horizontal', 'GH_DOOR', GHOST_HOUSE_COLOR);
     (0,_core_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(25, 4, 'horizontal', 'GH_BOTTOM');
     (0,_core_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(26, 4, 'horizontal', 'GH_BOTTOM');
     (0,_core_constants__WEBPACK_IMPORTED_MODULE_0__.setWall)(27, 4, 'horizontal', 'GH_BOTTOM');
