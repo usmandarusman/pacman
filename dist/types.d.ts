@@ -11,7 +11,7 @@ export interface Contribution {
     level: ContributionLevel;
 }
 export declare enum PlayerStyle {
-    CONSERVATIVE = "conservador",
+    CONSERVATIVE = "conservative",
     AGGRESSIVE = "aggressive",
     OPPORTUNISTIC = "opportunistic"
 }

@@ -2308,7 +2308,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 var PlayerStyle;
 (function (PlayerStyle) {
-    PlayerStyle["CONSERVATIVE"] = "conservador";
+    PlayerStyle["CONSERVATIVE"] = "conservative";
     PlayerStyle["AGGRESSIVE"] = "aggressive";
     PlayerStyle["OPPORTUNISTIC"] = "opportunistic";
 })(PlayerStyle || (PlayerStyle = {}));

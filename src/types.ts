@@ -14,7 +14,7 @@ export interface Contribution {
 }
 
 export enum PlayerStyle {
-	CONSERVATIVE = 'conservador',
+	CONSERVATIVE = 'conservative',
 	AGGRESSIVE = 'aggressive',
 	OPPORTUNISTIC = 'opportunistic'
 }
