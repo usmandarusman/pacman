@@ -140,8 +140,8 @@ To showcase the Pac-Man game on your GitLab profile, follow these steps:
 
 1. **Create a Special Repository**:
 
-    - Name a new repository exactly as your GitHub username (e.g., `username/username`).
-    - This repository powers your GitHub profile page.
+    - Name a new repository exactly as your GitLab username (e.g., `username/username`).
+    - This repository powers your GitLab profile page.
 
 2. **Generate & Setup Push Token**:
 
