@@ -21,7 +21,7 @@ export class PacmanRenderer {
 			outputFormat: 'svg',
 			svgCallback: (_: string) => {},
 			gameOverCallback: () => {},
-			gameTheme: 'github',
+			gameTheme: 'github-dark',
 			gameSpeed: 1,
 			enableSounds: false,
 			pointsIncreasedCallback: (_: number) => {},
